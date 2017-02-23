@@ -13,7 +13,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-02-23: replaced gene names output panel by profile plot output panel
+# 2017-02-23: added sample names input panel
+#             replaced gene names output panel by profile plot output panel
 # 2017-02-21: added gene names input/output panels
 #             initial version (app title only)
 
@@ -32,6 +33,14 @@ require(magrittr)
 
 # load parameter definitions
 source("params.R")
+
+
+########
+# data #
+########
+
+# load input data
+source("data.R")
 
 
 ########################
@@ -74,7 +83,30 @@ fluidPage(
     ) %>%
 
   # embed gene name input panel in sidebar
-  sidebarPanel %>%
+  sidebarPanel(
+
+    # add sample names input panel
+    checkboxGroupInput(
+
+      # name sample names input
+      inputId="sample.names"
+
+      # label gene names input panel
+      ,label=params$sample.names.input.label %>%
+
+        # make label 3rd level header
+        h3
+
+      # set choices for sample names input panel
+      ,choices=input.data$sample.names
+
+      # set default selection for sample names input panel
+      ,selected=params$sample.names.input.default
+
+      # end sample names input panel definition
+      )
+
+    ) %>%
 
   # initialize side bar layout
   sidebarLayout(

@@ -13,7 +13,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-02-23: added double-sourcing check / structured parameter definition / added profile plot
+# 2017-02-23: added sample names input panel parameters
+#             added double-sourcing check / structured parameter definition / added profile plot
 #             parameters
 # 2017-02-21: added gene names input panel parameters
 #             initial version (app title only)
@@ -68,6 +69,20 @@ if(!exists("params"))
       # placeholder of gene names input panel
       ,gene.names.input.placeholder="enter gene names to plot (space separated)"
 
+
+      ############################
+      # sample names input panel #
+      ############################
+
+      # label of sample names input panel
+      ,sample.names.input.label="Samples"
+
+      # default selection of sample names input panel
+      ,sample.names.input.default=c("ad_PG50um"
+                                   ,"ad_PG20um"
+                                   ,"ad_PG_wt_50"
+                                   ,"ad_PG_wt_50_2"
+                                   )
 
     ##############
     # main panel #

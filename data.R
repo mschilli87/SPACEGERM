@@ -2,17 +2,19 @@
 # general information #
 #######################
 
-# file:       data.R
-# author(s):  Marcel Schilling <marcel.schilling@mdc-berlin.de>
-# created:    2017-02-23
-# purpose:    load input data for tomo-seq shiny app
+# file:         data.R
+# author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
+# created:      2017-02-23
+# last update:  2017-02-23
+# purpose:      load input data for tomo-seq shiny app
 
 
 ######################################
 # change log (reverse chronological) #
 ######################################
 
-# 2017-02-23: initial version (double-sourcing check & tomo-seq data loading)
+# 2017-02-23: added sample names extraction
+#             initial version (double-sourcing check & tomo-seq data loading)
 
 
 #############
@@ -38,15 +40,29 @@ source("params.R")
 # ensure input data are not loaded already
 if(!exists("input.data"))
 
-  # load input data
-  input.data<-
+  # begin data loading
+  {
 
-    # store input data in a named list
-    list(
+    # load input data
+    input.data<-
 
-      # load tomo-seq data from file
-      tomoseq.data=readRDS(params$tomoseq.data.file)
+      # store input data in a named list
+      list(
 
-      # load input data list definition
-      )
+        # load tomo-seq data from file
+        tomoseq.data=readRDS(params$tomoseq.data.file)
 
+        # load input data list definition
+        )
+
+    # get sample names
+    input.data$sample.names<-
+
+      # take tomo-seq data
+      input.data$tomoseq.data %$%
+
+      # extract used sample names
+      unique(sample.name)
+
+  # end data loading
+  }
