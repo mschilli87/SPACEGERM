@@ -13,7 +13,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-02-23: added smooth.pooled plot option
+# 2017-02-23: added smooth.each plot option
+#             added smooth.pooled plot option
 #             added plot option input panel parameters (logscale only)
 #             added sample names input panel parameters
 #             added double-sourcing check / structured parameter definition / added profile plot
@@ -96,12 +97,14 @@ if(!exists("params"))
 
       # plot options
       ,plot.options=c(`scale y-axis logarithmically (log2)`="logscale"
+                     ,`show per-sample smooth fits (LOESS)`="smooth.each"
                      ,`show across-sample smooth fit (LOESS)`="smooth.pooled"
                      )
 
       # default selection of plot option input panel
       ,plot.options.input.default=c("logscale"
                                    ,"smooth.pooled"
+                                   ,"smooth.each"
                                    )
 
 
@@ -180,14 +183,14 @@ if(!exists("params"))
         # lines #
         #########
 
-      # raw data line size of profile plot
-      ,profile.plot.linesize.raw=1
+      # per-sample data line size of profile plot
+      ,profile.plot.linesize.each=1
 
       # raw data line type of profile plot
       ,profile.plot.linetype.raw="dashed"
 
       # smooth data line size of profile plot
-      ,profile.plot.linesize.smooth=2
+      ,profile.plot.linesize.pooled=2
 
       # smooth data linetype of profile plot
       ,profile.plot.linetype.smooth="solid"

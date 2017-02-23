@@ -13,7 +13,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-02-23: made across-sample smooth fit optional
+# 2017-02-23: added per-sample smooth fits
+#             made across-sample smooth fit optional
 #             added logarithmic y-axis scaling
 #             initial version (profile plot generation function)
 
@@ -156,6 +157,9 @@ plot.profiles<-
     # log-transform y-axis by default
     ,logscale=T
 
+    # show per-sample smooth fits by default
+    ,smooth.each=T
+
     # show across-sample smooth fit by default
     ,smooth.pooled=T
 
@@ -221,7 +225,7 @@ plot.profiles<-
             linetype=params$profile.plot.linetype.raw
 
             # adjust data line size
-            ,size=params$profile.plot.linesize.raw
+            ,size=params$profile.plot.linesize.each
 
             # end data line parameter definition
             ) %>%
@@ -274,6 +278,27 @@ plot.profiles<-
             # end color palette/legend parameter definition
             )
 
+        # add per-sample smooth fits if specified
+        if(smooth.each)
+
+          # modify profile plot
+          profile.plot %<>%
+
+          # fit smooth line across samples
+          + geom_smooth(
+
+              # adjust smoothing method
+              ,method=params$profile.plot.smoothing.method
+
+              # adjust smooth line style
+              ,linetype=params$profile.plot.linetype.smooth
+
+              # adjust smooth line size
+              ,size=params$profile.plot.linesize.each
+
+              # end smooth line parameter definition
+              )
+
         # add across-sample smooth fit if specified
         if(smooth.pooled)
 
@@ -293,7 +318,7 @@ plot.profiles<-
               ,linetype=params$profile.plot.linetype.smooth
 
               # adjust smooth line size
-              ,size=params$profile.plot.linesize.smooth
+              ,size=params$profile.plot.linesize.pooled
 
               # end smooth line parameter definition
               )
@@ -393,6 +418,9 @@ generate.profile.plot<-
 
         # log-transform y-axis if specified in plot options
         logscale="logscale" %in% plot.options
+
+        # show per-sample smooth fits if specified in plot options
+        ,smooth.each="smooth.each" %in% plot.options
 
         # show across-sample smooth fit if specified in plot options
         ,smooth.pooled="smooth.pooled" %in% plot.options
