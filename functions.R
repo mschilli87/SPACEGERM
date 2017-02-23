@@ -13,7 +13,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-02-23: made raw data points optional
+# 2017-02-23: re-ordered plot options
+#             made raw data points optional
 #             made raw data lines optional
 #             added per-sample smooth fits
 #             made across-sample smooth fit optional
@@ -156,9 +157,6 @@ plot.profiles<-
     # plot data
     plot.data
 
-    # log-transform y-axis by default
-    ,logscale=T
-
     # show raw data points by default
     ,raw.points=T
 
@@ -170,6 +168,9 @@ plot.profiles<-
 
     # show across-sample smooth fit by default
     ,smooth.pooled=T
+
+    # log-transform y-axis by default
+    ,logscale=T
 
     # end profile plot function parameter definition
     )
@@ -436,11 +437,8 @@ generate.profile.plot<-
       # plot profiles based on filtered tomo-seq data
       plot.profiles(
 
-        # log-transform y-axis if specified in plot options
-        logscale="logscale" %in% plot.options
-
         # show raw data points if specified in plot options
-        ,raw.points="raw.points" %in% plot.options
+        raw.points="raw.points" %in% plot.options
 
         # show raw data lines if specified in plot options
         ,raw.lines="raw.lines" %in% plot.options
@@ -450,6 +448,9 @@ generate.profile.plot<-
 
         # show across-sample smooth fit if specified in plot options
         ,smooth.pooled="smooth.pooled" %in% plot.options
+
+        # log-transform y-axis if specified in plot options
+        ,logscale="logscale" %in% plot.options
 
         # end profile plotting
         )
