@@ -13,7 +13,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-02-23: added per-sample smooth fits
+# 2017-02-23: made raw data lines optional
+#             added per-sample smooth fits
 #             made across-sample smooth fit optional
 #             added logarithmic y-axis scaling
 #             initial version (profile plot generation function)
@@ -157,6 +158,9 @@ plot.profiles<-
     # log-transform y-axis by default
     ,logscale=T
 
+    # don't show raw data lines by default
+    ,raw.lines=F
+
     # show per-sample smooth fits by default
     ,smooth.each=T
 
@@ -218,18 +222,6 @@ plot.profiles<-
             # end data point parameter definition
             ) %>%
 
-        # connect per-slice data with lines
-        + geom_line(
-
-            # adjust data line style
-            linetype=params$profile.plot.linetype.raw
-
-            # adjust data line size
-            ,size=params$profile.plot.linesize.each
-
-            # end data line parameter definition
-            ) %>%
-
         # color non-data plot elements in black, white & shades of grey only
         + theme_bw(
 
@@ -277,6 +269,24 @@ plot.profiles<-
 
             # end color palette/legend parameter definition
             )
+
+        # add raw data lines if specified
+        if(raw.lines)
+
+          # modify profile plot
+          profile.plot %<>%
+
+          # plot per-slice data as lines
+          + geom_line(
+
+              # adjust data line style
+              linetype=params$profile.plot.linetype.raw
+
+              # adjust data line size
+              ,size=params$profile.plot.linesize.each
+
+              # end data line parameter definition
+              )
 
         # add per-sample smooth fits if specified
         if(smooth.each)
@@ -418,6 +428,9 @@ generate.profile.plot<-
 
         # log-transform y-axis if specified in plot options
         logscale="logscale" %in% plot.options
+
+        # show raw data lines if specified in plot options
+        ,raw.lines="raw.lines" %in% plot.options
 
         # show per-sample smooth fits if specified in plot options
         ,smooth.each="smooth.each" %in% plot.options
