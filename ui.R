@@ -5,7 +5,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-02-21
+# last update:  2017-02-23
 # purpose:      define front end for tomo-seq shiny app
 
 
@@ -13,6 +13,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-02-23: replaced gene names output panel by profile plot output panel
 # 2017-02-21: added gene names input/output panels
 #             initial version (app title only)
 
@@ -79,10 +80,10 @@ fluidPage(
   sidebarLayout(
 
     # generate gene names output panel
-    textOutput(
+    plotOutput(
 
       # name gene names output
-      outputId="gene.names"
+      outputId="profile.plot"
       ) %>%
 
     # embed gene names output panel in main panel

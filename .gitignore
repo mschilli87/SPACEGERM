@@ -1,0 +1,23 @@
+#######################
+# general information #
+#######################
+
+# file:       .gitignore
+# created:    2017-02-23
+# author(s):  Marcel Schilling <marcel.schilling@mdc-berlin.de>
+# purpose:    untrack input files for tomo-seq shiny app
+
+
+######################################
+# change log (reverse chronological) #
+######################################
+
+# 2017-02-23: initial version (Rds file providing tomo-seq data)
+
+
+###############
+# input files #
+###############
+
+# Rds file providing tomo-seq data
+/tomoseq.data.Rds

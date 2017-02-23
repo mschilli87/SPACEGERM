@@ -1,0 +1,356 @@
+#######################
+# general information #
+#######################
+
+# file:       functions.R
+# author(s):  Marcel Schilling <marcel.schilling@mdc-berlin.de>
+# created:    2017-02-23
+# purpose:    define functions for tomo-seq shiny app
+
+
+######################################
+# change log (reverse chronological) #
+######################################
+
+# 2017-02-23: initial version (profile plot generation function)
+
+
+#############
+# libraries #
+#############
+
+# get pipe operators
+require(magrittr)
+
+# get ggplot for plotting
+require(ggplot2)
+
+
+##############
+# parameters #
+##############
+
+# load parameter definitions
+source("params.R")
+
+
+#############
+# functions #
+#############
+
+  ####################
+  # helper functions #
+  ####################
+
+# parse gene names input from single string to vector
+parse.gene.names<-
+
+  # define gene names parsing function
+  function(
+
+    # input gene names string
+    gene.names.input
+
+    # end gene names parsing function parameter definition
+    )
+
+    # begin gene names parsing function definition
+    {
+
+      # take single string gene names input
+      gene.names.input %>%
+
+      # split single string into vector
+      strsplit(params$gene.names.input.separator) %>%
+
+      # strsplit returns a list (single element in this case) --> convert to plain vector
+      unlist
+
+    # end gene names parsing function definition
+    }
+
+
+# filter data by sample names
+filter.data.by.sample.names<-
+
+  # define filter by sample names function
+  function(
+
+    # unfiltered data
+    unfiltered.data
+
+    # sample names to keep
+    ,sample.names.to.keep
+
+    # end filter by sample names function parameter definition
+    )
+
+    # begin filter by sample names function definition
+    {
+
+      # take unfiltered data
+      unfiltered.data %>%
+
+      # subset unfiltered data
+      subset(
+
+        # select data with sample names to keep
+        sample.name %in% sample.names.to.keep
+
+        # end data subsetting
+        )
+
+    # end filter by sample names function definition
+    }
+
+
+# filter data by gene names
+filter.data.by.gene.names<-
+
+  # define filter by gene names function
+  function(
+
+    # unfiltered data
+    unfiltered.data
+
+    # gene names to keep
+    ,gene.names.to.keep
+
+    # end filter by gene names function parameter definition
+    )
+
+    # begin filter by gene names function definition
+    {
+
+      # take unfiltered data
+      unfiltered.data %>%
+
+      # subset unfiltered data
+      subset(
+
+        # select data with sample names to keep
+        gene.name %in% gene.names.to.keep
+
+        # end data subsetting
+        )
+
+    # end filter by gene names function definition
+    }
+
+
+# plot gene profiles
+plot.profiles<-
+
+  # define profile plot function
+  function(
+
+    # plot data
+    plot.data
+
+    # end profile plot function parameter definition
+    )
+
+    # begin profile plot function definition
+    {
+
+      # take plot data
+      plot.data %>%
+
+      # generate plot object
+      ggplot(
+
+        # bind data variables to plot parameters
+        aes(
+
+          # position points on the x-axis according to the center of the corresponding slice
+          # (percent distal-to-proximal)
+          x=percent.center
+
+          # on the y-axis, plot the gene abundance (counts per million reads mapped)
+          ,y=cpm
+
+          # group data by sample name & color points/lines accordingly
+          ,color=sample.name
+
+          # end data derived plot parameter definition
+          )
+
+        # end general plot parameter definition
+        ) %>%
+
+      # split plot into panels
+      + facet_wrap(
+
+          # generate one sub-plot per gene name
+          ~gene.name
+
+          # adjust the (max.) number of sub-plots to put underneath each other
+          ,nrow=params$profile.plot.nrow
+
+          # end sub-plot definition
+          ) %>%
+
+      # plot data as points
+      + geom_point(
+
+          # adjust data point size
+          size=params$profile.plot.pointsize
+
+          # end data point parameter definition
+          ) %>%
+
+      # connect per-slice data with lines
+      + geom_line(
+
+          # adjust data line style
+          linetype=params$profile.plot.linetype.raw
+
+          # adjust data line size
+          ,size=params$profile.plot.linesize.raw
+
+          # end data line parameter definition
+          ) %>%
+
+      # fit smooth line accross samples
+      + geom_smooth(
+
+          # pool data accross samples & adjust smooth line color
+          color=params$profile.plot.color.smooth
+
+          # adjust smoothing method
+          ,method=params$profile.plot.smoothing.method
+
+          # adjust smooth line style
+          ,linetype=params$profile.plot.linetype.smooth
+
+          # adjust smooth line size
+          ,size=params$profile.plot.linesize.smooth
+
+          # end smooth line parameter definition
+          ) %>%
+
+      # color non-data plot elements in black, white & shades of grey only
+      + theme_bw(
+
+          # adjust plot base font sizes
+          base_size=params$profile.plot.fontsize.base
+
+          # end general plot style parameter definition
+          ) %>%
+
+      # add caption to plot
+      + ggtitle(
+
+          # set plot title
+          label=params$profile.plot.title
+
+          # end plot caption parameter definition
+          ) %>%
+
+      # adjust x-axis labelling
+      + xlab(
+
+          # adjust x-axis label
+          label=params$profile.plot.xlab
+
+          # end x-axis label parameter definition
+          ) %>%
+
+      # adjust y-axis labelling
+      + ylab(
+
+          # adjust y-axis label
+          label=params$profile.plot.ylab
+
+          # end y-axis label parameter definition
+          ) %>%
+
+      # adjust color (i.e. sample name) palette/legend
+      + scale_color_brewer(
+
+          # adjust sample name -> color mapping
+          palette=params$profile.plot.brewer.palette
+
+          # adjust color legend label
+          ,name=params$profile.plot.sample.legend.label
+
+          # end color palette/legend parameter definition
+          )
+
+    # end profile plot function definition
+    }
+
+
+  ####################
+  # server functions #
+  ####################
+
+    ##################
+    # plot functions #
+    ##################
+
+# profile plot generation function
+generate.profile.plot<-
+
+  # define filter by gene names function
+  function(
+
+    # tomoseq data to plot
+    tomoseq.data
+
+    # gene names of genes to include in plot
+    ,gene.names
+
+    # sample names of samples to include in plot
+    ,sample.names=
+
+      # derive default sample name to include in plot on given tomo seq data
+      tomoseq.data %$%
+
+      # identify all sample names provided data for
+      unique(sample.name)
+
+    # end profile plot generation parameter definition
+    )
+
+    # begin profile plot generation function definition
+    {
+
+      # take tomo-seq data
+      tomoseq.data %>%
+
+      # filter tomo-seq data by sample names
+      filter.data.by.sample.names(
+
+        # specify sample names of samples to keep
+        sample.names.to.keep=
+
+          # take sample names to include in plot
+          sample.names %>%
+
+          # drop last sample names if given sample number exceeds maximum
+          head(params$profile.plot.max.nsamples)
+
+        # end data filtering by sample names
+        ) %>%
+
+      # filter tomo-seq data by gene names
+      filter.data.by.gene.names(
+
+        # specify gene names of genes to keep
+        gene.names.to.keep=
+
+          # take gene names to include in plot
+          gene.names %>%
+
+          # convert single string input to vector
+          parse.gene.names
+
+        # end data filtering by gene names
+        ) %>%
+
+      # plot profiles based on filtered tomo-seq data
+      plot.profiles
+
+    # end profile plot generation function definition
+    }
