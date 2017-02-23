@@ -13,7 +13,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-02-23: added logarithmic y-axis scaling
+# 2017-02-23: made across-sample smooth fit optional
+#             added logarithmic y-axis scaling
 #             initial version (profile plot generation function)
 
 
@@ -155,6 +156,9 @@ plot.profiles<-
     # log-transform y-axis by default
     ,logscale=T
 
+    # show across-sample smooth fit by default
+    ,smooth.pooled=T
+
     # end profile plot function parameter definition
     )
 
@@ -222,24 +226,6 @@ plot.profiles<-
             # end data line parameter definition
             ) %>%
 
-        # fit smooth line accross samples
-        + geom_smooth(
-
-            # pool data accross samples & adjust smooth line color
-            color=params$profile.plot.color.smooth
-
-            # adjust smoothing method
-            ,method=params$profile.plot.smoothing.method
-
-            # adjust smooth line style
-            ,linetype=params$profile.plot.linetype.smooth
-
-            # adjust smooth line size
-            ,size=params$profile.plot.linesize.smooth
-
-            # end smooth line parameter definition
-            ) %>%
-
         # color non-data plot elements in black, white & shades of grey only
         + theme_bw(
 
@@ -287,6 +273,30 @@ plot.profiles<-
 
             # end color palette/legend parameter definition
             )
+
+        # add across-sample smooth fit if specified
+        if(smooth.pooled)
+
+          # modify profile plot
+          profile.plot %<>%
+
+          # fit smooth line across samples
+          + geom_smooth(
+
+              # pool data across samples & adjust smooth line color
+              color=params$profile.plot.color.smooth
+
+              # adjust smoothing method
+              ,method=params$profile.plot.smoothing.method
+
+              # adjust smooth line style
+              ,linetype=params$profile.plot.linetype.smooth
+
+              # adjust smooth line size
+              ,size=params$profile.plot.linesize.smooth
+
+              # end smooth line parameter definition
+              )
 
         # scale y-axis logarithmically if specified
         if(logscale)
@@ -383,6 +393,9 @@ generate.profile.plot<-
 
         # log-transform y-axis if specified in plot options
         logscale="logscale" %in% plot.options
+
+        # show across-sample smooth fit if specified in plot options
+        ,smooth.pooled="smooth.pooled" %in% plot.options
 
         # end profile plotting
         )

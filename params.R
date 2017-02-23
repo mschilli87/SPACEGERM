@@ -13,7 +13,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-02-23: added plot option input panel parameters (logscale only)
+# 2017-02-23: added smooth.pooled plot option
+#             added plot option input panel parameters (logscale only)
 #             added sample names input panel parameters
 #             added double-sourcing check / structured parameter definition / added profile plot
 #             parameters
@@ -95,10 +96,12 @@ if(!exists("params"))
 
       # plot options
       ,plot.options=c(`scale y-axis logarithmically (log2)`="logscale"
+                     ,`show across-sample smooth fit (LOESS)`="smooth.pooled"
                      )
 
       # default selection of plot option input panel
       ,plot.options.input.default=c("logscale"
+                                   ,"smooth.pooled"
                                    )
 
 
