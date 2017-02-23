@@ -13,7 +13,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-02-23: made raw data lines optional
+# 2017-02-23: made raw data points optional
+#             made raw data lines optional
 #             added per-sample smooth fits
 #             made across-sample smooth fit optional
 #             added logarithmic y-axis scaling
@@ -158,6 +159,9 @@ plot.profiles<-
     # log-transform y-axis by default
     ,logscale=T
 
+    # show raw data points by default
+    ,raw.points=T
+
     # don't show raw data lines by default
     ,raw.lines=F
 
@@ -213,15 +217,6 @@ plot.profiles<-
             # end sub-plot definition
             ) %>%
 
-        # plot data as points
-        + geom_point(
-
-            # adjust data point size
-            size=params$profile.plot.pointsize
-
-            # end data point parameter definition
-            ) %>%
-
         # color non-data plot elements in black, white & shades of grey only
         + theme_bw(
 
@@ -269,6 +264,21 @@ plot.profiles<-
 
             # end color palette/legend parameter definition
             )
+
+        # add raw data points if specified
+        if(raw.points)
+
+          # modify profile plot
+          profile.plot %<>%
+
+          # plot raw data as points
+          + geom_point(
+
+              # adjust data point size
+              size=params$profile.plot.pointsize
+
+              # end data point parameter definition
+              )
 
         # add raw data lines if specified
         if(raw.lines)
@@ -428,6 +438,9 @@ generate.profile.plot<-
 
         # log-transform y-axis if specified in plot options
         logscale="logscale" %in% plot.options
+
+        # show raw data points if specified in plot options
+        ,raw.points="raw.points" %in% plot.options
 
         # show raw data lines if specified in plot options
         ,raw.lines="raw.lines" %in% plot.options

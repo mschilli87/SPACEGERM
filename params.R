@@ -13,7 +13,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-02-23: added raw.lines plot option
+# 2017-02-23: added raw.points plot option
+#             added raw.lines plot option
 #             added smooth.each plot option
 #             added smooth.pooled plot option
 #             added plot option input panel parameters (logscale only)
@@ -98,6 +99,7 @@ if(!exists("params"))
 
       # plot options
       ,plot.options=c(`scale y-axis logarithmically (log2)`="logscale"
+                     ,`show raw data points`="raw.points"
                      ,`show raw data lines`="raw.lines"
                      ,`show per-sample smooth fits (LOESS)`="smooth.each"
                      ,`show across-sample smooth fit (LOESS)`="smooth.pooled"
@@ -105,6 +107,7 @@ if(!exists("params"))
 
       # default selection of plot option input panel
       ,plot.options.input.default=c("logscale"
+                                   ,"raw.points"
                                    ,"smooth.pooled"
                                    ,"smooth.each"
                                    )
