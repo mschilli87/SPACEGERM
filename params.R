@@ -13,7 +13,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-02-23: added sample names input panel parameters
+# 2017-02-23: added plot option input panel parameters (logscale only)
+#             added sample names input panel parameters
 #             added double-sourcing check / structured parameter definition / added profile plot
 #             parameters
 # 2017-02-21: added gene names input panel parameters
@@ -83,6 +84,23 @@ if(!exists("params"))
                                    ,"ad_PG_wt_50"
                                    ,"ad_PG_wt_50_2"
                                    )
+
+
+      ############################
+      # plot options input panel #
+      ############################
+
+      # label of plot option input panel
+      ,plot.options.input.label="Plot options"
+
+      # plot options
+      ,plot.options=c(`scale y-axis logarithmically (log2)`="logscale"
+                     )
+
+      # default selection of plot option input panel
+      ,plot.options.input.default=c("logscale"
+                                   )
+
 
     ##############
     # main panel #

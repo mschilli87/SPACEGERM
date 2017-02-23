@@ -2,17 +2,19 @@
 # general information #
 #######################
 
-# file:       functions.R
-# author(s):  Marcel Schilling <marcel.schilling@mdc-berlin.de>
-# created:    2017-02-23
-# purpose:    define functions for tomo-seq shiny app
+# file:         functions.R
+# author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
+# created:      2017-02-23
+# last update:  2017-02-23
+# purpose:      define functions for tomo-seq shiny app
 
 
 ######################################
 # change log (reverse chronological) #
 ######################################
 
-# 2017-02-23: initial version (profile plot generation function)
+# 2017-02-23: added logarithmic y-axis scaling
+#             initial version (profile plot generation function)
 
 
 #############
@@ -24,6 +26,9 @@ require(magrittr)
 
 # get ggplot for plotting
 require(ggplot2)
+
+# get log2_trans for logscale
+require(scales)
 
 
 ##############
@@ -147,135 +152,153 @@ plot.profiles<-
     # plot data
     plot.data
 
+    # log-transform y-axis by default
+    ,logscale=T
+
     # end profile plot function parameter definition
     )
 
     # begin profile plot function definition
     {
 
-      # take plot data
-      plot.data %>%
+      # create profile plot
+      profile.plot<-
 
-      # generate plot object
-      ggplot(
+        # take plot data
+        plot.data %>%
 
-        # bind data variables to plot parameters
-        aes(
+        # generate plot object
+        ggplot(
 
-          # position points on the x-axis according to the center of the corresponding slice
-          # (percent distal-to-proximal)
-          x=percent.center
+          # bind data variables to plot parameters
+          aes(
 
-          # on the y-axis, plot the gene abundance (counts per million reads mapped)
-          ,y=cpm
+            # position points on the x-axis according to the center of the corresponding slice
+            # (percent distal-to-proximal)
+            x=percent.center
 
-          # group data by sample name & color points/lines accordingly
-          ,color=sample.name
+            # on the y-axis, plot the gene abundance (counts per million reads mapped)
+            ,y=cpm
 
-          # end data derived plot parameter definition
-          )
+            # group data by sample name & color points/lines accordingly
+            ,color=sample.name
 
-        # end general plot parameter definition
-        ) %>%
+            # end data derived plot parameter definition
+            )
 
-      # split plot into panels
-      + facet_wrap(
-
-          # generate one sub-plot per gene name
-          ~gene.name
-
-          # adjust the (max.) number of sub-plots to put underneath each other
-          ,nrow=params$profile.plot.nrow
-
-          # end sub-plot definition
+          # end general plot parameter definition
           ) %>%
 
-      # plot data as points
-      + geom_point(
+        # split plot into panels
+        + facet_wrap(
 
-          # adjust data point size
-          size=params$profile.plot.pointsize
+            # generate one sub-plot per gene name
+            ~gene.name
 
-          # end data point parameter definition
-          ) %>%
+            # adjust the (max.) number of sub-plots to put underneath each other
+            ,nrow=params$profile.plot.nrow
 
-      # connect per-slice data with lines
-      + geom_line(
+            # end sub-plot definition
+            ) %>%
 
-          # adjust data line style
-          linetype=params$profile.plot.linetype.raw
+        # plot data as points
+        + geom_point(
 
-          # adjust data line size
-          ,size=params$profile.plot.linesize.raw
+            # adjust data point size
+            size=params$profile.plot.pointsize
 
-          # end data line parameter definition
-          ) %>%
+            # end data point parameter definition
+            ) %>%
 
-      # fit smooth line accross samples
-      + geom_smooth(
+        # connect per-slice data with lines
+        + geom_line(
 
-          # pool data accross samples & adjust smooth line color
-          color=params$profile.plot.color.smooth
+            # adjust data line style
+            linetype=params$profile.plot.linetype.raw
 
-          # adjust smoothing method
-          ,method=params$profile.plot.smoothing.method
+            # adjust data line size
+            ,size=params$profile.plot.linesize.raw
 
-          # adjust smooth line style
-          ,linetype=params$profile.plot.linetype.smooth
+            # end data line parameter definition
+            ) %>%
 
-          # adjust smooth line size
-          ,size=params$profile.plot.linesize.smooth
+        # fit smooth line accross samples
+        + geom_smooth(
 
-          # end smooth line parameter definition
-          ) %>%
+            # pool data accross samples & adjust smooth line color
+            color=params$profile.plot.color.smooth
 
-      # color non-data plot elements in black, white & shades of grey only
-      + theme_bw(
+            # adjust smoothing method
+            ,method=params$profile.plot.smoothing.method
 
-          # adjust plot base font sizes
-          base_size=params$profile.plot.fontsize.base
+            # adjust smooth line style
+            ,linetype=params$profile.plot.linetype.smooth
 
-          # end general plot style parameter definition
-          ) %>%
+            # adjust smooth line size
+            ,size=params$profile.plot.linesize.smooth
 
-      # add caption to plot
-      + ggtitle(
+            # end smooth line parameter definition
+            ) %>%
 
-          # set plot title
-          label=params$profile.plot.title
+        # color non-data plot elements in black, white & shades of grey only
+        + theme_bw(
 
-          # end plot caption parameter definition
-          ) %>%
+            # adjust plot base font sizes
+            base_size=params$profile.plot.fontsize.base
 
-      # adjust x-axis labelling
-      + xlab(
+            # end general plot style parameter definition
+            ) %>%
 
-          # adjust x-axis label
-          label=params$profile.plot.xlab
+        # add caption to plot
+        + ggtitle(
 
-          # end x-axis label parameter definition
-          ) %>%
+            # set plot title
+            label=params$profile.plot.title
 
-      # adjust y-axis labelling
-      + ylab(
+            # end plot caption parameter definition
+            ) %>%
 
-          # adjust y-axis label
-          label=params$profile.plot.ylab
+        # adjust x-axis labelling
+        + xlab(
 
-          # end y-axis label parameter definition
-          ) %>%
+            # adjust x-axis label
+            label=params$profile.plot.xlab
 
-      # adjust color (i.e. sample name) palette/legend
-      + scale_color_brewer(
+            # end x-axis label parameter definition
+            ) %>%
 
-          # adjust sample name -> color mapping
-          palette=params$profile.plot.brewer.palette
+        # adjust y-axis labelling
+        + ylab(
 
-          # adjust color legend label
-          ,name=params$profile.plot.sample.legend.label
+            # adjust y-axis label
+            label=params$profile.plot.ylab
 
-          # end color palette/legend parameter definition
-          )
+            # end y-axis label parameter definition
+            ) %>%
+
+        # adjust color (i.e. sample name) palette/legend
+        + scale_color_brewer(
+
+            # adjust sample name -> color mapping
+            palette=params$profile.plot.brewer.palette
+
+            # adjust color legend label
+            ,name=params$profile.plot.sample.legend.label
+
+            # end color palette/legend parameter definition
+            )
+
+        # scale y-axis logarithmically if specified
+        if(logscale)
+
+          # modify profile plot
+          profile.plot %<>%
+
+          # log2-transform y-axis
+          + scale_y_continuous(trans=log2_trans())
+
+        # return profile plot
+        profile.plot
 
     # end profile plot function definition
     }
@@ -309,6 +332,12 @@ generate.profile.plot<-
 
       # identify all sample names provided data for
       unique(sample.name)
+
+    # plot options to use
+    ,plot.options=
+
+      # by default, don't use any plot option
+      character(0)
 
     # end profile plot generation parameter definition
     )
@@ -350,7 +379,13 @@ generate.profile.plot<-
         ) %>%
 
       # plot profiles based on filtered tomo-seq data
-      plot.profiles
+      plot.profiles(
+
+        # log-transform y-axis if specified in plot options
+        logscale="logscale" %in% plot.options
+
+        # end profile plotting
+        )
 
     # end profile plot generation function definition
     }

@@ -13,7 +13,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-02-23: added user specified sample selection
+# 2017-02-23: added user specified plot option selection
+#             added user specified sample selection
 #             replaced gene names output assignment by profile plot output assignment
 # 2017-02-21: added gene names output assignment
 #             initial version (empty template)
@@ -78,6 +79,9 @@ function(
 
           # include sample specified by the user in plot
           ,sample.names=input$sample.names
+
+          # set plot options specified by the user
+          ,plot.options=input$plot.options
 
           # end profile plot generation
           )

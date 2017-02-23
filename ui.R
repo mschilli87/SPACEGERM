@@ -13,7 +13,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-02-23: added sample names input panel
+# 2017-02-23: added plot options input panel
+#             added sample names input panel
 #             replaced gene names output panel by profile plot output panel
 # 2017-02-21: added gene names input/output panels
 #             initial version (app title only)
@@ -104,6 +105,27 @@ fluidPage(
       ,selected=params$sample.names.input.default
 
       # end sample names input panel definition
+      )
+
+    # add plot options input panel
+    ,checkboxGroupInput(
+
+      # name sample names input
+      inputId="plot.options"
+
+      # label plot options input panel
+      ,label=params$plot.options.input.label %>%
+
+        # make label 3rd level header
+        h3
+
+      # set choices for plot options input panel
+      ,choices=params$plot.options
+
+      # set default selection for plot options input panel
+      ,selected=params$plot.options.input.default
+
+      # end plot options input panel definition
       )
 
     ) %>%
