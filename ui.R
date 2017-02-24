@@ -1,3 +1,19 @@
+# tomo-seq shiny app user interface script
+# Copyright (C) 2017  Marcel Schilling
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 #######################
 # general information #
 #######################
@@ -6,6 +22,7 @@
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
 # last update:  2017-02-24
+# license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define front end for tomo-seq shiny app
 
 
@@ -13,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-02-24: added dynamically generated sample shifts input panel
+# 2017-02-24: added license comment
+#             added dynamically generated sample shifts input panel
 # 2017-02-23: added plot options input panel
 #             added sample names input panel
 #             replaced gene names output panel by profile plot output panel

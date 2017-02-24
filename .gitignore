@@ -1,17 +1,36 @@
+# tomo-seq shiny app .gitignore
+# Copyright (C) 2017  Marcel Schilling
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 #######################
 # general information #
 #######################
 
-# file:       .gitignore
-# created:    2017-02-23
-# author(s):  Marcel Schilling <marcel.schilling@mdc-berlin.de>
-# purpose:    untrack input files for tomo-seq shiny app
+# file:         .gitignore
+# created:      2017-02-23
+# last update:  2017-02-24
+# license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
+# author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
+# purpose:      untrack input files for tomo-seq shiny app
 
 
 ######################################
 # change log (reverse chronological) #
 ######################################
 
+# 2017-02-24: added license comment
 # 2017-02-23: initial version (Rds file providing tomo-seq data)
 
 
