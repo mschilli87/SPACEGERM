@@ -5,7 +5,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-02-23
+# last update:  2017-02-24
 # purpose:      define parameters for tomo-seq shiny app
 
 
@@ -13,6 +13,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-02-24: added sample shift input panel parameters
 # 2017-02-23: re-ordered plot options
 #             added raw.points plot option
 #             added raw.lines plot option
@@ -112,6 +113,26 @@ if(!exists("params"))
                                    ,"smooth.pooled"
                                    ,"logscale"
                                    )
+
+
+      #############################
+      # sample shifts input panel #
+      #############################
+
+      # label of sample shift input panel
+      ,sample.shifts.input.label="Sample shifts"
+
+      # minimum value of sample shift input panel
+      ,sample.shifts.input.min=-50
+
+      # maximum value of sample shift input panel
+      ,sample.shifts.input.max=50
+
+      # default value of sample shift input panel
+      ,sample.shifts.input.default=0
+
+      # value suffix of sampleshift input panel
+      ,sample.shifts.input.suffix="%"
 
 
     ##############

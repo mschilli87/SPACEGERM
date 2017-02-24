@@ -5,7 +5,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-02-23
+# last update:  2017-02-24
 # purpose:      define functions for tomo-seq shiny app
 
 
@@ -13,6 +13,8 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-02-24: added sample shifts input panel generation & input extraction functions / added sample
+#             based shift assignment / added shift support to profile plot function
 # 2017-02-23: re-ordered plot options
 #             made raw data points optional
 #             made raw data lines optional
@@ -35,6 +37,9 @@ require(ggplot2)
 # get log2_trans for logscale
 require(scales)
 
+# get llply
+require(plyr)
+
 
 ##############
 # parameters #
@@ -51,6 +56,75 @@ source("params.R")
   ####################
   # helper functions #
   ####################
+
+# get sample shift input names by sample name
+get.sample.shift.inputId<-
+
+  # define sample shift input name function
+  function(
+
+    # sample name to get sample shift input name for
+    sample.name
+
+    # end sample shift input name function parameter definition
+    )
+
+    # begin sample shift input name function definition
+    {
+
+      # take sample name to get sample shift input name for
+      sample.name %>%
+
+      # add sample shift input name prefix
+      paste0("sample.shift.",.)
+
+    # end sample shift input name function definition
+    }
+
+# generate sample shift input panel
+generate.sample.shift.input<-
+
+  # define sample shift input panel generation function
+  function(
+
+    # sample name of generate sample shift input panel for
+    sample.name
+
+    # end sample shift input panel generation function parameter definition
+    )
+
+    # begin sample shift input panel generation function definition
+    {
+
+      # take sample name of generate sample shift input panel for
+      sample.name %>%
+
+      # generate sample shift input panel
+      sliderInput(
+
+        # name sample shift input value
+        inputId=get.sample.shift.inputId(.)
+
+        # label sample shift input panel
+        ,label=.
+
+        # set sample shift input panel minimum value
+        ,min=params$sample.shifts.input.min
+
+        # set sample shift input panel maximum value
+        ,max=params$sample.shifts.input.max
+
+        # set sample shift input panel default value
+        ,value=params$sample.shifts.input.default
+
+        # set sample shift input panel value suffix
+        ,post=params$sample.shifts.input.suffix
+
+        # end sample shift input panel generation
+        )
+
+    # end sample shift input panel generation function definition
+    }
 
 # parse gene names input from single string to vector
 parse.gene.names<-
@@ -147,6 +221,86 @@ filter.data.by.gene.names<-
     # end filter by gene names function definition
     }
 
+# convert named sample shift list (or NULL) to named (default) sample shift vector
+parse.sample.shifts<-
+
+  # define sample shift conversion function
+  function(
+
+    # list with sample shifts labeled with sample names (or NULL)
+    shifts
+
+    # sample names to include in output sample shift vector
+    ,samples
+
+    # end sample shift conversion function parameter definition
+    )
+
+    # begin sample shift conversion function definition
+    {
+
+      # if no sample shifts were specified, use default values
+      if(is.null(shifts))
+
+        # take default sample shift input value
+        params$sample.shifts.input.default %>%
+
+        # repeat for each sample specified
+        rep(times=length(samples)) %>%
+
+        # label default sample shifts with sample names
+        setNames(samples)
+
+      # if sample shifts were specified, convert list to vector
+      else
+
+        # take sample names to include in output sample shift vector
+        samples %>%
+
+        # extract corresponding sample shifts
+        shifts[.] %>%
+
+        # convert names list to vector
+        unlist
+
+    # end sample shift conversion function definition
+    }
+
+# add shift column to data
+add.shift.column<-
+
+  # define shift column addition function
+  function(
+
+    # data to add shift column to
+    input.data
+
+    # shifts to add to data labeled by sample name
+    ,shifts.by.sample
+
+    # end shift column addition function parameter definition
+    )
+
+    # begin shift column addition function definition
+    {
+
+      # take data to add shift column to
+      input.data %>%
+
+      # add column to data
+      cbind(
+
+        # label shift column
+        shift=
+
+          # assign shift by sample name
+          shifts.by.sample[.$sample.name]
+
+        # and column addition
+        )
+
+    # end shift column addition function definition
+    }
 
 # plot gene profiles
 plot.profiles<-
@@ -190,9 +344,9 @@ plot.profiles<-
           # bind data variables to plot parameters
           aes(
 
-            # position points on the x-axis according to the center of the corresponding slice
-            # (percent distal-to-proximal)
-            x=percent.center
+            # position points on the x-axis according to the (shifted) center of the corresponding
+            # slice (percent distal-to-proximal)
+            x=percent.center+shift
 
             # on the y-axis, plot the gene abundance (counts per million reads mapped)
             ,y=cpm
@@ -359,10 +513,81 @@ plot.profiles<-
     # end profile plot function definition
     }
 
-
   ####################
   # server functions #
   ####################
+
+    #############################
+    # data extraction functions #
+    #############################
+
+# extract sample shift inputs from inputs list
+get.sample.shifts<-
+
+  # define sample shift input extraction function
+  function(
+
+    # sample names of samples to extract sample shift inputs for
+    sample.names
+
+    # input list to extract sample shift inputs from
+    ,inputs
+
+    # end sample shift input extraction function parameter definition
+    )
+
+    # begin sample shift input extraction function definition
+    {
+
+      # take sample names of samples to extract sample shift inputs for
+      sample.names %>%
+
+      # get corresponding sample shift input names
+      get.sample.shift.inputId %>%
+
+      # extract sample shift inputs from input list by input names
+      llply(. %>% inputs[[.]]) %>%
+
+      # label sample shift inputs with sample names
+      setNames(sample.names)
+
+    # end sample shift input extraction function definition
+    }
+
+
+    #########################
+    # input panel functions #
+    #########################
+
+# sample shifts input panel generation
+generate.sample.shifts.input<-
+
+  # define sample shifts input panel generation function
+  function(
+
+    # sample names to include in sample shifts input panel
+    sample.names
+
+    # end sample shifts input panel generation function parameter definition
+    )
+
+    # begin sample shifts input panel generation function
+    {
+
+      # take sample names to include in sample shifts input panel
+      sample.names %>%
+
+      # generate sample shift input panel per sample
+      llply(
+
+        # generate sample shift input panel
+        generate.sample.shift.input
+
+        # end sample shift input panel generate per sample
+        )
+
+    # end sample shifts input panel generation function
+    }
 
     ##################
     # plot functions #
@@ -394,6 +619,12 @@ generate.profile.plot<-
 
       # by default, don't use any plot option
       character(0)
+
+    # sample shift input list
+    ,sample.shifts=
+
+      # use default sample shift input values for all samples by default
+      NULL
 
     # end profile plot generation parameter definition
     )
@@ -432,6 +663,27 @@ generate.profile.plot<-
           parse.gene.names
 
         # end data filtering by gene names
+        ) %>%
+
+      # add shift column to data
+      add.shift.column(
+
+        # specify shifts to add by sample
+        shifts.by.sample=
+
+          # take sample shift
+          sample.shifts %>%
+
+          # convert named list (or NULL) to named vector
+          parse.sample.shifts(
+
+            # specify samples to convert sample shifts for
+            samples=sample.names
+
+            # end sample shift conversion
+            )
+
+        # end addition of shift column
         ) %>%
 
       # plot profiles based on filtered tomo-seq data

@@ -5,7 +5,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-02-23
+# last update:  2017-02-24
 # purpose:      define front end for tomo-seq shiny app
 
 
@@ -13,6 +13,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-02-24: added dynamically generated sample shifts input panel
 # 2017-02-23: added plot options input panel
 #             added sample names input panel
 #             replaced gene names output panel by profile plot output panel
@@ -126,6 +127,22 @@ fluidPage(
       ,selected=params$plot.options.input.default
 
       # end plot options input panel definition
+      )
+
+
+    # label sample shifts input panel
+    ,params$sample.shifts.input.label %>%
+
+        # make label 3rd level header
+        h3
+
+    # add dynamically generated sample shifts panel
+    ,uiOutput(
+
+      # name sample shifts input panel output
+      outputId="shifts.input"
+
+      # end sample shifts input panel definition
       )
 
     ) %>%
