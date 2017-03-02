@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-03-02: added fix.xlim plot option & fixed x-axis limits parameter
+# 2017-03-02: added single.y.scale plot option
+#             added fix.xlim plot option & fixed x-axis limits parameter
 #             added missing blank lines (cosmetics)
 # 2017-02-24: added license comment
 #             added sample shift input panel parameters
@@ -127,6 +128,7 @@ if(!exists("params"))
                      ,`show across-sample smooth fit (LOESS)`="smooth.pooled"
                      ,`scale y-axis logarithmically (log2)`="logscale"
                      ,`fix x-axis limits`="fix.xlim"
+                     ,`use single y-scale for all sub-plots`="single.y.scale"
                      )
 
       # default selection of plot option input panel
@@ -134,6 +136,7 @@ if(!exists("params"))
                                    ,"smooth.each"
                                    ,"smooth.pooled"
                                    ,"logscale"
+                                   ,"single.y.scale"
                                    )
 
 

@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-03-02: added fixed x-axis limits support
+# 2017-03-02: made single y-scale for all sub-plots optional
+#             added fixed x-axis limits support
 # 2017-02-24: added license comment
 #             added sample shifts input panel generation & input extraction functions / added sample
 #             based shift assignment / added shift support to profile plot function
@@ -348,6 +349,9 @@ plot.profiles<-
     # don't fix x-axis limits by default
     ,fix.xlim=F
 
+    # use a single y-scale for all sub-plots by default
+    ,single.y.scale=T
+
     # end profile plot function parameter definition
     )
 
@@ -390,6 +394,24 @@ plot.profiles<-
 
             # adjust the (max.) number of sub-plots to put underneath each other
             ,nrow=params$profile.plot.nrow
+
+            # set sub-plot scales
+            ,scales=
+
+              # take single y-scale parameter
+              single.y.scale %>%
+
+              # set sub-plot scales based on single y-scale parameter
+              ifelse(
+
+                # if single y-scale requested: fix both scales for sub-plots
+                "fixed"
+
+                # if single y-scale not requested: fix only x-scale for sub-plots
+                ,"free_y"
+
+                # end single y-scale parameter evaluation
+                )
 
             # end sub-plot definition
             ) %>%
@@ -737,6 +759,9 @@ generate.profile.plot<-
 
         # fix x-axis limits if specified in plot options
         ,fix.xlim="fix.xlim" %in% plot.options
+
+        # use a single y-scale for all sub-plots if specified in plot options
+        ,single.y.scale="single.y.scale" %in% plot.options
 
         # end profile plotting
         )
