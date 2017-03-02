@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-02-24
+# last update:  2017-03-02
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-03-02: added fixed x-axis limits support
 # 2017-02-24: added license comment
 #             added sample shifts input panel generation & input extraction functions / added sample
 #             based shift assignment / added shift support to profile plot function
@@ -344,6 +345,9 @@ plot.profiles<-
     # log-transform y-axis by default
     ,logscale=T
 
+    # don't fix x-axis limits by default
+    ,fix.xlim=F
+
     # end profile plot function parameter definition
     )
 
@@ -524,6 +528,15 @@ plot.profiles<-
 
           # log2-transform y-axis
           + scale_y_continuous(trans=log2_trans())
+
+        # fix x-axis limits if specified
+        if(fix.xlim)
+
+          # modify profile plot
+          profile.plot %<>%
+
+          # fix x-axis limits
+          + xlim(params$profile.plot.xlim)
 
         # return profile plot
         profile.plot
@@ -721,6 +734,9 @@ generate.profile.plot<-
 
         # log-transform y-axis if specified in plot options
         ,logscale="logscale" %in% plot.options
+
+        # fix x-axis limits if specified in plot options
+        ,fix.xlim="fix.xlim" %in% plot.options
 
         # end profile plotting
         )

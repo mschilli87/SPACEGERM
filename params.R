@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-03-02: added missing blank lines (cosmetics)
+# 2017-03-02: added fix.xlim plot option & fixed x-axis limits parameter
+#             added missing blank lines (cosmetics)
 # 2017-02-24: added license comment
 #             added sample shift input panel parameters
 # 2017-02-23: re-ordered plot options
@@ -125,6 +126,7 @@ if(!exists("params"))
                      ,`show per-sample smooth fits (LOESS)`="smooth.each"
                      ,`show across-sample smooth fit (LOESS)`="smooth.pooled"
                      ,`scale y-axis logarithmically (log2)`="logscale"
+                     ,`fix x-axis limits`="fix.xlim"
                      )
 
       # default selection of plot option input panel
@@ -261,6 +263,14 @@ if(!exists("params"))
       # safe' for up to three data classes.
       # The Dark2 palette supports up to eigth data classes.
       ,profile.plot.brewer.palette="Dark2"
+
+
+        ########
+        # axes #
+        ########
+
+      # x-axis limits for fixed limit x-axis profile plot [%]
+      ,profile.plot.xlim=c(0,100)
 
 
       ##########
