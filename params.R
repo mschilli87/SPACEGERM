@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-02-24
+# last update:  2017-03-02
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-03-02: added missing blank lines (cosmetics)
 # 2017-02-24: added license comment
 #             added sample shift input panel parameters
 # 2017-02-23: re-ordered plot options
@@ -57,6 +58,7 @@ if(!exists("params"))
 
     # store parameters in a named list
     list(
+
 
   ##################
   # user interface #
@@ -239,6 +241,7 @@ if(!exists("params"))
 
       # smooth data linetype of profile plot
       ,profile.plot.linetype.smooth="solid"
+
 
         ##########
         # colors #
