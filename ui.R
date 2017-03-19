@@ -21,7 +21,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-02-24
+# last update:  2017-03-19
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define front end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-03-19: fixed copy-and-paste error in comment
 # 2017-02-24: added license comment
 #             added dynamically generated sample shifts input panel
 # 2017-02-23: added plot options input panel
@@ -129,7 +130,7 @@ fluidPage(
     # add plot options input panel
     ,checkboxGroupInput(
 
-      # name sample names input
+      # name plot options input
       inputId="plot.options"
 
       # label plot options input panel
