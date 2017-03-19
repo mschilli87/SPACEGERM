@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-03-02
+# last update:  2017-03-19
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -30,6 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
+
+# 2017-03-19: replaced profile.plot.nrow parameter with plot columns count input panel parameters
 # 2017-03-02: added single.y.scale plot option
 #             added fix.xlim plot option & fixed x-axis limits parameter
 #             added missing blank lines (cosmetics)
@@ -138,6 +140,20 @@ if(!exists("params"))
                                    ,"logscale"
                                    ,"single.y.scale"
                                    )
+
+
+      ##################################
+      # plot columns count input panel #
+      ##################################
+
+      # label of plot columns count input panel
+      ,ncols.plot.input.label="# plot columns"
+
+      # minimum value of plot columns count input panel
+      ,ncols.plot.input.min=1
+
+      # default value of plot columns count input panel
+      ,ncols.plot.input.default=2
 
 
       #############################
@@ -274,14 +290,6 @@ if(!exists("params"))
 
       # x-axis limits for fixed limit x-axis profile plot [%]
       ,profile.plot.xlim=c(0,100)
-
-
-      ##########
-      # layout #
-      ##########
-
-      # row count of profile plot
-      ,profile.plot.nrow=2
 
 
       ##########

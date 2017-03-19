@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-03-19: fixed copy-and-paste error in comment
+# 2017-03-19: added plot columns count input panel
+#             fixed copy-and-paste error in comment
 # 2017-02-24: added license comment
 #             added dynamically generated sample shifts input panel
 # 2017-02-23: added plot options input panel
@@ -148,6 +149,26 @@ fluidPage(
       # end plot options input panel definition
       )
 
+    # add plot columns count input panel
+    ,numericInput(
+
+      # name plot columns count input
+      inputId="ncols.plot"
+
+      # label plot columns count input panel
+      ,label=params$ncols.plot.input.label %>%
+
+        # make label 3rd level header
+        h3
+
+      # set minimal value for plot columns count input panel
+      ,min=params$ncols.plot.input.min
+
+      # set default value for plot columns count input panel
+      ,value=params$ncols.plot.input.default
+
+      # end plot columns count input panel definition
+      )
 
     # label sample shifts input panel
     ,params$sample.shifts.input.label %>%

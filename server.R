@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-02-24
+# last update:  2017-03-19
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-03-19: added user specified plot columns count
 # 2017-02-24: added license comment
 #             added dynamic sample shift input panel assignment & corresponding user input support
 # 2017-02-23: added user specified plot option selection
@@ -116,6 +117,9 @@ function(
 
           # set plot options specified by the user
           ,plot.options=input$plot.options
+
+          # set plot columns count specified by the user
+          ,ncols.plot=input$ncols.plot
 
           # set sample shifts specified by the user
           ,sample.shifts=

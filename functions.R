@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-03-02
+# last update:  2017-03-19
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-03-19: added plot columns count support
 # 2017-03-02: made single y-scale for all sub-plots optional
 #             added fixed x-axis limits support
 # 2017-02-24: added license comment
@@ -352,6 +353,9 @@ plot.profiles<-
     # use a single y-scale for all sub-plots by default
     ,single.y.scale=T
 
+    # use default plot columns count by default
+    ,ncols=params$ncols.plot.input.default
+
     # end profile plot function parameter definition
     )
 
@@ -392,8 +396,8 @@ plot.profiles<-
             # generate one sub-plot per gene name
             ~gene.name
 
-            # adjust the (max.) number of sub-plots to put underneath each other
-            ,nrow=params$profile.plot.nrow
+            # adjust the (max.) number of sub-plots to put next to each other
+            ,ncol=ncols
 
             # set sub-plot scales
             ,scales=
@@ -673,6 +677,12 @@ generate.profile.plot<-
       # by default, don't use any plot option
       character(0)
 
+    # plot columns count to use
+    ,ncols.plot=
+
+      # by default, use default plot columns count
+      params$ncols.plot.input.default
+
     # sample shift input list
     ,sample.shifts=
 
@@ -762,6 +772,9 @@ generate.profile.plot<-
 
         # use a single y-scale for all sub-plots if specified in plot options
         ,single.y.scale="single.y.scale" %in% plot.options
+
+        # use plot columns count specified
+        ,ncols=ncols.plot
 
         # end profile plotting
         )
