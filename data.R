@@ -21,7 +21,7 @@
 # file:         data.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-02-24
+# last update:  2017-03-28
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      load input data for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-03-28: added missing explicit magrittr loading
 # 2017-02-24: added license comment
 # 2017-02-23: added sample names extraction
 #             initial version (double-sourcing check & tomo-seq data loading)
@@ -41,6 +42,9 @@
 
 # tomo-seq data is provided as tibble
 require(tibble)
+
+# get pipe operators
+require(magrittr)
 
 
 ##############
