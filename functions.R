@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-03-19
+# last update:  2017-03-29
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-03-29: added genotype input panel generation and heatmap functions
 # 2017-03-19: added plot columns count support
 # 2017-03-02: made single y-scale for all sub-plots optional
 #             added fixed x-axis limits support
@@ -58,8 +59,11 @@ require(ggplot2)
 # get log2_trans for logscale
 require(scales)
 
-# get llply
+# get llply & alply
 require(plyr)
+
+# get heatmaply
+require(heatmaply)
 
 
 ##############
@@ -570,6 +574,195 @@ plot.profiles<-
     # end profile plot function definition
     }
 
+
+# only top variable genes
+keep.top.genes<-
+
+  # define top variable genes filter function
+  function(
+
+    # expression matrix (genes as rows)
+    mat
+
+    # maximum number of genes to keep
+    ,nmax=
+
+      #by default, keep default maximum number of genes
+      params@heatmap.max.ngenes
+
+    # end top variable genes filter function parameter definition
+    )
+
+    # begin top variable genes filter function definition
+    {
+
+      # calculate standard deviations
+      sds<-
+
+        # take expression matrix
+        mat %>%
+
+        #  calculate row standard deviations
+        alply(1,sd,na.rm=TRUE) %>%
+
+        #  convert list to vector
+        unlist
+
+      # set missing standard deviations to zero
+      sds[is.na(sds)]<-0
+
+      # keep only variable genes
+      variable<-sds!=0
+      mat<-mat[variable,]
+      sds<-sds[variable]
+
+      # take standard deviations
+      sds %>%
+
+      # sort from high to low
+      order(decreasing=TRUE) %>%
+
+      # keep up to specified maximum number of highest varying genes
+      head(nmax) %>%
+
+      # return corresponding expression matrix rows
+      {mat[.,]}
+
+    # end top variable genes filter function definition
+    }
+
+
+# calculate distance matrix of matrix columns
+get.column.distances<-
+
+  # define matrix columns distance calculation function
+  function(
+
+    # matrix to get column distance of
+    column.matrix
+
+    # end matrix columns distance calculation function parameter definition
+    )
+
+    # begin matrix columns distance calculation function definition
+    {
+
+      # take matrix to get column distance of
+      column.matrix %>%
+
+      # calculate (pairwise) column (Pearson) correlations
+      cor(use="complete") %>%
+
+      # convert column similarities to distances
+      `-`(1,.) %>%
+
+      # return column distance matrix
+      as.dist
+
+    # end matrix columns distance calculation function definition
+    }
+
+
+# cluster columns of matrix
+cluster.columns<-
+
+  # define matrix column clustering function
+  function(
+
+    # matrix to cluster columns of
+    mat
+
+    # end matrix column clustering function parameter definition
+    )
+
+    # begin matrix column clustering function definition
+    {
+
+      # take matrix to cluster columns of
+      mat %>%
+
+      # calculate columns distance matrix
+      get.column.distances %>%
+
+      # (hirarchically) cluster columns based on their pairwise distances
+      hclust
+
+    # end matrix column clustering function definition
+    }
+
+
+# generate heatmap treating columns as rows
+heatmap.cols_as_rows<-
+
+  # define columns-as-rows heatmap function
+  function(
+
+    # expression matrix (genes as columns)
+    expr.matrix
+
+    # end columns-as-rows heatmap function parameter definition
+    )
+
+    # begin columns-as-rows heatmap function definition
+    {
+
+      # take expression matrix (genes as columns)
+      expr.matrix %>%
+
+      # z-transform columns (genes)
+      scale %>%
+
+      # use genes as rows
+      t %>%
+
+      # generate heatmap
+      heatmaply(
+
+        # don't change column order
+        ,Colv=FALSE
+
+        # set row dendrogram
+        ,Rowv=
+
+          # take expression matrix (genes as columns)
+          expr.matrix %>%
+
+          # cluster columns (genes)
+          cluster.columns
+      )
+
+    # end columns-as-rows heatmap function definition
+    }
+
+
+# generate heatmap clustering rows
+heatmap.rows<-
+
+  # define row-clustered heatmap function
+  function(
+
+    # expression matrix (genes as rows)
+    expression.matrix
+
+    # end row-clustered heatmap function parameter definition
+    )
+
+    # begin row-clustered heatmap function definition
+    {
+
+      # take expression matrix (genes as rows)
+      expression.matrix %>%
+
+      # use genes as columns
+      t %>%
+
+      # generate heatmap treating columns as rows
+      heatmap.cols_as_rows
+
+    # end row-clustered heatmap function definition
+    }
+
+
   ####################
   # server functions #
   ####################
@@ -645,6 +838,53 @@ generate.sample.shifts.input<-
 
     # end sample shifts input panel generation function
     }
+
+
+# generate genotype input panel
+generate.genotype.input<-
+
+  # define genotype input panel generation function
+  function(
+
+    # sample description to generate genotype input panel for
+    sample.description
+
+    # end genotype input panel generation function parameter definition
+    )
+
+    # begin genotype input panel generation function definition
+    {
+
+      # take sample description to generate genotype input panel for
+      sample.description %>%
+
+      # get corresponding available genotypes
+      input.data$genotypes[[.]] %>%
+
+      # generate genotype input panel
+      selectInput(
+
+        # name genotype input
+        inputId="genotype"
+
+        # label genotype input panel
+        ,label=params$genotype.input.label %>%
+
+          # make label 3rd level header
+          h3
+
+        # set choices for genotype input panel
+        ,choices=.
+
+        # set default selection for genotype input panel
+        ,selected=params$genotype.input.default
+
+        # end genotype input panel generation
+        )
+
+    # end genotype input panel generation function definition
+    }
+
 
     ##################
     # plot functions #
@@ -780,4 +1020,49 @@ generate.profile.plot<-
         )
 
     # end profile plot generation function definition
+    }
+
+
+# heatmap generation function
+generate.heatmap<-
+
+  # define heatmap generation function
+  function(
+
+    # gene profiles to plot
+    gene.profiles
+
+    # sample description to generate heatmap for
+    ,sample.description
+
+    # genotype to generate heatmap for
+    ,genotype
+
+    # maximum number of genes to include in heatmap
+    ,max.genes=
+
+      # by default, use default maximum number of genes
+      params$heatmap.max.ngenes
+
+    # end heatmap generation function parameter definition
+    )
+
+    # begin heatmap generation function definition
+    {
+
+      # take gene profile
+      gene.profiles %>%
+
+      # extract gene profile for specified sample description
+      `[[`(sample.description) %>%
+
+      # extract gene profile for specified genotype
+      `[[`(genotype) %>%
+
+      # keep specified number of top varying genes
+      keep.top.genes(max.genes) %>%
+
+     heatmap.rows
+
+    # end heatmap generation function definition
     }

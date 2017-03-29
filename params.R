@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-03-19
+# last update:  2017-03-29
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -31,6 +31,7 @@
 ######################################
 
 
+# 2017-03-29: added tab title, sample description & genotype input & heatmap output panel parameters
 # 2017-03-19: replaced profile.plot.nrow parameter with plot columns count input panel parameters
 # 2017-03-02: added single.y.scale plot option
 #             added fix.xlim plot option & fixed x-axis limits parameter
@@ -76,13 +77,21 @@ if(!exists("params"))
       app.title="tomo-seq"
 
 
-    #################
-    # sidebar panel #
-    #################
+    ###########################
+    # gene profiles tab panel #
+    ###########################
 
-      ##########################
-      # gene names input panel #
-      ##########################
+      # title of gene profiles
+      ,gene.profiles.tab.title="Gene profiles"
+
+
+      #################
+      # sidebar panel #
+      #################
+
+        ##########################
+        # gene names input panel #
+        ##########################
 
       # label of gene names input panel
       ,gene.names.input.label="Gene names"
@@ -101,9 +110,9 @@ if(!exists("params"))
       ,gene.names.input.placeholder="enter gene names to plot (space separated)"
 
 
-      ############################
-      # sample names input panel #
-      ############################
+        ############################
+        # sample names input panel #
+        ############################
 
       # label of sample names input panel
       ,sample.names.input.label="Samples"
@@ -116,9 +125,9 @@ if(!exists("params"))
                                    )
 
 
-      ############################
-      # plot options input panel #
-      ############################
+        ############################
+        # plot options input panel #
+        ############################
 
       # label of plot option input panel
       ,plot.options.input.label="Plot options"
@@ -142,9 +151,9 @@ if(!exists("params"))
                                    )
 
 
-      ##################################
-      # plot columns count input panel #
-      ##################################
+        ##################################
+        # plot columns count input panel #
+        ##################################
 
       # label of plot columns count input panel
       ,ncols.plot.input.label="# plot columns"
@@ -156,9 +165,9 @@ if(!exists("params"))
       ,ncols.plot.input.default=2
 
 
-      #############################
-      # sample shifts input panel #
-      #############################
+        #############################
+        # sample shifts input panel #
+        #############################
 
       # label of sample shift input panel
       ,sample.shifts.input.label="Sample shifts"
@@ -176,15 +185,61 @@ if(!exists("params"))
       ,sample.shifts.input.suffix="%"
 
 
-    ##############
-    # main panel #
-    ##############
+      ##############
+      # main panel #
+      ##############
 
-      #############################
-      # profile plot output panel #
-      #############################
+        #############################
+        # profile plot output panel #
+        #############################
 
       # There are currently no parameters for the plot output panel.
+      # See the plot parameters below to adjust the plot itself.
+
+
+    #####################
+    # heatmap tab panel #
+    #####################
+
+      # title of heatmap tab panel
+      ,heatmap.tab.title="Heatmap"
+
+
+      #################
+      # sidebar panel #
+      #################
+
+        ##################################
+        # sample description input panel #
+        ##################################
+
+      # label of sample names input panel
+      ,sample.description.input.label="Sample description"
+
+      # default selection of sample names input panel
+      ,sample.description.input.default="anterior gonad"
+
+
+        ########################
+        # genotype input panel #
+        ########################
+
+      # label of genotype input panel
+      ,genotype.input.label="Genotype"
+
+      # default selection of genotype input panel
+      ,genotype.input.default="wild type"
+
+
+      ##############
+      # main panel #
+      ##############
+
+        ########################
+        # heatmap output panel #
+        ########################
+
+      # There are currently no parameters for the heatmap output panel.
       # See the plot parameters below to adjust the plot itself.
 
 
@@ -194,6 +249,9 @@ if(!exists("params"))
 
       # (relative) file path of Rds file with tomo-seq data
       ,tomoseq.data.file="tomoseq.data.Rds"
+
+      # (relative) file path of Rds file with gene profiles
+      ,gene.profiles.file="gene.profiles.Rds"
 
 
   ################
@@ -307,6 +365,18 @@ if(!exists("params"))
 
       # sample legend label of profile plot
       ,profile.plot.sample.legend.label="sample"
+
+
+    ###########
+    # heatmap #
+    ###########
+
+      #########
+      # input #
+      #########
+
+      # maximum number of genes to include in heatmap
+      ,heatmap.max.ngenes=500
 
       # end parameter list definition
       )

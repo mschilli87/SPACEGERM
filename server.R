@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-03-19
+# last update:  2017-03-29
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-03-29: added dynamic genotype input panel & heatmap output panel assignment
 # 2017-03-19: added user specified plot columns count
 # 2017-02-24: added license comment
 #             added dynamic sample shift input panel assignment & corresponding user input support
@@ -45,6 +46,9 @@
 
 # get pipe operators
 require(magrittr)
+
+# get renderPlotly
+require(plotly)
 
 
 #############
@@ -134,6 +138,43 @@ function(
           )
 
         # end profile plot rendering
+        )
+
+    # assign genotype input panel output
+    output$genotype.input<-
+
+      # render genotype input panel
+      renderUI(
+
+        # take sample description to use for heatmap
+        input$sample.description %>%
+
+        # generate genotype input panel
+        generate.genotype.input
+
+        # end genotype input panel rendering
+        )
+
+    # assign heatmap output
+    output$heatmap<-
+
+      # render heatmap
+      renderPlotly(
+
+        # take gene profiles
+        input.data$gene.profiles %>%
+
+        # generate heatmap
+        generate.heatmap(
+
+          # generate heatmap for sample description specified by the user
+          sample.description=input$sample.description
+
+          # generate heatmap for genotype specified by the user
+          ,genotype=input$genotype
+          )
+
+        # end heatmap rendering
         )
 
   # end shiny server function definition

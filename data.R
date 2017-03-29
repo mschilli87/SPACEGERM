@@ -21,7 +21,7 @@
 # file:         data.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-03-28
+# last update:  2017-03-29
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      load input data for tomo-seq shiny app
 
@@ -30,8 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-03-28: added missing explicit magrittr loading
-# 2017-02-24: added license comment
+# 2017-03-29: added gene profile loading (incl. sample descriptions & genotypes extraction)
+# 2017-02-23: added sample names extraction
 # 2017-02-23: added sample names extraction
 #             initial version (double-sourcing check & tomo-seq data loading)
 
@@ -45,6 +45,9 @@ require(tibble)
 
 # get pipe operators
 require(magrittr)
+
+# get llply
+require(plyr)
 
 
 ##############
@@ -74,6 +77,9 @@ if(!exists("input.data"))
         # load tomo-seq data from file
         tomoseq.data=readRDS(params$tomoseq.data.file)
 
+        # load gene profile from file
+        ,gene.profiles=readRDS(params$gene.profiles.file)
+
         # load input data list definition
         )
 
@@ -85,6 +91,24 @@ if(!exists("input.data"))
 
       # extract used sample names
       unique(sample.name)
+
+    # get sample descriptions
+    input.data$sample.descriptions<-
+
+      # take gene profiles
+      input.data$gene.profiles %>%
+
+      # extract used sample descriptions
+      names
+
+    # get sample descriptions
+    input.data$genotypes<-
+
+      # take gene profiles
+      input.data$gene.profiles %>%
+
+      # extract used genotypes per sample description
+      llply(names)
 
   # end data loading
   }

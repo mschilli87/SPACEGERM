@@ -21,7 +21,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-03-19
+# last update:  2017-03-29
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define front end for tomo-seq shiny app
 
@@ -30,6 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-03-29: added heatmap tab panel (incl. sample description & genotype input & heatmap output
+#             panels)
 # 2017-03-19: added plot columns count input panel
 #             fixed copy-and-paste error in comment
 # 2017-02-24: added license comment
@@ -47,6 +49,9 @@
 
 # get pipe operators
 require(magrittr)
+
+# get plotlyOutput
+require(plotly)
 
 
 ##############
@@ -201,6 +206,87 @@ fluidPage(
     mainPanel
 
     # end layout definition
+    ) %>%
+
+  # embed gene profiles page into tab panel
+  tabPanel(
+
+    # label gene profiles tab panel
+    title=params$gene.profiles.tab.title
+
+    # end gene profiles tab panel definition
+    ) %>%
+
+  # embed gene profiles tab panel in tabset panel
+  tabsetPanel(
+
+    # add heatmap tab panel
+    tabPanel(
+
+      # label heatmap tab panel
+      title=params$heatmap.tab.title
+
+      # add sidebar layout to heatmap tab panel
+      ,sidebarLayout(
+
+        # define sidebar panel for heatmap tab panel
+        sidebarPanel(
+
+          # add sample description input panel
+          selectInput(
+
+            # name sample description input
+            inputId="sample.description"
+
+            # label sample description input panel
+            ,label=params$sample.description.input.label %>%
+
+              # make label 3rd level header
+              h3
+
+            # set choices for sample description input panel
+            ,choices=input.data$sample.descriptions
+
+            # set default selection for sample description input panel
+            ,selected=params$sample.description.input.default
+
+            # end sample description input panel definition
+            )
+
+          # add dynamically generated genotype input panel
+          ,uiOutput(
+
+            # name genotype input panel output
+            outputId="genotype.input"
+
+            # end genotype input panel definition
+            )
+
+          # end sidebar panel definition for heatmap tab panel
+          )
+
+        # define main panel for heatmap tab panel
+        ,mainPanel(
+
+          # generate heatmap output panel
+          plotlyOutput(
+
+            # name heatmaps output
+            outputId="heatmap"
+
+            # end heatmap output panel definition
+            )
+
+          # end main panel definition for heatmap tab panel
+          )
+
+        # end heatmap tab panel sidebar layout definition
+        )
+
+      # end heatmap tab panel definition
+      )
+
+    # end tabset panel definition
     )
 
   # end page definition
