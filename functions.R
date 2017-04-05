@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-05: added gene cluster count support
+# 2017-04-05: added gene cluster summary profiles
+#             added gene cluster count support
 #             fixed typo in default parameter definition
 #             switched heatmap generation from heatmaply to iheatmapr
 # 2017-03-29: added genotype input panel generation and heatmap functions
@@ -777,6 +778,28 @@ heatmap.rows<-
       # by default, place dendrogram at default side of heatmap
       params$heatmap.dendrogram.side
 
+    # plotly scatter mode to use for row cluster summary
+    ,summary.mode=
+
+      # by default, use default mode
+      params$heatmap.summary.mode
+
+    # line type to use for row cluster summary
+    ,summary.line=
+
+      # by default, use list of default plotly line attributes
+      # see https://plot.ly/javascript/reference/#scatter-line for options
+      list(
+
+        # by default, modify line with to non-plotly default
+        width=
+
+          # by default, use default summary line width
+          params$heatmap.summary.linewidth
+
+        # end default plotly line attributes list definition for summary line
+        )
+
     # font to use for x-axis labels
     ,xlab.font=
 
@@ -852,6 +875,30 @@ heatmap.rows<-
           dendrogram.side
 
         # end heatmap row clustering parameter definition
+        ) %>%
+
+      # add summary profiles
+      add_col_summary(
+
+        # show summary profile per row group
+        groups=
+
+          # group rows by cluster assignment
+          TRUE
+
+        # set summary mode
+        ,mode=
+
+          # use specified summary mode
+          summary.mode
+
+        # set line type
+        ,line=
+
+          # use specified summary line type
+          summary.line
+
+        # end summary profiles addition
         ) %>%
 
       # label heatmap columns
