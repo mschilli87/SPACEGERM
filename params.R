@@ -31,7 +31,8 @@
 ######################################
 
 
-# 2017-04-05: added heatmap dendrogram.side x/ylab.fontsize & color.values parameters
+# 2017-04-05: added gene cluster count input panel parameters
+#             added heatmap dendrogram.side x/ylab.fontsize & color.values parameters
 # 2017-03-29: added tab title, sample description & genotype input & heatmap output panel parameters
 # 2017-03-19: replaced profile.plot.nrow parameter with plot columns count input panel parameters
 # 2017-03-02: added single.y.scale plot option
@@ -238,6 +239,20 @@ if(!exists("params"))
 
       # default selection of genotype input panel
       ,genotype.input.default="wild type"
+
+
+        ##################################
+        # gene cluster count input panel #
+        ##################################
+
+      # label of gene cluster count input panel
+      ,nclust.genes.input.label="# gene clusters"
+
+      # minimum value of gene cluster count input panel
+      ,nclust.genes.input.min=1
+
+      # default value of gene cluster count input panel
+      ,nclust.genes.input.default=5
 
 
       ##############

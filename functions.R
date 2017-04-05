@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-05: fixed typo in default parameter definition
+# 2017-04-05: added gene cluster count support
+#             fixed typo in default parameter definition
 #             switched heatmap generation from heatmaply to iheatmapr
 # 2017-03-29: added genotype input panel generation and heatmap functions
 # 2017-03-19: added plot columns count support
@@ -758,6 +759,12 @@ heatmap.rows<-
     # expression matrix (genes as columns)
     expression.matrix
 
+    # number of clusters to cluster rows into
+    ,nclust=
+
+      # by default, use default number of gene clusters
+      params$nclust.genes.input.default
+
     # color values to use for heatmap tiles
     ,color.values=
 
@@ -829,8 +836,11 @@ heatmap.rows<-
       # cluster heatmap rows (i.e. genes)
       add_row_clustering(
 
+        # cluster rows (i.e. genes) into as many clusters as specified
+        k=nclust
+
         # set distance function for row clustering
-        clust_dist=
+        ,clust_dist=
 
           # use matrix rows distance calculation function
           get.row.distances
@@ -1148,6 +1158,12 @@ generate.heatmap<-
     # genotype to generate heatmap for
     ,genotype
 
+    # number of clusters to cluster genes into
+    ,nclust.genes=
+
+      # by default, use default number of gene clusters
+      params$nclust.genes.input.default
+
     # maximum number of genes to include in heatmap
     ,max.genes=
 
@@ -1172,7 +1188,14 @@ generate.heatmap<-
       # keep specified number of top varying genes
       keep.top.genes(max.genes) %>%
 
-      heatmap.rows %>%
+      # generate heatmap clustering rows (i.e. genes)
+      heatmap.rows(
+
+        # cluster genes into as many clusters as specified
+        nclust=nclust.genes
+
+        # end row-clustered heatmap generation
+        ) %>%
 
       # convert to plotly object for interactive rendering
       as_plotly

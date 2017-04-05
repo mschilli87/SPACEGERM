@@ -21,7 +21,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-03-29
+# last update:  2017-04-05
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define front end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-05: added gene cluster count input panel
 # 2017-03-29: added heatmap tab panel (incl. sample description & genotype input & heatmap output
 #             panels)
 # 2017-03-19: added plot columns count input panel
@@ -261,6 +262,27 @@ fluidPage(
 
             # end genotype input panel definition
             )
+
+            # add gene cluster count input panel
+            ,numericInput(
+
+              # name gene cluster count input
+              inputId="nclust.genes"
+
+              # label gene cluster count input panel
+              ,label=params$nclust.genes.input.label %>%
+
+                # make label 3rd level header
+                h3
+
+              # set minimal value for gene cluster count input panel
+              ,min=params$nclust.genes.input.min
+
+              # set default value for gene cluster count input panel
+              ,value=params$nclust.genes.input.default
+
+              # end plot columns count input panel definition
+              )
 
           # end sidebar panel definition for heatmap tab panel
           )
