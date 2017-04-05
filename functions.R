@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-05: switched heatmap generation from heatmaply to iheatmapr
+# 2017-04-05: fixed typo in default parameter definition
+#             switched heatmap generation from heatmaply to iheatmapr
 # 2017-03-29: added genotype input panel generation and heatmap functions
 # 2017-03-19: added plot columns count support
 # 2017-03-02: made single y-scale for all sub-plots optional
@@ -589,7 +590,7 @@ keep.top.genes<-
     ,nmax=
 
       #by default, keep default maximum number of genes
-      params@heatmap.max.ngenes
+      params$heatmap.max.ngenes
 
     # end top variable genes filter function parameter definition
     )
