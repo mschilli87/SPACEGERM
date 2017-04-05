@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-05: added user specified gene cluster count
+# 2017-04-05: added user specified heatmap option selection
+#             added user specified gene cluster count
 # 2017-03-29: added dynamic genotype input panel & heatmap output panel assignment
 # 2017-03-19: added user specified plot columns count
 # 2017-02-24: added license comment
@@ -176,6 +177,9 @@ function(
 
           # cluster genes into as many clusters as specified by the user
           ,nclust.genes=input$nclust.genes
+
+          # set heatmap options specified by the user
+          ,heatmap.options=input$heatmap.options
 
           # end heatmap generation
           )

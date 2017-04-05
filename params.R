@@ -31,7 +31,8 @@
 ######################################
 
 
-# 2017-04-05: added gene cluster summary profile parameters
+# 2017-04-05: added heatmap option input panel parameters (row.scaling only)
+#             added gene cluster summary profile parameters
 #             added gene cluster count input panel parameters
 #             added heatmap dendrogram.side x/ylab.fontsize & color.values parameters
 # 2017-03-29: added tab title, sample description & genotype input & heatmap output panel parameters
@@ -254,6 +255,22 @@ if(!exists("params"))
 
       # default value of gene cluster count input panel
       ,nclust.genes.input.default=5
+
+
+        ###############################
+        # heatmap options input panel #
+        ###############################
+
+      # label of heatmap option input panel
+      ,heatmap.options.input.label="heatmap options"
+
+      # heatmap options
+      ,heatmap.options=c(`row-normalize expression matrix (z-scores)`="row.scaling"
+                        )
+
+      # default selection of heatmap option input panel
+      ,heatmap.options.input.default=c("row.scaling"
+                                      )
 
 
       ##############

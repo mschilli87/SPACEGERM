@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-05: added gene cluster summary profiles
+# 2017-04-05: made row-scaling for heatmap optional
+#             added gene cluster summary profiles
 #             added gene cluster count support
 #             fixed typo in default parameter definition
 #             switched heatmap generation from heatmaply to iheatmapr
@@ -760,6 +761,12 @@ heatmap.rows<-
     # expression matrix (genes as columns)
     expression.matrix
 
+    # scale rows (z-scores)
+    ,row.scaling=
+
+      # by default, scale rows if specified in default heatmap options
+      "row.scaling" %in% params$heatmap.options.input.default
+
     # number of clusters to cluster rows into
     ,nclust=
 
@@ -838,11 +845,17 @@ heatmap.rows<-
     # begin row-clustered heatmap function definition
     {
 
+      # scale rows if specified
+      if(row.scaling)
+
+        # take expression matrix
+        expression.matrix %<>%
+
+        # scale rows (i.e. genes)
+        scale.rows
+
       # take expression matrix (genes as columns)
       expression.matrix %>%
-
-      # scale rows (i.e. genes)
-      scale.rows %>%
 
       # generate heatmap
       main_heatmap(
@@ -1217,6 +1230,12 @@ generate.heatmap<-
       # by default, use default maximum number of genes
       params$heatmap.max.ngenes
 
+    # heatmap options to use
+    ,heatmap.options=
+
+      # by default, don't use any heatmap option
+      character(0)
+
     # end heatmap generation function parameter definition
     )
 
@@ -1238,8 +1257,11 @@ generate.heatmap<-
       # generate heatmap clustering rows (i.e. genes)
       heatmap.rows(
 
+        # scale rows if specified in heatmap options
+        row.scaling="row.scaling" %in% heatmap.options
+
         # cluster genes into as many clusters as specified
-        nclust=nclust.genes
+        ,nclust=nclust.genes
 
         # end row-clustered heatmap generation
         ) %>%

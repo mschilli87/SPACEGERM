@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-05: added gene cluster count input panel
+# 2017-04-05: added heatmap options input panel
+#             added gene cluster count input panel
 # 2017-03-29: added heatmap tab panel (incl. sample description & genotype input & heatmap output
 #             panels)
 # 2017-03-19: added plot columns count input panel
@@ -283,6 +284,27 @@ fluidPage(
 
               # end plot columns count input panel definition
               )
+
+          # add heatmap options input panel
+          ,checkboxGroupInput(
+
+            # name heatmap options input
+            inputId="heatmap.options"
+
+            # label heatmap options input panel
+            ,label=params$heatmap.options.input.label %>%
+
+              # make label 3rd level header
+              h3
+
+            # set choices for heatmap options input panel
+            ,choices=params$heatmap.options
+
+            # set default selection for heatmap options input panel
+            ,selected=params$heatmap.options.input.default
+
+            # end heatmap options input panel definition
+            )
 
           # end sidebar panel definition for heatmap tab panel
           )
