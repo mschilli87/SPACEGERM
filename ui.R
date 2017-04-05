@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-05: added heatmap options input panel
+# 2017-04-05: fixed code indentation
+#             added heatmap options input panel
 #             added gene cluster count input panel
 # 2017-03-29: added heatmap tab panel (incl. sample description & genotype input & heatmap output
 #             panels)
@@ -264,26 +265,26 @@ fluidPage(
             # end genotype input panel definition
             )
 
-            # add gene cluster count input panel
-            ,numericInput(
+          # add gene cluster count input panel
+          ,numericInput(
 
-              # name gene cluster count input
-              inputId="nclust.genes"
+            # name gene cluster count input
+            inputId="nclust.genes"
 
-              # label gene cluster count input panel
-              ,label=params$nclust.genes.input.label %>%
+            # label gene cluster count input panel
+            ,label=params$nclust.genes.input.label %>%
 
-                # make label 3rd level header
-                h3
+              # make label 3rd level header
+              h3
 
-              # set minimal value for gene cluster count input panel
-              ,min=params$nclust.genes.input.min
+            # set minimal value for gene cluster count input panel
+            ,min=params$nclust.genes.input.min
 
-              # set default value for gene cluster count input panel
-              ,value=params$nclust.genes.input.default
+            # set default value for gene cluster count input panel
+            ,value=params$nclust.genes.input.default
 
-              # end plot columns count input panel definition
-              )
+            # end plot columns count input panel definition
+            )
 
           # add heatmap options input panel
           ,checkboxGroupInput(
