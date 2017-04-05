@@ -31,7 +31,8 @@
 ######################################
 
 
-# 2017-04-05: added heatmap option input panel parameters (row.scaling only)
+# 2017-04-05: added log.transform plot option
+#             added heatmap option input panel parameters (row.scaling only)
 #             added gene cluster summary profile parameters
 #             added gene cluster count input panel parameters
 #             added heatmap dendrogram.side x/ylab.fontsize & color.values parameters
@@ -265,7 +266,8 @@ if(!exists("params"))
       ,heatmap.options.input.label="heatmap options"
 
       # heatmap options
-      ,heatmap.options=c(`row-normalize expression matrix (z-scores)`="row.scaling"
+      ,heatmap.options=c(`log-transform gene expression (log2 1+CPM)`="log.transform"
+                        ,`row-normalize expression matrix (z-scores)`="row.scaling"
                         )
 
       # default selection of heatmap option input panel

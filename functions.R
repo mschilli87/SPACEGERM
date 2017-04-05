@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-05: made row-scaling for heatmap optional
+# 2017-04-05: added gene expression data log-transformation support
+#             made row-scaling for heatmap optional
 #             added gene cluster summary profiles
 #             added gene cluster count support
 #             fixed typo in default parameter definition
@@ -761,6 +762,13 @@ heatmap.rows<-
     # expression matrix (genes as columns)
     expression.matrix
 
+    # log-transform gene expression
+    ,log.transform=
+
+      # by default, log-transform gene expression if specified in heatmap
+      # options
+      "log.transform" %in% params$heatmap.options.input.default
+
     # scale rows (z-scores)
     ,row.scaling=
 
@@ -844,6 +852,18 @@ heatmap.rows<-
 
     # begin row-clustered heatmap function definition
     {
+
+      # log-transform gene expression if specified
+      if(log.transform)
+
+        # take expression matrix
+        expression.matrix %<>%
+
+        # add pseudocount
+        `+`(1) %>%
+
+        # log-transform
+        log2
 
       # scale rows if specified
       if(row.scaling)
@@ -1257,8 +1277,11 @@ generate.heatmap<-
       # generate heatmap clustering rows (i.e. genes)
       heatmap.rows(
 
+        # log-transform gene expression if specified in heatmap options
+        log.transform="log.transform" %in% heatmap.options
+
         # scale rows if specified in heatmap options
-        row.scaling="row.scaling" %in% heatmap.options
+        ,row.scaling="row.scaling" %in% heatmap.options
 
         # cluster genes into as many clusters as specified
         ,nclust=nclust.genes
