@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-03-29
+# last update:  2017-04-05
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -31,6 +31,7 @@
 ######################################
 
 
+# 2017-04-05: added heatmap dendrogram.side x/ylab.fontsize & color.values parameters
 # 2017-03-29: added tab title, sample description & genotype input & heatmap output panel parameters
 # 2017-03-19: replaced profile.plot.nrow parameter with plot columns count input panel parameters
 # 2017-03-02: added single.y.scale plot option
@@ -49,6 +50,14 @@
 #             parameters
 # 2017-02-21: added gene names input panel parameters
 #             initial version (app title only)
+
+
+#############
+# libraries #
+#############
+
+# get viridis color palette for heatmap
+require(viridis)
 
 
 ##############
@@ -377,6 +386,41 @@ if(!exists("params"))
 
       # maximum number of genes to include in heatmap
       ,heatmap.max.ngenes=500
+
+
+      ##############
+      # appearance #
+      ##############
+
+        ##########
+        # layout #
+        ##########
+
+
+      # side of heatmap to place dendrogram at
+      ,heatmap.dendrogram.side="right"
+
+
+        ########
+        # text #
+        ########
+
+      # font size to use for heatmap x-axis labels
+      ,heatmap.xlab.fontsize=8
+
+      # font size to use for heatmap y-axis labels
+      ,heatmap.ylab.fontsize=8
+
+
+        ##########
+        # colors #
+        ##########
+
+      # color values to use for heatmap tiles
+      ,heatmap.color.values=
+
+        # use viridis colors with heatmaply default settings
+        viridis(n=256,alpha=1,begin=0,end=1,option="viridis")
 
       # end parameter list definition
       )

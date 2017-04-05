@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-03-29
+# last update:  2017-04-05
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-05: switched heatmap generation from heatmaply to iheatmapr
 # 2017-03-29: added genotype input panel generation and heatmap functions
 # 2017-03-19: added plot columns count support
 # 2017-03-02: made single y-scale for all sub-plots optional
@@ -62,8 +63,8 @@ require(scales)
 # get llply & alply
 require(plyr)
 
-# get heatmaply
-require(heatmaply)
+# get interactive complex heatmap framework
+require(iheatmapr)
 
 
 ##############
@@ -663,75 +664,87 @@ get.column.distances<-
     }
 
 
-# cluster columns of matrix
-cluster.columns<-
+# scale matrix columns
+scale.columns<-
 
-  # define matrix column clustering function
+  # define matrix column scaling function
   function(
 
-    # matrix to cluster columns of
-    mat
+    # matrix to scale columns of
+    column.matrix
 
-    # end matrix column clustering function parameter definition
+    # end matrix column scaling function parameter definition
     )
 
-    # begin matrix column clustering function definition
+    # begin matrix column scaling function definition
     {
 
-      # take matrix to cluster columns of
-      mat %>%
+      # take matrix to scale columns of
+      column.matrix %>%
 
-      # calculate columns distance matrix
-      get.column.distances %>%
+      # z-transform columns
+      scale
 
-      # (hirarchically) cluster columns based on their pairwise distances
-      hclust
-
-    # end matrix column clustering function definition
+    # end matrix column scaling function definition
     }
 
 
-# generate heatmap treating columns as rows
-heatmap.cols_as_rows<-
+# scale matrix rows
+scale.rows<-
 
-  # define columns-as-rows heatmap function
+  # define matrix row scaling function
   function(
 
-    # expression matrix (genes as columns)
-    expr.matrix
+    # matrix to scale rows of
+    row.matrix
 
-    # end columns-as-rows heatmap function parameter definition
+    # end matrix row scaling function parameter definition
     )
 
-    # begin columns-as-rows heatmap function definition
+    # begin matrix row scaling function definition
     {
 
-      # take expression matrix (genes as columns)
-      expr.matrix %>%
+      # take matrix to scale rows of
+      row.matrix %>%
 
-      # z-transform columns (genes)
-      scale %>%
-
-      # use genes as rows
+      # treat rows as columns
       t %>%
 
-      # generate heatmap
-      heatmaply(
+      # scale columns
+      scale.columns %>%
 
-        # don't change column order
-        ,Colv=FALSE
+      # treat columns as rows
+      t
 
-        # set row dendrogram
-        ,Rowv=
+    # end matrix row scaling function definition
+    }
 
-          # take expression matrix (genes as columns)
-          expr.matrix %>%
 
-          # cluster columns (genes)
-          cluster.columns
-      )
+# calculate distance matrix of matrix rows
+get.row.distances<-
 
-    # end columns-as-rows heatmap function definition
+  # define matrix rows distance calculation function
+  function(
+
+    # matrix to get rows distance of
+    row.matrix
+
+    # end matrix rows distance calculation function parameter definition
+    )
+
+    # begin matrix rows distance calculation function definition
+    {
+
+      # take matrix to get row distance of
+      row.matrix %>%
+
+      # treat rows as columns
+      t %>%
+
+      # calculate column distance
+      get.column.distances
+
+    # end matrix rows distance calculation function definition
     }
 
 
@@ -741,8 +754,52 @@ heatmap.rows<-
   # define row-clustered heatmap function
   function(
 
-    # expression matrix (genes as rows)
+    # expression matrix (genes as columns)
     expression.matrix
+
+    # color values to use for heatmap tiles
+    ,color.values=
+
+      # by default, use default color values
+      params$heatmap.color.values
+
+    # side of heatmap to place dendrogram at
+    ,dendrogram.side=
+
+      # by default, place dendrogram at default side of heatmap
+      params$heatmap.dendrogram.side
+
+    # font to use for x-axis labels
+    ,xlab.font=
+
+      # by default, use list of default plotly font attributes
+      # see https://plot.ly/javascript/reference/#layout-font for options
+      list(
+
+        # by default, modify font size to non-plotly default
+        size=
+
+          # by default, use default x-axis label font size
+          params$heatmap.xlab.fontsize
+
+        # end default plotly font attributes list definition for x-axis labels
+        )
+
+    # font to use for y-axis labels
+    ,ylab.font=
+
+      # by default, use list of default plotly font attributes
+      # see https://plot.ly/javascript/reference/#layout-font for options
+      list(
+
+        # by default, modify font size to non-plotly default
+        size=
+
+          # by default, use default y-axis label font size
+          params$heatmap.ylab.fontsize
+
+        # end default plotly font attributes list definition for x-axis labels
+        )
 
     # end row-clustered heatmap function parameter definition
     )
@@ -750,17 +807,69 @@ heatmap.rows<-
     # begin row-clustered heatmap function definition
     {
 
-      # take expression matrix (genes as rows)
+      # take expression matrix (genes as columns)
       expression.matrix %>%
 
-      # use genes as columns
-      t %>%
+      # scale rows (i.e. genes)
+      scale.rows %>%
 
-      # generate heatmap treating columns as rows
-      heatmap.cols_as_rows
+      # generate heatmap
+      main_heatmap(
+
+        # set color values to use for heatmap tiles
+        colors=
+
+          # use specified color values
+          color.values
+
+        # end main heatmap definition
+        ) %>%
+
+      # cluster heatmap rows (i.e. genes)
+      add_row_clustering(
+
+        # set distance function for row clustering
+        clust_dist=
+
+          # use matrix rows distance calculation function
+          get.row.distances
+
+        # set side of heatmap to place row dendrogram
+        ,side=
+
+          # place row dendrogram on the specified side
+          dendrogram.side
+
+        # end heatmap row clustering parameter definition
+        ) %>%
+
+      # label heatmap columns
+      add_col_labels(
+
+        # set column label font
+        font=
+
+          # use specified x-axis label font
+          xlab.font
+
+        # end heatmap column label parameter definition
+        ) %>%
+
+      # label heatmap rows
+      add_row_labels(
+
+        # set row label font
+        font=
+
+          # use specified y-axis label font
+          ylab.font
+
+        # end heatmap row label parameter definition
+        )
 
     # end row-clustered heatmap function definition
     }
+
 
 
   ####################
@@ -1062,7 +1171,10 @@ generate.heatmap<-
       # keep specified number of top varying genes
       keep.top.genes(max.genes) %>%
 
-     heatmap.rows
+      heatmap.rows %>%
+
+      # convert to plotly object for interactive rendering
+      as_plotly
 
     # end heatmap generation function definition
     }
