@@ -31,7 +31,8 @@
 ######################################
 
 
-# 2017-04-06: added gene table output panel parameters (gene.table.ngenes only)
+# 2017-04-06: fixed capitalization of heatmap option input panel label
+#             added gene table output panel parameters (gene.table.ngenes only)
 # 2017-04-05: added log.transform plot option
 #             added heatmap option input panel parameters (row.scaling only)
 #             added gene cluster summary profile parameters
@@ -264,7 +265,7 @@ if(!exists("params"))
         ###############################
 
       # label of heatmap option input panel
-      ,heatmap.options.input.label="heatmap options"
+      ,heatmap.options.input.label="Heatmap options"
 
       # heatmap options
       ,heatmap.options=c(`log-transform gene expression (log2 1+CPM)`="log.transform"
