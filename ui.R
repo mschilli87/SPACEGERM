@@ -21,7 +21,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-04-05
+# last update:  2017-04-06
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define front end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-06: added gene table output
 # 2017-04-05: fixed code indentation
 #             added heatmap options input panel
 #             added gene cluster count input panel
@@ -320,6 +321,15 @@ fluidPage(
             outputId="heatmap"
 
             # end heatmap output panel definition
+            )
+
+          # generate gene table output panel
+          ,dataTableOutput(
+
+            # name gene table output
+            outputId="gene.table"
+
+            # end gene table output panel definition
             )
 
           # end main panel definition for heatmap tab panel

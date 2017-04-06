@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-04-05
+# last update:  2017-04-06
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -31,6 +31,7 @@
 ######################################
 
 
+# 2017-04-06: added gene table output panel parameters (gene.table.ngenes only)
 # 2017-04-05: added log.transform plot option
 #             added heatmap option input panel parameters (row.scaling only)
 #             added gene cluster summary profile parameters
@@ -285,6 +286,14 @@ if(!exists("params"))
 
       # There are currently no parameters for the heatmap output panel.
       # See the plot parameters below to adjust the plot itself.
+
+
+        ###########################
+        # gene table output panel #
+        ###########################
+
+      # (default) number of genes to include in gene table (per page)
+      ,gene.table.ngenes=10
 
 
   ##############

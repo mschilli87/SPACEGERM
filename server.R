@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-04-05
+# last update:  2017-04-06
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-06: added gene table output assignment
 # 2017-04-05: added user specified heatmap option selection
 #             added user specified gene cluster count
 # 2017-03-29: added dynamic genotype input panel & heatmap output panel assignment
@@ -157,11 +158,11 @@ function(
         # end genotype input panel rendering
         )
 
-    # assign heatmap output
-    output$heatmap<-
+    # assign heatmap object
+    heatmap.object<-
 
-      # render heatmap
-      renderPlotly(
+      # re-calculate heatmap when necessary
+      reactive(
 
         # take gene profiles
         input.data$gene.profiles %>%
@@ -184,7 +185,43 @@ function(
           # end heatmap generation
           )
 
+        # end heatmap re-calculation
+        )
+
+    # assign heatmap output
+    output$heatmap<-
+
+      # render heatmap
+      renderPlotly(
+
+        # take heatmap object
+        heatmap.object() %>%
+
+        # convert to plotly object for interactive rendering
+        as_plotly
+
         # end heatmap rendering
+        )
+
+    # assign gene table output
+    output$gene.table<-
+
+      # render gene table
+      renderDataTable(
+
+        # take heatmap object
+        heatmap.object() %>%
+
+        # generate gene table
+        generate.gene.table
+
+        # set table rendering option
+        ,options=
+
+          # generate gene table options using helper function
+          generate.gene.table.options
+
+        # end gene table rendering
         )
 
   # end shiny server function definition

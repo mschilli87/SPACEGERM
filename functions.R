@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-04-05
+# last update:  2017-04-06
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-06: added gene table generation functions (incl. cluster assignment)
 # 2017-04-05: added gene expression data log-transformation support
 #             made row-scaling for heatmap optional
 #             added gene cluster summary profiles
@@ -70,6 +71,9 @@ require(plyr)
 
 # get interactive complex heatmap framework
 require(iheatmapr)
+
+# get tibbles
+require(tibble)
 
 
 ##############
@@ -962,6 +966,91 @@ heatmap.rows<-
     }
 
 
+# extract number of row clusters used from heatmap
+get.row.cluster.count<-
+
+  # define row cluster number extraction function
+  function(
+
+    # heatmap to extract row cluster number from
+    hm
+
+    # end row cluster number extraction function parameter definition
+    )
+
+    # begin row cluster number extraction function definition
+    {
+
+      # take heatmap to extract row cluster number from
+      hm %>%
+
+      # extract heatmap scale list
+      colorbars %>%
+
+      # extract heatmap row cluster scale
+      `[[`("Row<br>Clusters") %>%
+
+      # extract heatmap row cluster scale tick labels
+      `@`(ticktext) %>%
+
+      # get heatmap row cluster scale tick count
+      length
+
+    # end row cluster number extraction function definition
+    }
+
+
+# extract row cluster assignment from heatmap
+get.row.clusters<-
+
+  # define row cluster assignment extraction function
+  function(
+
+    # heatmap to extract row cluster assignment from
+    heatmap
+
+    # number of clusters to cluster heatmap rows into
+    ,nclust=
+
+      # by default, extract number of clusters from heatmap
+      heatmap %>%
+
+      # extract number of row clusters used from heatmap
+      get.row.cluster.count
+
+    # end row cluster assignment extraction function parameter definition
+    )
+
+    # begin row cluster assignment extraction function definition
+    {
+
+      # take heatmap to extract row cluster assignment from
+      heatmap %>%
+
+      # extract heatmap shape list
+      shapes %>%
+
+      # extract heatmap row dendrogram
+      `[[`("row_dendro") %>%
+
+      # extract row dendrogram clustering data
+      `@`(data) %>%
+
+      # get clusters assignment
+      cutree(
+
+        # set sumber of clusters to cut dendrogram into
+        k=
+
+          # use specified number of row clusters
+          nclust
+
+        # end cluster assignment
+        )
+
+    # end row cluster assignment extraction function definition
+    }
+
 
   ####################
   # server functions #
@@ -1287,10 +1376,73 @@ generate.heatmap<-
         ,nclust=nclust.genes
 
         # end row-clustered heatmap generation
-        ) %>%
-
-      # convert to plotly object for interactive rendering
-      as_plotly
+        )
 
     # end heatmap generation function definition
+    }
+
+
+    ##########################
+    # table output functions #
+    ##########################
+
+# generate gene table
+generate.gene.table<-
+
+  # define gene table generation function
+  function(
+
+    # gene clustered heatmap to generate gene table for
+    gene.heatmap
+
+    # end gene table generation function parameter definition
+    )
+
+    # begin gene table generation function definition
+    {
+
+      # take gene clustered heatmap to generate gene table for
+      gene.heatmap %>%
+
+      # get row (i.e gene) cluster assignment
+      get.row.clusters %>%
+
+      # convert named vector to tibble
+      data_frame(gene=names(.),cluster=.)
+
+    # end gene table generation function definition
+    }
+
+
+# generate gene table option list
+generate.gene.table.options<-
+
+  # define gene table option list generation function
+  function(
+
+    # (default) number of genes to show per page
+    ngenes=
+
+      # by default, use default (default) number of genes to show per page
+      params$gene.table.ngenes
+
+    # end gene table option list generation function parameter definition
+    )
+    # begin gene table option list generation function definition
+    {
+
+      # define table output option list
+      # see https://datatables.net/reference/option/ for options
+      list(
+
+        # set (initial) number of rows per page
+        pageLength=
+
+          # use specified (default) number of genes to show per page
+          ngenes
+
+        # end  table output option list definition
+        )
+
+    # end gene table option list generation function definition
     }
