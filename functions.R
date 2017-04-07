@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-04-06
+# last update:  2017-04-07
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-07: simplified gene cluster assignment extraction as suggested by Alicia Schep
 # 2017-04-06: added gene table generation functions (incl. cluster assignment)
 # 2017-04-05: added gene expression data log-transformation support
 #             made row-scaling for heatmap optional
@@ -966,41 +967,8 @@ heatmap.rows<-
     }
 
 
-# extract number of row clusters used from heatmap
-get.row.cluster.count<-
-
-  # define row cluster number extraction function
-  function(
-
-    # heatmap to extract row cluster number from
-    hm
-
-    # end row cluster number extraction function parameter definition
-    )
-
-    # begin row cluster number extraction function definition
-    {
-
-      # take heatmap to extract row cluster number from
-      hm %>%
-
-      # extract heatmap scale list
-      colorbars %>%
-
-      # extract heatmap row cluster scale
-      `[[`("Row<br>Clusters") %>%
-
-      # extract heatmap row cluster scale tick labels
-      `@`(ticktext) %>%
-
-      # get heatmap row cluster scale tick count
-      length
-
-    # end row cluster number extraction function definition
-    }
-
-
 # extract row cluster assignment from heatmap
+# see https://github.com/AliciaSchep/iheatmapr/issues/2#issuecomment-292393474
 get.row.clusters<-
 
   # define row cluster assignment extraction function
@@ -1008,15 +976,6 @@ get.row.clusters<-
 
     # heatmap to extract row cluster assignment from
     heatmap
-
-    # number of clusters to cluster heatmap rows into
-    ,nclust=
-
-      # by default, extract number of clusters from heatmap
-      heatmap %>%
-
-      # extract number of row clusters used from heatmap
-      get.row.cluster.count
 
     # end row cluster assignment extraction function parameter definition
     )
@@ -1027,26 +986,14 @@ get.row.clusters<-
       # take heatmap to extract row cluster assignment from
       heatmap %>%
 
-      # extract heatmap shape list
-      shapes %>%
+      # extract heatmap plot list
+      plots %>%
 
-      # extract heatmap row dendrogram
-      `[[`("row_dendro") %>%
+      # extract heatmap row cluster plot
+      `[[`("Row<br>Clusters") %>%
 
-      # extract row dendrogram clustering data
-      `@`(data) %>%
-
-      # get clusters assignment
-      cutree(
-
-        # set sumber of clusters to cut dendrogram into
-        k=
-
-          # use specified number of row clusters
-          nclust
-
-        # end cluster assignment
-        )
+      # extract heatmap row cluster data
+      (iheatmapr:::get_data)
 
     # end row cluster assignment extraction function definition
     }
