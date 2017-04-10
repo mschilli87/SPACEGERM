@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-04-07
+# last update:  2017-04-10
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-10: added gene table XLSX export functions
 # 2017-04-07: simplified gene cluster assignment extraction as suggested by Alicia Schep
 # 2017-04-06: added gene table generation functions (incl. cluster assignment)
 # 2017-04-05: added gene expression data log-transformation support
@@ -75,6 +76,9 @@ require(iheatmapr)
 
 # get tibbles
 require(tibble)
+
+# get write.xlsx
+require(xlsx)
 
 
 ##############
@@ -999,9 +1003,97 @@ get.row.clusters<-
     }
 
 
+# save table to XLSX file of specified name
+save.xlsx<-
+
+  # define XLSX export function
+  function(
+
+    # table to save to XLSX
+    input.table
+
+    # output file name
+    ,output.file
+
+    # other parameters to be passed on to write.xlsx
+    ,...
+
+    # end XLSX export function parameter definition
+    )
+
+    # begin XLSX export function definition
+    {
+
+      # define temporary output file name
+      # see http://stackoverflow.com/a/21388005/2451238
+      tmp.xlsx<-
+
+        # take specified output file name
+        output.file %>%
+
+        # append XLSX extension
+        paste0(".xlsx")
+
+      # take table to save to XLSX
+      input.table %>%
+
+      # convert to data.frame for write.xlsx
+      as.data.frame %>%
+
+      # write data.frame to XLSX file
+      write.xlsx(
+
+        # set output file name
+        file=
+
+          # use temporary output file name
+          tmp.xlsx
+
+        # pass on other parameters
+        ,...
+
+        # end writign of data.frame to XLSX file
+        )
+
+      # take temporary output XLSX file name
+      tmp.xlsx %>%
+
+      # rename temporary XLSX output file to specified output file name
+      file.rename(output.file)
+
+    # end XLSX export function definition
+    }
+
+
   ####################
   # server functions #
   ####################
+
+
+    ##################################
+    # parameter extraction functions #
+    ##################################
+
+# extract file name to use for gene table XLSX export
+get.gene.table.xlsx.name<-
+
+  # define gene table XLSX file name export function
+  function(
+
+    # This function doesn't have any parameters as it is returning a constant.
+
+    # end gene table XLSX file name export function parameter definition
+    )
+
+    # begin gene table XLSX file name export function definition
+    {
+
+      # return gene table XLSX file name parameter
+      params$gene.table.xlsx.name
+
+    # end gene table XLSX file name export function definition
+    }
+
 
     #############################
     # data extraction functions #
@@ -1392,4 +1484,49 @@ generate.gene.table.options<-
         )
 
     # end gene table option list generation function definition
+    }
+
+
+    #########################
+    # data export functions #
+    #########################
+
+# export gene table to XLSX
+save.gene.table.xlsx<-
+
+  # define gene table XLSX export function
+  function(
+
+    # gene table to export to XLSX
+    gene.table
+
+    # file name to save XLSX ouput to
+    ,output.xlsx
+
+    # end gene table XLSX export function parameter definition
+    )
+
+    # begin gene table XLSX export function definition
+    {
+
+      # take gene table to export to XLSX
+      gene.table %>%
+
+      # export gene table to XLSX
+      save.xlsx(
+
+        # set output file name for XLSX export
+        output.file=
+
+          # use specified XLSX output file name
+          output.xlsx
+
+        # don't include row names as a column in output XLSX file
+        # (gene table should be in tidy format)
+        ,row.names=FALSE
+
+        # end gene table XLSX export
+        )
+
+    # end gene table XLSX export function definition
     }

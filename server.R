@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-04-06
+# last update:  2017-04-10
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-10: added gene table XLSX export button assignment
 # 2017-04-06: added gene table output assignment
 # 2017-04-05: added user specified heatmap option selection
 #             added user specified gene cluster count
@@ -203,17 +204,29 @@ function(
         # end heatmap rendering
         )
 
-    # assign gene table output
-    output$gene.table<-
+    # assign gene table object
+    gene.table.object<-
 
-      # render gene table
-      renderDataTable(
+      # re-calculate gene table when necessary
+      reactive(
 
         # take heatmap object
         heatmap.object() %>%
 
         # generate gene table
         generate.gene.table
+
+        # end gene table re-calculation
+        )
+
+    # assign gene table output
+    output$gene.table<-
+
+      # render gene table
+      renderDataTable(
+
+        # take gene table object
+        gene.table.object()
 
         # set table rendering option
         ,options=
@@ -222,6 +235,54 @@ function(
           generate.gene.table.options
 
         # end gene table rendering
+        )
+
+    # assign gene table XLSX export button
+    output$gene.table.xlsx.export.button<-
+
+      # generate file download for gene table XLSX export
+      downloadHandler(
+
+        # set file name for file download
+        filename=
+
+          # use file name defined for gene table XLSX export
+          get.gene.table.xlsx.name
+
+        # set file content for file download
+        ,content=
+
+          # define gene table XLSX export file content generation function
+          function(
+
+            # out file name specified by downloadHandler
+            file
+
+            # end gene table XLSX export file content generation function parameter definition
+            )
+
+            # begin gene table XLSX export file content generation function definition
+            {
+
+              # use gene table object
+              gene.table.object() %>%
+
+              # save gene table to XLSX
+              save.gene.table.xlsx(
+
+                # set output file name for gene table XLSX
+                output.xlsx=
+
+                  # use file name specified by downloadHandler
+                  file
+
+                # end gene table XLSX export
+                )
+
+            # end gene table XLSX export file content generation function definition
+            }
+
+        # end file download generation for gene table XLSX export
         )
 
   # end shiny server function definition

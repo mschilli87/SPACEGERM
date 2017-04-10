@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-04-06
+# last update:  2017-04-10
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -31,6 +31,7 @@
 ######################################
 
 
+# 2017-04-10: added gene table XLSX export button parameters
 # 2017-04-06: fixed capitalization of heatmap option input panel label
 #             added gene table output panel parameters (gene.table.ngenes only)
 # 2017-04-05: added log.transform plot option
@@ -295,6 +296,17 @@ if(!exists("params"))
 
       # (default) number of genes to include in gene table (per page)
       ,gene.table.ngenes=10
+
+
+        #################################
+        # gene table XLSX export button #
+        #################################
+
+      # label to use for gene table XLSX export button
+      ,gene.table.xlsx.export.button.label="Export gene table as XLSX"
+
+      # file name to use for gene table XLSX export
+      ,gene.table.xlsx.name="gene_table.xlsx"
 
 
   ##############
