@@ -21,7 +21,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-04-10
+# last update:  2017-04-11
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define front end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-11: added gene list file import panel
 # 2017-04-10: added gene table XLSX export button
 # 2017-04-06: added gene table output
 # 2017-04-05: fixed code indentation
@@ -307,6 +308,30 @@ fluidPage(
             ,selected=params$heatmap.options.input.default
 
             # end heatmap options input panel definition
+            )
+
+          # add gene list file import panel
+          ,fileInput(
+
+            # name gene list file input
+            inputId="gene.list.file"
+
+            # label gene list file import panel
+            ,label=params$gene.list.import.label %>%
+
+              # make label 3rd level header
+              h3
+
+            # set accepted MIME types for gene list file import
+            ,accept=params$gene.list.file.import.mime.accept
+
+            # label gene list file import button
+            ,buttonLabel=params$gene.list.file.import.button.label
+
+            # set gene list file import placeholder
+            ,placeholder=params$gene.list.file.import.placeholder
+
+            # end gene list file import
             )
 
           # end sidebar panel definition for heatmap tab panel

@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-04-10
+# last update:  2017-04-11
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-11: added gene list file import functions
 # 2017-04-10: added gene table XLSX export functions
 # 2017-04-07: simplified gene cluster assignment extraction as suggested by Alicia Schep
 # 2017-04-06: added gene table generation functions (incl. cluster assignment)
@@ -77,7 +78,7 @@ require(iheatmapr)
 # get tibbles
 require(tibble)
 
-# get write.xlsx
+# get write.xlsx & read.xlsx
 require(xlsx)
 
 
@@ -589,6 +590,121 @@ plot.profiles<-
     # end profile plot function definition
     }
 
+
+# extract column from table file by column index
+get.column.from.file<-
+
+  # define column from file extraction function
+  function(
+
+    # single row data.frame with name of table file to extract column from in datapath column
+    input.file
+
+    # index of table column to extract
+    ,column.index
+
+    # index of table sheet to extract column from
+    ,sheet.index=1
+
+    # end column from file extraction function parameter definition
+    )
+
+    # begin column from file extraction function definition
+    {
+
+      # take file to extract column from in datapath column
+      input.file %$%
+
+      # read column from XLSX file
+      read.xlsx(
+
+        # get input file path from input data.frame
+        file=datapath
+
+        # read only specified table sheet
+        ,sheetIndex=sheet.index
+
+        # read only specified table column
+        ,colIndex=column.index
+
+        # end XLSX file reading
+        ) %>%
+
+      # convert single column data.frame to vector
+      unlist %>%
+
+      # strip off rownames before returning column data
+      unname
+
+    # end column from file extraction function definition
+    }
+
+
+# extract rownames from table file
+get.rownames.from.file<-
+
+  # define rownames from file extraction function
+  function(
+
+    # single row data.frame with name of table file to extract rownames from in datapath column
+    table.file
+
+    # index of rownames column within table file
+    ,rownames.column=1
+
+    # end rownames from file extraction function parameter definition
+    )
+    # begin rownames from file extraction function definition
+    {
+
+      # take table file to extract rownames from
+      table.file %>%
+
+      # extract rownames column from table by specified column index
+      get.column.from.file(rownames.column) %>%
+
+      # convert rownames to characters before returning them
+      as.character
+
+    # end rownames from file extraction function definition
+    }
+
+
+# only keep matrix rows specified in input file (if any)
+filter.matrix.by.rownames.file<-
+
+  # define matrix filtering by rownames file function
+  function(
+
+    # matrix to subset by rownames file
+    mat
+
+    # single row data.frame with rowname file name in datapath column (or NULL)
+    ,rownames.file
+
+    # end matrix filtering by rownames file function parameter definition
+    )
+
+    # begin matrix filtering by rownames file function definition
+    {
+
+      # if no rownames file specified, return unfiltered matrix
+      if(is.null(rownames.file)) mat
+
+      # filter matrix based if applicable
+      else
+
+        # take rownames file
+        rownames.file %>%
+
+        # extract rownames from file
+        get.rownames.from.file %>%
+
+        # subset matrix based on rownames
+        {mat[.,]}
+
+    # end matrix filtering by rownames file function definition
+    }
 
 # only top variable genes
 keep.top.genes<-
@@ -1384,6 +1500,13 @@ generate.heatmap<-
       # by default, don't use any heatmap option
       character(0)
 
+    # name of file with genes to use
+    ,gene.list.file=
+
+      # by default, don't restrict genes
+      NULL
+
+
     # end heatmap generation function parameter definition
     )
 
@@ -1398,6 +1521,9 @@ generate.heatmap<-
 
       # extract gene profile for specified genotype
       `[[`(genotype) %>%
+
+      # only keep rows (i.e. genes) specified in input file (if any)
+      filter.matrix.by.rownames.file(gene.list.file) %>%
 
       # keep specified number of top varying genes
       keep.top.genes(max.genes) %>%

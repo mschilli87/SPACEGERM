@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-04-10
+# last update:  2017-04-11
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -31,6 +31,7 @@
 ######################################
 
 
+# 2017-04-11: added gene list file import panel parameters
 # 2017-04-10: added gene table XLSX export button parameters
 # 2017-04-06: fixed capitalization of heatmap option input panel label
 #             added gene table output panel parameters (gene.table.ngenes only)
@@ -276,6 +277,23 @@ if(!exists("params"))
       # default selection of heatmap option input panel
       ,heatmap.options.input.default=c("row.scaling"
                                       )
+
+
+        ###############################
+        # gene list file import panel #
+        ###############################
+
+      # label of gene list file import panel
+      ,gene.list.import.label="Gene list"
+
+      # MIME type to accept for gene list file import
+      ,gene.list.file.import.mime.accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+      # label to use for gene list file import button
+      ,gene.list.file.import.button.label="import gene list"
+
+      # placeholder to use for gene list file import
+      ,gene.list.file.import.placeholder="use most variable genes"
 
 
       ##############
