@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-12: switched to tidy gene profile input data
+# 2017-04-12: made dplyr an explicit dependency
+#             switched to tidy gene profile input data
 # 2017-03-29: added gene profile loading (incl. sample descriptions & genotypes extraction)
 # 2017-02-23: added sample names extraction
 # 2017-02-23: added sample names extraction
@@ -49,6 +50,9 @@ require(magrittr)
 
 # get dlply
 require(plyr)
+
+# get select
+require(dplyr)
 
 
 ##############
