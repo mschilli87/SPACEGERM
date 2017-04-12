@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-12: moved genotype based filtering out of heatmap function
+# 2017-04-12: moved gene rank based filtering out of heatmap function
+#             moved genotype based filtering out of heatmap function
 #             moved sample description based filtering out of heatmap function
 #             moved gene list based filtering out of heatmap function
 #             switched to tidy gene profile input data & rank based gene filtering
@@ -681,37 +682,6 @@ get.genes.from.file<-
     }
 
 
-# only top variable genes
-keep.top.genes<-
-
-  # define top variable genes filter function
-  function(
-
-    # expression matrix (genes as rows)
-    unfiltered.data
-
-    # maximum rank of genes to keep
-    ,rankmax=
-
-      #by default, keep default maximum number of genes
-      params$heatmap.rankmax.genes
-
-    # end top variable genes filter function parameter definition
-    )
-
-    # begin top variable genes filter function definition
-    {
-
-      # take unfiltered data
-      unfiltered.data %>%
-
-      # keep up to specified rank of highest varying genes
-      filter(cpm.sd.rank<=rankmax,!is.na(cpm.sd))
-
-    # end top variable genes filter function definition
-    }
-
-
 # extract CPM matrix (genes as rows)
 get.cpm.matrix<-
 
@@ -1176,6 +1146,26 @@ save.xlsx<-
     # parameter extraction functions #
     ##################################
 
+# extract maximum gene rank to use for heatmap
+get.heatmap.rankmax.genes<-
+
+  # define gene rank maximum export function
+  function(
+
+    # This function doesn't have any parameters as it is returning a constant.
+
+    # end gene rank maximum export function parameter definition
+    )
+
+    # begin gene rank maximum export function definition
+    {
+
+      # return gene table XLSX file name parameter
+      params$heatmap.rankmax.genes
+
+    # end gene rank maximum export function definition
+    }
+
 # extract file name to use for gene table XLSX export
 get.gene.table.xlsx.name<-
 
@@ -1341,6 +1331,37 @@ filter.data.by.genotype<-
         )
 
     # end filter by genotype function definition
+    }
+
+
+# only top variable genes
+keep.top.genes<-
+
+  # define top variable genes filter function
+  function(
+
+    # expression matrix (genes as rows)
+    unfiltered.data
+
+    # maximum rank of genes to keep
+    ,rankmax=
+
+      #by default, keep default maximum number of genes
+      params$heatmap.rankmax.genes
+
+    # end top variable genes filter function parameter definition
+    )
+
+    # begin top variable genes filter function definition
+    {
+
+      # take unfiltered data
+      unfiltered.data %>%
+
+      # keep up to specified rank of highest varying genes
+      filter(cpm.sd.rank<=rankmax,!is.na(cpm.sd))
+
+    # end top variable genes filter function definition
     }
 
 
@@ -1577,12 +1598,6 @@ generate.heatmap<-
       # by default, use default number of gene clusters
       params$nclust.genes.input.default
 
-    # maximum rank of genes to include in heatmap
-    ,rankmax.genes=
-
-      # by default, use default maximum rank of genes
-      params$heatmap.rankmax.genes
-
     # heatmap options to use
     ,heatmap.options=
 
@@ -1598,9 +1613,6 @@ generate.heatmap<-
 
       # take gene profile
       gene.profiles %>%
-
-      # keep top varying genes up to specified rank
-      keep.top.genes(rankmax.genes) %>%
 
       # extract CPM matrix (genes as rows)
       get.cpm.matrix %>%
