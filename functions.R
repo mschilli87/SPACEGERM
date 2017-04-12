@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-12: switched to tidy gene profile input data & rank based gene filtering
+# 2017-04-12: moved gene list based filtering out of heatmap function
+#             switched to tidy gene profile input data & rank based gene filtering
 # 2017-04-11: added gene list file import functions
 # 2017-04-10: added gene table XLSX export functions
 # 2017-04-07: simplified gene cluster assignment extraction as suggested by Alicia Schep
@@ -746,43 +747,6 @@ get.genes.from.file<-
     }
 
 
-# only keep matrix rows specified in input file (if any)
-filter.data.by.genes.file<-
-
-  # define matrix filtering by gene list file function
-  function(
-
-    # data to subset by gene list file
-    unfiltered.data
-
-    # single row data.frame with gene list file name in datapath column (or NULL)
-    ,genes.file
-
-    # end matrix filtering by gene list file function parameter definition
-    )
-
-    # begin matrix filtering by gene list file function definition
-    {
-
-      # if no gene list file was specified, return unfiltered data
-      if(is.null(genes.file)) unfiltered.data
-
-      # filter data based on gene list if applicable
-      else
-
-        # take list file file
-        genes.file %>%
-
-        # extract gene list from file
-        get.genes.from.file %>%
-
-        # subset data based on gene list
-        {filter(unfiltered.data,gene %in% .)}
-
-    # end data filtering by gene list file function definition
-    }
-
-
 # only top variable genes
 keep.top.genes<-
 
@@ -1337,6 +1301,46 @@ get.sample.shifts<-
     }
 
 
+    ############################
+    # data filtering functions #
+    ############################
+
+# only keep matrix rows specified in input file (if any)
+filter.data.by.genes.file<-
+
+  # define matrix filtering by gene list file function
+  function(
+
+    # data to subset by gene list file
+    unfiltered.data
+
+    # single row data.frame with gene list file name in datapath column (or NULL)
+    ,genes.file
+
+    # end matrix filtering by gene list file function parameter definition
+    )
+
+    # begin matrix filtering by gene list file function definition
+    {
+
+      # if no gene list file was specified, return unfiltered data
+      if(is.null(genes.file)) unfiltered.data
+
+      # filter data based on gene list if applicable
+      else
+
+        # take list file file
+        genes.file %>%
+
+        # extract gene list from file
+        get.genes.from.file %>%
+
+        # subset data based on gene list
+        {filter(unfiltered.data,gene %in% .)}
+
+    # end data filtering by gene list file function definition
+    }
+
     #########################
     # input panel functions #
     #########################
@@ -1588,12 +1592,6 @@ generate.heatmap<-
       # by default, don't use any heatmap option
       character(0)
 
-    # name of file with genes to use
-    ,gene.list.file=
-
-      # by default, don't restrict genes
-      NULL
-
 
     # end heatmap generation function parameter definition
     )
@@ -1609,9 +1607,6 @@ generate.heatmap<-
 
       # extract gene profiles for specified genotype
       filter.data.by.genotype(genotype) %>%
-
-      # extract gene profiles for genes specified in gene list file
-      filter.data.by.genes.file(gene.list.file) %>%
 
       # keep top varying genes up to specified rank
       keep.top.genes(rankmax.genes) %>%

@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-04-11
+# last update:  2017-04-12
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-12: moved gene list based filtering out of heatmap function
 # 2017-04-11: added user specified gene list file input
 # 2017-04-10: added gene table XLSX export button assignment
 # 2017-04-06: added gene table output assignment
@@ -160,14 +161,29 @@ function(
         # end genotype input panel rendering
         )
 
+    # assign gene list filtered gene profiles
+    gene.profiles.filtered.gene.list<-
+
+      # re-calculate gene list filtered gene profiles when necessary
+      reactive(
+
+        # take gene profiles
+        input.data$gene.profiles %>%
+
+        # extract gene profiles for genes in gene list file specified by the user
+        filter.data.by.genes.file(input$gene.list.file)
+
+        # end gene list filtered gene profiles re-calculation
+        )
+
     # assign heatmap object
     heatmap.object<-
 
       # re-calculate heatmap when necessary
       reactive(
 
-        # take gene profiles
-        input.data$gene.profiles %>%
+        # take gene list filtered gene profiles
+        gene.profiles.filtered.gene.list() %>%
 
         # generate heatmap
         generate.heatmap(
@@ -183,9 +199,6 @@ function(
 
           # set heatmap options specified by the user
           ,heatmap.options=input$heatmap.options
-
-          # set gene list file specified by the user
-          ,gene.list.file=input$gene.list.file
 
           # end heatmap generation
           )
