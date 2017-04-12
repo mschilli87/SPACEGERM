@@ -30,9 +30,11 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-12: made dplyr an explicit dependency
+# 2017-04-12: added missing changelog entry
+#             made dplyr an explicit dependency
 #             switched to tidy gene profile input data
 # 2017-03-29: added gene profile loading (incl. sample descriptions & genotypes extraction)
+# 2017-03-28: made magrittr an explicit dependency
 # 2017-02-23: added sample names extraction
 # 2017-02-23: added sample names extraction
 #             initial version (double-sourcing check & tomo-seq data loading)
