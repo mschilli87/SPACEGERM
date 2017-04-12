@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-04-11
+# last update:  2017-04-12
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -31,6 +31,7 @@
 ######################################
 
 
+# 2017-04-12: replaced maximum number of genes by maximum gene rank parameter
 # 2017-04-11: added gene list file import panel parameters
 # 2017-04-10: added gene table XLSX export button parameters
 # 2017-04-06: fixed capitalization of heatmap option input panel label
@@ -460,7 +461,7 @@ if(!exists("params"))
       #########
 
       # maximum number of genes to include in heatmap
-      ,heatmap.max.ngenes=500
+      ,heatmap.rankmax.genes=500
 
 
       ##############

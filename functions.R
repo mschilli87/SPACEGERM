@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-04-11
+# last update:  2017-04-12
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-12: switched to tidy gene profile input data & rank based gene filtering
 # 2017-04-11: added gene list file import functions
 # 2017-04-10: added gene table XLSX export functions
 # 2017-04-07: simplified gene cluster assignment extraction as suggested by Alicia Schep
@@ -69,14 +70,20 @@ require(ggplot2)
 # get log2_trans for logscale
 require(scales)
 
-# get llply & alply
+# get llply
 require(plyr)
-
-# get interactive complex heatmap framework
-require(iheatmapr)
 
 # get tibbles
 require(tibble)
+
+# get filter
+require(dplyr)
+
+# get acast
+require(reshape2)
+
+# get interactive complex heatmap framework
+require(iheatmapr)
 
 # get write.xlsx & read.xlsx
 require(xlsx)
@@ -591,6 +598,74 @@ plot.profiles<-
     }
 
 
+# filter data by sample description
+filter.data.by.sample.description<-
+
+  # define filter by sample description function
+  function(
+
+    # unfiltered data
+    unfiltered.data
+
+    # sample description to keep
+    ,sample.description.to.keep
+
+    # end filter by sample description function parameter definition
+    )
+
+    # begin filter by sample description function definition
+    {
+
+      # take unfiltered data
+      unfiltered.data %>%
+
+      # subset unfiltered data
+      filter(
+
+        # select data with sample description to keep
+        sample.description==sample.description.to.keep
+
+        # end data subsetting
+        )
+
+    # end filter by sample description function definition
+    }
+
+
+# filter data by genotype
+filter.data.by.genotype<-
+
+  # define filter by genotype function
+  function(
+
+    # unfiltered data
+    unfiltered.data
+
+    # genotype to keep
+    ,genotype.to.keep
+
+    # end filter by genotype function parameter definition
+    )
+
+    # begin filter by genotype function definition
+    {
+
+      # take unfiltered data
+      unfiltered.data %>%
+
+      # subset unfiltered data
+      filter(
+
+        # select data with genotype to keep
+        genotype==genotype.to.keep
+
+        # end data subsetting
+        )
+
+    # end filter by genotype function definition
+    }
+
+
 # extract column from table file by column index
 get.column.from.file<-
 
@@ -640,71 +715,73 @@ get.column.from.file<-
     }
 
 
-# extract rownames from table file
-get.rownames.from.file<-
+# extract gene list from table file
+get.genes.from.file<-
 
-  # define rownames from file extraction function
+  # define gene list from file extraction function
   function(
 
-    # single row data.frame with name of table file to extract rownames from in datapath column
+    # single row data.frame with name of table file to extract gene list from in datapath column
     table.file
 
-    # index of rownames column within table file
-    ,rownames.column=1
+    # index of gene list column within table file
+    ,gene.column=1
 
-    # end rownames from file extraction function parameter definition
+    # end gene list from file extraction function parameter definition
     )
-    # begin rownames from file extraction function definition
+
+    # begin gene list from file extraction function definition
     {
 
-      # take table file to extract rownames from
+      # take table file to extract gene list from
       table.file %>%
 
-      # extract rownames column from table by specified column index
-      get.column.from.file(rownames.column) %>%
+      # extract gene list column from table by specified column index
+      get.column.from.file(gene.column) %>%
 
-      # convert rownames to characters before returning them
+      # convert gene list to characters before returning them
       as.character
 
-    # end rownames from file extraction function definition
+    # end gene list from file extraction function definition
     }
 
 
 # only keep matrix rows specified in input file (if any)
-filter.matrix.by.rownames.file<-
+filter.data.by.genes.file<-
 
-  # define matrix filtering by rownames file function
+  # define matrix filtering by gene list file function
   function(
 
-    # matrix to subset by rownames file
-    mat
+    # data to subset by gene list file
+    unfiltered.data
 
-    # single row data.frame with rowname file name in datapath column (or NULL)
-    ,rownames.file
+    # single row data.frame with gene list file name in datapath column (or NULL)
+    ,genes.file
 
-    # end matrix filtering by rownames file function parameter definition
+    # end matrix filtering by gene list file function parameter definition
     )
 
-    # begin matrix filtering by rownames file function definition
+    # begin matrix filtering by gene list file function definition
     {
 
-      # if no rownames file specified, return unfiltered matrix
-      if(is.null(rownames.file)) mat
+      # if no gene list file was specified, return unfiltered data
+      if(is.null(genes.file)) unfiltered.data
 
-      # filter matrix based if applicable
+      # filter data based on gene list if applicable
       else
 
-        # take rownames file
-        rownames.file %>%
+        # take list file file
+        genes.file %>%
 
-        # extract rownames from file
-        get.rownames.from.file %>%
+        # extract gene list from file
+        get.genes.from.file %>%
 
-        # subset matrix based on rownames
-        {mat[.,]}
+        # subset data based on gene list
+        {filter(unfiltered.data,gene %in% .)}
 
-    # end matrix filtering by rownames file function definition
+    # end data filtering by gene list file function definition
     }
+
 
 # only top variable genes
 keep.top.genes<-
@@ -713,13 +790,13 @@ keep.top.genes<-
   function(
 
     # expression matrix (genes as rows)
-    mat
+    unfiltered.data
 
-    # maximum number of genes to keep
-    ,nmax=
+    # maximum rank of genes to keep
+    ,rankmax=
 
       #by default, keep default maximum number of genes
-      params$heatmap.max.ngenes
+      params$heatmap.rankmax.genes
 
     # end top variable genes filter function parameter definition
     )
@@ -727,39 +804,50 @@ keep.top.genes<-
     # begin top variable genes filter function definition
     {
 
-      # calculate standard deviations
-      sds<-
+      # take unfiltered data
+      unfiltered.data %>%
 
-        # take expression matrix
-        mat %>%
-
-        #  calculate row standard deviations
-        alply(1,sd,na.rm=TRUE) %>%
-
-        #  convert list to vector
-        unlist
-
-      # set missing standard deviations to zero
-      sds[is.na(sds)]<-0
-
-      # keep only variable genes
-      variable<-sds!=0
-      mat<-mat[variable,]
-      sds<-sds[variable]
-
-      # take standard deviations
-      sds %>%
-
-      # sort from high to low
-      order(decreasing=TRUE) %>%
-
-      # keep up to specified maximum number of highest varying genes
-      head(nmax) %>%
-
-      # return corresponding expression matrix rows
-      {mat[.,]}
+      # keep up to specified rank of highest varying genes
+      filter(cpm.sd.rank<=rankmax,!is.na(cpm.sd))
 
     # end top variable genes filter function definition
+    }
+
+
+# extract CPM matrix (genes as rows)
+get.cpm.matrix<-
+
+  # define CPM matrix extraction function
+  function(
+
+    # expression data (gene, percent & cpm.fit columns)
+    expression.data
+
+    # name of CPM column
+    ,cpm.colname="cpm.fit"
+
+    # end CPM matrix extraction function parameter definition
+    )
+
+    # begin CPM matrix extraction function definition
+    {
+
+      # take expression data
+      expression.data %>%
+
+      # convert tidy table to matrix
+      acast(
+
+        # use genes as rows, percent as columns
+        gene~percent
+
+        # fill matrix with corresponding CPM values
+        ,value.var=cpm.colname
+
+        # end tidy table to matrix conversion
+        )
+
+    # end CPM matrix extraction function definition
     }
 
 
@@ -1488,11 +1576,11 @@ generate.heatmap<-
       # by default, use default number of gene clusters
       params$nclust.genes.input.default
 
-    # maximum number of genes to include in heatmap
-    ,max.genes=
+    # maximum rank of genes to include in heatmap
+    ,rankmax.genes=
 
-      # by default, use default maximum number of genes
-      params$heatmap.max.ngenes
+      # by default, use default maximum rank of genes
+      params$heatmap.rankmax.genes
 
     # heatmap options to use
     ,heatmap.options=
@@ -1516,17 +1604,20 @@ generate.heatmap<-
       # take gene profile
       gene.profiles %>%
 
-      # extract gene profile for specified sample description
-      `[[`(sample.description) %>%
+      # extract gene profiles for specified sample description
+      filter.data.by.sample.description(sample.description) %>%
 
-      # extract gene profile for specified genotype
-      `[[`(genotype) %>%
+      # extract gene profiles for specified genotype
+      filter.data.by.genotype(genotype) %>%
 
-      # only keep rows (i.e. genes) specified in input file (if any)
-      filter.matrix.by.rownames.file(gene.list.file) %>%
+      # extract gene profiles for genes specified in gene list file
+      filter.data.by.genes.file(gene.list.file) %>%
 
-      # keep specified number of top varying genes
-      keep.top.genes(max.genes) %>%
+      # keep top varying genes up to specified rank
+      keep.top.genes(rankmax.genes) %>%
+
+      # extract CPM matrix (genes as rows)
+      get.cpm.matrix %>%
 
       # generate heatmap clustering rows (i.e. genes)
       heatmap.rows(

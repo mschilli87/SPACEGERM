@@ -21,7 +21,7 @@
 # file:         data.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-03-29
+# last update:  2017-04-12
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      load input data for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-12: switched to tidy gene profile input data
 # 2017-03-29: added gene profile loading (incl. sample descriptions & genotypes extraction)
 # 2017-02-23: added sample names extraction
 # 2017-02-23: added sample names extraction
@@ -46,7 +47,7 @@ require(tibble)
 # get pipe operators
 require(magrittr)
 
-# get llply
+# get dlply
 require(plyr)
 
 
@@ -96,10 +97,10 @@ if(!exists("input.data"))
     input.data$sample.descriptions<-
 
       # take gene profiles
-      input.data$gene.profiles %>%
+      input.data$gene.profiles %$%
 
       # extract used sample descriptions
-      names
+      unique(sample.description)
 
     # get sample descriptions
     input.data$genotypes<-
@@ -107,8 +108,14 @@ if(!exists("input.data"))
       # take gene profiles
       input.data$gene.profiles %>%
 
+      # extract used genotype/sample description combinations
+      select(sample.description,genotype) %>%
+
+      # drop repetitions
+      unique %>%
+
       # extract used genotypes per sample description
-      llply(names)
+      dlply("sample.description",with,unique(genotype))
 
   # end data loading
   }
