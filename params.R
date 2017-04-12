@@ -31,7 +31,8 @@
 ######################################
 
 
-# 2017-04-12: replaced maximum number of genes by maximum gene rank parameter
+# 2017-04-12: (re-)replaced maximum gene rank by maximum number of genes parameter
+#             replaced maximum number of genes by maximum gene rank parameter
 # 2017-04-11: added gene list file import panel parameters
 # 2017-04-10: added gene table XLSX export button parameters
 # 2017-04-06: fixed capitalization of heatmap option input panel label
@@ -461,7 +462,7 @@ if(!exists("params"))
       #########
 
       # maximum number of genes to include in heatmap
-      ,heatmap.rankmax.genes=500
+      ,heatmap.nmax.genes=500
 
 
       ##############

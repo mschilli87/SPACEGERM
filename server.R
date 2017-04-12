@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-12: moved gene rank based filtering out of heatmap function
+# 2017-04-12: switched (back) from gene rank to count based filtering
+#             moved gene rank based filtering out of heatmap function
 #             moved genotype based filtering out of heatmap function
 #             moved sample description based filtering out of heatmap function
 #             moved gene list based filtering out of heatmap function
@@ -218,8 +219,8 @@ function(
         # take genotype filtered gene profiles
         gene.profiles.filtered.genotype() %>%
 
-        # keep top varying genes up to rank specified by the user
-        keep.top.genes(get.heatmap.rankmax.genes())
+        # keep top varying genes
+        keep.top.genes
 
         # end top gene profiles re-calculation
         )

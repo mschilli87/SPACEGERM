@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-12: moved gene rank based filtering out of heatmap function
+# 2017-04-12: switched (back) from gene rank to count based filtering
+#             moved gene rank based filtering out of heatmap function
 #             moved genotype based filtering out of heatmap function
 #             moved sample description based filtering out of heatmap function
 #             moved gene list based filtering out of heatmap function
@@ -1146,26 +1147,6 @@ save.xlsx<-
     # parameter extraction functions #
     ##################################
 
-# extract maximum gene rank to use for heatmap
-get.heatmap.rankmax.genes<-
-
-  # define gene rank maximum export function
-  function(
-
-    # This function doesn't have any parameters as it is returning a constant.
-
-    # end gene rank maximum export function parameter definition
-    )
-
-    # begin gene rank maximum export function definition
-    {
-
-      # return gene table XLSX file name parameter
-      params$heatmap.rankmax.genes
-
-    # end gene rank maximum export function definition
-    }
-
 # extract file name to use for gene table XLSX export
 get.gene.table.xlsx.name<-
 
@@ -1343,11 +1324,11 @@ keep.top.genes<-
     # expression matrix (genes as rows)
     unfiltered.data
 
-    # maximum rank of genes to keep
-    ,rankmax=
+    # maximum number of genes to keep
+    ,nmax=
 
       #by default, keep default maximum number of genes
-      params$heatmap.rankmax.genes
+      params$heatmap.nmax.genes
 
     # end top variable genes filter function parameter definition
     )
@@ -1358,8 +1339,17 @@ keep.top.genes<-
       # take unfiltered data
       unfiltered.data %>%
 
-      # keep up to specified rank of highest varying genes
-      filter(cpm.sd.rank<=rankmax,!is.na(cpm.sd))
+      # isolate gene/standard-deviation pairs
+      distinct(gene,cpm.sd) %>%
+
+      # sort genes by standard deviation
+      arrange(desc(cpm.sd)) %>%
+
+      # keep up to specified maximum number of highest varying genes
+      head(nmax) %>%
+
+      # extract gene profiles of top varying genes
+      left_join(unfiltered.data)
 
     # end top variable genes filter function definition
     }
