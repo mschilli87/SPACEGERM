@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-12: moved gene list based filtering out of heatmap function
+# 2017-04-12: moved sample description based filtering out of heatmap function
+#             moved gene list based filtering out of heatmap function
 #             switched to tidy gene profile input data & rank based gene filtering
 # 2017-04-11: added gene list file import functions
 # 2017-04-10: added gene table XLSX export functions
@@ -596,40 +597,6 @@ plot.profiles<-
         profile.plot
 
     # end profile plot function definition
-    }
-
-
-# filter data by sample description
-filter.data.by.sample.description<-
-
-  # define filter by sample description function
-  function(
-
-    # unfiltered data
-    unfiltered.data
-
-    # sample description to keep
-    ,sample.description.to.keep
-
-    # end filter by sample description function parameter definition
-    )
-
-    # begin filter by sample description function definition
-    {
-
-      # take unfiltered data
-      unfiltered.data %>%
-
-      # subset unfiltered data
-      filter(
-
-        # select data with sample description to keep
-        sample.description==sample.description.to.keep
-
-        # end data subsetting
-        )
-
-    # end filter by sample description function definition
     }
 
 
@@ -1341,6 +1308,41 @@ filter.data.by.genes.file<-
     # end data filtering by gene list file function definition
     }
 
+
+# filter data by sample description
+filter.data.by.sample.description<-
+
+  # define filter by sample description function
+  function(
+
+    # unfiltered data
+    unfiltered.data
+
+    # sample description to keep
+    ,sample.description.to.keep
+
+    # end filter by sample description function parameter definition
+    )
+
+    # begin filter by sample description function definition
+    {
+
+      # take unfiltered data
+      unfiltered.data %>%
+
+      # subset unfiltered data
+      filter(
+
+        # select data with sample description to keep
+        sample.description==sample.description.to.keep
+
+        # end data subsetting
+        )
+
+    # end filter by sample description function definition
+    }
+
+
     #########################
     # input panel functions #
     #########################
@@ -1568,9 +1570,6 @@ generate.heatmap<-
     # gene profiles to plot
     gene.profiles
 
-    # sample description to generate heatmap for
-    ,sample.description
-
     # genotype to generate heatmap for
     ,genotype
 
@@ -1601,9 +1600,6 @@ generate.heatmap<-
 
       # take gene profile
       gene.profiles %>%
-
-      # extract gene profiles for specified sample description
-      filter.data.by.sample.description(sample.description) %>%
 
       # extract gene profiles for specified genotype
       filter.data.by.genotype(genotype) %>%
