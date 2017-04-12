@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-12: moved sample description based filtering out of heatmap function
+# 2017-04-12: moved genotype based filtering out of heatmap function
+#             moved sample description based filtering out of heatmap function
 #             moved gene list based filtering out of heatmap function
 #             switched to tidy gene profile input data & rank based gene filtering
 # 2017-04-11: added gene list file import functions
@@ -597,40 +598,6 @@ plot.profiles<-
         profile.plot
 
     # end profile plot function definition
-    }
-
-
-# filter data by genotype
-filter.data.by.genotype<-
-
-  # define filter by genotype function
-  function(
-
-    # unfiltered data
-    unfiltered.data
-
-    # genotype to keep
-    ,genotype.to.keep
-
-    # end filter by genotype function parameter definition
-    )
-
-    # begin filter by genotype function definition
-    {
-
-      # take unfiltered data
-      unfiltered.data %>%
-
-      # subset unfiltered data
-      filter(
-
-        # select data with genotype to keep
-        genotype==genotype.to.keep
-
-        # end data subsetting
-        )
-
-    # end filter by genotype function definition
     }
 
 
@@ -1343,6 +1310,40 @@ filter.data.by.sample.description<-
     }
 
 
+# filter data by genotype
+filter.data.by.genotype<-
+
+  # define filter by genotype function
+  function(
+
+    # unfiltered data
+    unfiltered.data
+
+    # genotype to keep
+    ,genotype.to.keep
+
+    # end filter by genotype function parameter definition
+    )
+
+    # begin filter by genotype function definition
+    {
+
+      # take unfiltered data
+      unfiltered.data %>%
+
+      # subset unfiltered data
+      filter(
+
+        # select data with genotype to keep
+        genotype==genotype.to.keep
+
+        # end data subsetting
+        )
+
+    # end filter by genotype function definition
+    }
+
+
     #########################
     # input panel functions #
     #########################
@@ -1570,9 +1571,6 @@ generate.heatmap<-
     # gene profiles to plot
     gene.profiles
 
-    # genotype to generate heatmap for
-    ,genotype
-
     # number of clusters to cluster genes into
     ,nclust.genes=
 
@@ -1600,9 +1598,6 @@ generate.heatmap<-
 
       # take gene profile
       gene.profiles %>%
-
-      # extract gene profiles for specified genotype
-      filter.data.by.genotype(genotype) %>%
 
       # keep top varying genes up to specified rank
       keep.top.genes(rankmax.genes) %>%

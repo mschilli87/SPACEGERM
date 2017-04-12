@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-12: moved sample description based filtering out of heatmap function
+# 2017-04-12: moved genotype based filtering out of heatmap function
+#             moved sample description based filtering out of heatmap function
 #             moved gene list based filtering out of heatmap function
 # 2017-04-11: added user specified gene list file input
 # 2017-04-10: added gene table XLSX export button assignment
@@ -192,23 +193,36 @@ function(
         # end sample description filtered gene profiles re-calculation
         )
 
+    # assign genotype filtered gene profiles
+    gene.profiles.filtered.genotype<-
+
+      # re-calculate genotype filtered gene profiles when necessary
+      reactive(
+
+        # take sample description filtered gene profiles
+        gene.profiles.filtered.sample.description() %>%
+
+        # extract gene profiles for genotype specified by the user
+        filter.data.by.genotype(input$genotype)
+
+        # end genotype filtered gene profiles re-calculation
+        )
+
+
     # assign heatmap object
     heatmap.object<-
 
       # re-calculate heatmap when necessary
       reactive(
 
-        # take sample description filtered gene profiles
-        gene.profiles.filtered.sample.description() %>%
+        # take genotype filtered gene profiles
+        gene.profiles.filtered.genotype() %>%
 
         # generate heatmap
         generate.heatmap(
 
-          # generate heatmap for genotype specified by the user
-          genotype=input$genotype
-
           # cluster genes into as many clusters as specified by the user
-          ,nclust.genes=input$nclust.genes
+          nclust.genes=input$nclust.genes
 
           # set heatmap options specified by the user
           ,heatmap.options=input$heatmap.options
