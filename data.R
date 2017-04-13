@@ -21,7 +21,7 @@
 # file:         data.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-04-12
+# last update:  2017-04-13
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      load input data for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-13: replaced unique by distinct
 # 2017-04-12: added missing changelog entry
 #             made dplyr an explicit dependency
 #             switched to tidy gene profile input data
@@ -47,13 +48,11 @@
 # tomo-seq data is provided as tibble
 require(tibble)
 
-# get pipe operators
-require(magrittr)
-
 # get dlply
 require(plyr)
 
-# get select
+# get %>% & distinct
+# Note: dplyr must be loaded after plyr!
 require(dplyr)
 
 
@@ -94,19 +93,31 @@ if(!exists("input.data"))
     input.data$sample.names<-
 
       # take tomo-seq data
-      input.data$tomoseq.data %$%
+      input.data$tomoseq.data %>%
 
       # extract used sample names
-      unique(sample.name)
+      distinct(sample.name) %>%
+
+      # convert single-column tibble to vector
+      unlist %>%
+
+      # drop names
+      unname
 
     # get sample descriptions
     input.data$sample.descriptions<-
 
       # take gene profiles
-      input.data$gene.profiles %$%
+      input.data$gene.profiles %>%
 
       # extract used sample descriptions
-      unique(sample.description)
+      distinct(sample.description) %>%
+
+      # convert single-column tibble to vector
+      unlist %>%
+
+      # drop names
+      unname
 
     # get sample descriptions
     input.data$genotypes<-
@@ -115,10 +126,7 @@ if(!exists("input.data"))
       input.data$gene.profiles %>%
 
       # extract used genotype/sample description combinations
-      select(sample.description,genotype) %>%
-
-      # drop repetitions
-      unique %>%
+      distinct(sample.description,genotype) %>%
 
       # extract used genotypes per sample description
       dlply("sample.description",with,unique(genotype))
