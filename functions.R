@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-13: added gene table annotation (gene.name & cpm.sd) support
+# 2017-04-13: added cpm.mean/min/max/lfc & percent.min/max to gene table annotation
+#             added gene table annotation (gene.name & cpm.sd) support
 # 2017-04-12: switched (back) from gene rank to count based filtering
 #             moved gene rank based filtering out of heatmap function
 #             moved genotype based filtering out of heatmap function
@@ -1234,8 +1235,26 @@ get.gene.annotation<-
         # add gene name
         ,gene.name
 
+        # add gene CPM mean
+        ,cpm.mean
+
         # add gene CPM standard deviation
         ,cpm.sd
+
+        # add gene CPM minimum
+        ,cpm.min
+
+        # add gene CPM maximum
+        ,cpm.max
+
+        # add gene CPM minimum to maximum log(2) fold-change
+        ,cpm.lfc
+
+        # add (median) position (percent distal-to-proximal) where minumum gene CPM was observed
+        ,percent.min
+
+        # add (median) position (percent distal-to-proximal) where maximum gene CPM was observed
+        ,percent.max
 
         # extract gene annotation columns
         )
