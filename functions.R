@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-04-12
+# last update:  2017-04-13
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-13: added gene table annotation (gene.name & cpm.sd) support
 # 2017-04-12: switched (back) from gene rank to count based filtering
 #             moved gene rank based filtering out of heatmap function
 #             moved genotype based filtering out of heatmap function
@@ -1206,6 +1207,43 @@ get.sample.shifts<-
     }
 
 
+# extract gene annotation from gene profiles table
+get.gene.annotation<-
+
+  # define gene annotation extract function
+  function(
+
+    # gene profiles table to extract annotation from
+    gene.profiles
+
+    # end gene annotation extract function parameter definition
+    )
+
+    # begin gene annotation extract function definition
+    {
+
+      # take gene profiles table to extract annotation from
+      gene.profiles %>%
+
+      # extract gene annotation columns
+      distinct(
+
+        # get gene ID
+        gene
+
+        # add gene name
+        ,gene.name
+
+        # add gene CPM standard deviation
+        ,cpm.sd
+
+        # extract gene annotation columns
+        )
+
+    # end gene annotation extract function definition
+    }
+
+
     ############################
     # data filtering functions #
     ############################
@@ -1639,6 +1677,12 @@ generate.gene.table<-
     # gene clustered heatmap to generate gene table for
     gene.heatmap
 
+    # gene annotation used to annotate gene table
+    ,annotation=
+
+      # by default, don't add any annotation
+      data_frame(gene=character(0))
+
     # end gene table generation function parameter definition
     )
 
@@ -1652,7 +1696,10 @@ generate.gene.table<-
       get.row.clusters %>%
 
       # convert named vector to tibble
-      data_frame(gene=names(.),cluster=.)
+      data_frame(gene=names(.),cluster=.) %>%
+
+      # merge gene table with given annotation
+      left_join(annotation)
 
     # end gene table generation function definition
     }

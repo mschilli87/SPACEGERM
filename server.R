@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-04-12
+# last update:  2017-04-13
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-13: added gene table annotation
 # 2017-04-12: switched (back) from gene rank to count based filtering
 #             moved gene rank based filtering out of heatmap function
 #             moved genotype based filtering out of heatmap function
@@ -225,7 +226,6 @@ function(
         # end top gene profiles re-calculation
         )
 
-
     # assign heatmap object
     heatmap.object<-
 
@@ -265,6 +265,21 @@ function(
         # end heatmap rendering
         )
 
+    # assign gene annotation
+    gene.annotation<-
+
+      # re-calculate gene annotation when necessary
+      reactive(
+
+        # take gene profiles
+        gene.profiles.top() %>%
+
+        # extract gene annotation
+        get.gene.annotation
+
+        # end gene annotation re-calculation
+        )
+
     # assign gene table object
     gene.table.object<-
 
@@ -275,7 +290,13 @@ function(
         heatmap.object() %>%
 
         # generate gene table
-        generate.gene.table
+        generate.gene.table(
+
+          # annotate gene table with annotation extracted from gene profile table
+          annotation=gene.annotation()
+
+          # end gene table generation
+          )
 
         # end gene table re-calculation
         )
