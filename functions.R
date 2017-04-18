@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-04-13
+# last update:  2017-04-18
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-18: added removal of non-varying genes for heatmap
 # 2017-04-13: added cpm.mean/min/max/lfc & percent.min/max to gene table annotation
 #             added gene table annotation (gene.name & cpm.sd) support
 # 2017-04-12: switched (back) from gene rank to count based filtering
@@ -1398,6 +1399,9 @@ keep.top.genes<-
 
       # isolate gene/standard-deviation pairs
       distinct(gene,cpm.sd) %>%
+
+      # drop non-varying genes
+      filter(cpm.sd>0) %>%
 
       # sort genes by standard deviation
       arrange(desc(cpm.sd)) %>%
