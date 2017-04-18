@@ -21,7 +21,7 @@
 # file:         data.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-04-13
+# last update:  2017-04-18
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      load input data for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-18: fixed copy/paste-error in comment
 # 2017-04-13: replaced unique by distinct
 # 2017-04-12: added missing changelog entry
 #             made dplyr an explicit dependency
@@ -119,7 +120,7 @@ if(!exists("input.data"))
       # drop names
       unname
 
-    # get sample descriptions
+    # get genotypes per sample description
     input.data$genotypes<-
 
       # take gene profiles
