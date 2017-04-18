@@ -30,15 +30,16 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-18: added gene type extraction
+# 2017-04-18: fixed changelog comments (broken since 2017-03-29/baea8e9)
+#             added gene type extraction
 #             fixed copy/paste-error in comment
 # 2017-04-13: replaced unique by distinct
 # 2017-04-12: added missing changelog entry
 #             made dplyr an explicit dependency
 #             switched to tidy gene profile input data
 # 2017-03-29: added gene profile loading (incl. sample descriptions & genotypes extraction)
-# 2017-03-28: made magrittr an explicit dependency
-# 2017-02-23: added sample names extraction
+# 2017-03-28: added missing explicit magrittr loading
+# 2017-02-24: added license comment
 # 2017-02-23: added sample names extraction
 #             initial version (double-sourcing check & tomo-seq data loading)
 
