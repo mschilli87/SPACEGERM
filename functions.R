@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-18: added removal of non-varying genes for heatmap
+# 2017-04-18: added gene type input panel generation and gene type based filtering functions
+#             added removal of non-varying genes for heatmap
 # 2017-04-13: added cpm.mean/min/max/lfc & percent.min/max to gene table annotation
 #             added gene table annotation (gene.name & cpm.sd) support
 # 2017-04-12: switched (back) from gene rank to count based filtering
@@ -1373,6 +1374,40 @@ filter.data.by.genotype<-
     }
 
 
+# filter data by gene type
+filter.data.by.gene.type<-
+
+  # define filter by gene type function
+  function(
+
+    # unfiltered data
+    unfiltered.data
+
+    # gene type to keep
+    ,gene.type.to.keep
+
+    # end filter by gene type function parameter definition
+    )
+
+    # begin filter by gene type function definition
+    {
+
+      # take unfiltered data
+      unfiltered.data %>%
+
+      # subset unfiltered data
+      filter(
+
+        # select data with gene type to keep
+        gene.type==gene.type.to.keep
+
+        # end data subsetting
+        )
+
+    # end filter by gene type function definition
+    }
+
+
 # only top variable genes
 keep.top.genes<-
 
@@ -1491,6 +1526,58 @@ generate.genotype.input<-
         ,selected=params$genotype.input.default
 
         # end genotype input panel generation
+        )
+
+    # end genotype input panel generation function definition
+    }
+
+
+# generate gene type input panel
+generate.gene.type.input<-
+
+  # define gene type input panel generation function
+  function(
+
+    # sample description to generate gene type input panel for
+    sample.description
+
+    # genotype to generate gene type input panel for
+    ,genotype
+
+    # end gene type input panel generation function parameter definition
+    )
+
+    # begin gene type input panel generation function definition
+    {
+
+      # take sample description to generate gene type input panel for
+      sample.description %>%
+
+      # get corresponding available gene types
+      input.data$gene.types[[.]] %>%
+
+      # get gene types for genotype to generate gene type input panel for
+      `[[`(genotype) %>%
+
+      # generate gene type input panel
+      selectInput(
+
+        # name gene type input
+        inputId="gene.type"
+
+        # label gene type input panel
+        ,label=params$gene.type.input.label %>%
+
+          # make label 3rd level header
+          h3
+
+        # set choices for gene type input panel
+        ,choices=.
+
+        # set default selection for gene type input panel
+        ,selected=params$gene.type.input.default
+
+        # end gene type input panel generation
         )
 
     # end genotype input panel generation function definition

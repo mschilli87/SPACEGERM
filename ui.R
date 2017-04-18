@@ -21,7 +21,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-04-11
+# last update:  2017-04-18
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define front end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-18: added dynamically generated gene type input panel
 # 2017-04-11: added gene list file import panel
 # 2017-04-10: added gene table XLSX export button
 # 2017-04-06: added gene table output
@@ -266,6 +267,15 @@ fluidPage(
             outputId="genotype.input"
 
             # end genotype input panel definition
+            )
+
+          # add dynamically generated gene type input panel
+          ,uiOutput(
+
+            # name gene type input panel output
+            outputId="gene.type.input"
+
+            # end gene type input panel definition
             )
 
           # add gene cluster count input panel

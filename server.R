@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-04-13
+# last update:  2017-04-18
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-18: added user specified gene type filtering
 # 2017-04-13: added gene table annotation
 # 2017-04-12: switched (back) from gene rank to count based filtering
 #             moved gene rank based filtering out of heatmap function
@@ -166,6 +167,21 @@ function(
         # end genotype input panel rendering
         )
 
+    # assign gene type input panel output
+    output$gene.type.input<-
+
+      # render gene type input panel
+      renderUI(
+
+        # take sample description to use for heatmap
+        input$sample.description %>%
+
+        # generate gene type input panel for genotype to use for heatmap
+        generate.gene.type.input(input$genotype)
+
+        # end gene type input panel rendering
+        )
+
     # assign gene list filtered gene profiles
     gene.profiles.filtered.gene.list<-
 
@@ -211,14 +227,29 @@ function(
         # end genotype filtered gene profiles re-calculation
         )
 
+    # assign gene type filtered gene profiles
+    gene.profiles.filtered.gene.type<-
+
+      # re-calculate gene type filtered gene profiles when necessary
+      reactive(
+
+        # take genotype filtered gene profiles
+        gene.profiles.filtered.genotype() %>%
+
+        # extract gene profiles for gene type specified by the user
+        filter.data.by.gene.type(input$gene.type)
+
+        # end gene type filtered gene profiles re-calculation
+        )
+
     # assign top gene profiles
     gene.profiles.top<-
 
       # re-calculate top gene profiles when necessary
       reactive(
 
-        # take genotype filtered gene profiles
-        gene.profiles.filtered.genotype() %>%
+        # take gene type filtered gene profiles
+        gene.profiles.filtered.gene.type() %>%
 
         # keep top varying genes
         keep.top.genes

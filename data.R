@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-04-18: fixed copy/paste-error in comment
+# 2017-04-18: added gene type extraction
+#             fixed copy/paste-error in comment
 # 2017-04-13: replaced unique by distinct
 # 2017-04-12: added missing changelog entry
 #             made dplyr an explicit dependency
@@ -131,6 +132,21 @@ if(!exists("input.data"))
 
       # extract used genotypes per sample description
       dlply("sample.description",with,unique(genotype))
+
+    # get gene types per sample description & genotype
+    input.data$gene.types<-
+
+      # take gene profiles
+      input.data$gene.profiles %>%
+
+      # extract used genotype/sample description/gene type combinations
+      distinct(sample.description,genotype,gene.type) %>%
+
+      # extract used genotypes/gene type combinations per sample description
+      dlply("sample.description",distinct,genotype,gene.type) %>%
+
+      # extract used gene types per sample description/genotype combination
+      llply(dlply,"genotype",with,unique(gene.type))
 
   # end data loading
   }

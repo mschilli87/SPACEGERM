@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-04-12
+# last update:  2017-04-18
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -31,6 +31,7 @@
 ######################################
 
 
+# 2017-04-18: added gene type input panel parameters
 # 2017-04-12: (re-)replaced maximum gene rank by maximum number of genes parameter
 #             replaced maximum number of genes by maximum gene rank parameter
 # 2017-04-11: added gene list file import panel parameters
@@ -248,6 +249,17 @@ if(!exists("params"))
 
       # default selection of genotype input panel
       ,genotype.input.default="wild type"
+
+
+        #########################
+        # gene type input panel #
+        #########################
+
+      # label of gene type input panel
+      ,gene.type.input.label="Gene type"
+
+      # default selection of gene type input panel
+      ,gene.type.input.default="mRNA"
 
 
         ##################################
