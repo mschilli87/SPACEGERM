@@ -21,7 +21,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-04-18
+# last update:  2017-04-19
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define front end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-19: added distance metric input panel
 # 2017-04-18: added dynamically generated gene type input panel
 # 2017-04-11: added gene list file import panel
 # 2017-04-10: added gene table XLSX export button
@@ -318,6 +319,27 @@ fluidPage(
             ,selected=params$heatmap.options.input.default
 
             # end heatmap options input panel definition
+            )
+
+          # add distance metric input panel
+          ,selectInput(
+
+            # name distance metric input
+            inputId="distance.metric"
+
+            # label distance metric input panel
+            ,label=params$distance.metric.input.label %>%
+
+              # make label 3rd level header
+              h3
+
+            # set choices for distance metric input panel
+            ,choices=params$distance.metric.input.choices
+
+            # set default selection for sdistance metric input panel
+            ,selected=params$distance.metric.input.default
+
+            # end distance metric input panel definition
             )
 
           # add gene list file import panel

@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-04-18
+# last update:  2017-04-19
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-19: added Euclidean distance as possible alternative to "1 - Pearson's r" metric for
+#             gene clustering
 # 2017-04-18: added gene type input panel generation and gene type based filtering functions
 #             added removal of non-varying genes for heatmap
 # 2017-04-13: added cpm.mean/min/max/lfc & percent.min/max to gene table annotation
@@ -724,22 +726,22 @@ get.cpm.matrix<-
     }
 
 
-# calculate distance matrix of matrix columns
-get.column.distances<-
+# calculate distance matrix of matrix columns using "1 - Pearson's r" metric
+get.column.distances.pearson<-
 
-  # define matrix columns distance calculation function
+  # define matrix columns "1 - Pearson's r" distance calculation function
   function(
 
-    # matrix to get column distance of
+    # matrix to get column distances of
     column.matrix
 
-    # end matrix columns distance calculation function parameter definition
+    # end matrix columns "1 - Pearson's r" distance calculation function parameter definition
     )
 
-    # begin matrix columns distance calculation function definition
+    # begin matrix columns "1 - Pearson's r" distance calculation function definition
     {
 
-      # take matrix to get column distance of
+      # take matrix to get column distances of
       column.matrix %>%
 
       # calculate (pairwise) column (Pearson) correlations
@@ -751,7 +753,7 @@ get.column.distances<-
       # return column distance matrix
       as.dist
 
-    # end matrix columns distance calculation function definition
+    # end matrix columns "1 - Pearson's r" distance calculation function definition
     }
 
 
@@ -811,32 +813,73 @@ scale.rows<-
     }
 
 
-# calculate distance matrix of matrix rows
-get.row.distances<-
+# calculate distance matrix of matrix rows using "1 - Pearson's r" metric
+get.row.distances.pearson<-
 
-  # define matrix rows distance calculation function
+  # define matrix rows "1 - Pearson's r" distance calculation function
   function(
 
-    # matrix to get rows distance of
+    # matrix to get row distances of
     row.matrix
 
-    # end matrix rows distance calculation function parameter definition
+    # end matrix rows "1 - Pearson's r" distance calculation function parameter definition
     )
 
-    # begin matrix rows distance calculation function definition
+    # begin matrix rows "1 - Pearson's r" distance calculation function definition
     {
 
-      # take matrix to get row distance of
+      # take matrix to get row distances of
       row.matrix %>%
 
       # treat rows as columns
       t %>%
 
-      # calculate column distance
-      get.column.distances
+      # calculate column "1 - Pearson's r" distances
+      get.column.distances.pearson
 
-    # end matrix rows distance calculation function definition
+    # end matrix rows "1 - Pearson's r" distance calculation function definition
     }
+
+
+# calculate distance matrix of matrix rows using "Euclidean distance" metric
+get.row.distances.euclidean<-
+
+  # define matrix rows Euclidean distance calculation function
+  function(
+
+    # matrix to get row distances of
+    row.matrix
+
+    # end matrix rows Euclidean distance calculation function parameter definition
+    )
+
+    # begin matrix rows Euclidean distance calculation function definition
+    {
+
+      # take matrix to get row distances of
+      row.matrix %>%
+
+      # calculate Euclidean distances of rows
+      dist(method="euclidean")
+
+    # end matrix rows Euclidean distance calculation function definition
+    }
+
+
+# calculate distance matrix of matrix rows
+get.row.distances<-
+
+  # define named list of matrix rows distance calculation functions
+  list(
+
+    # add matrix rows "1 - Pearson's r" distance calculation function
+    `1 - Pearson's r`=get.row.distances.pearson
+
+    # add matrix rows Euclidean distance calculation function
+    ,`Euclidean distance`=get.row.distances.euclidean
+
+    # end definition of  named list of matrix rows distance calculation functions
+    )
 
 
 # generate heatmap clustering rows
@@ -866,6 +909,12 @@ heatmap.rows<-
 
       # by default, use default number of gene clusters
       params$nclust.genes.input.default
+
+    # distance matrix to cluster rows by
+    ,dist.metric=
+
+      # by default, use default distance metric
+      params$distance.metric.input.default
 
     # color values to use for heatmap tiles
     ,color.values=
@@ -985,7 +1034,7 @@ heatmap.rows<-
         ,clust_dist=
 
           # use matrix rows distance calculation function
-          get.row.distances
+          get.row.distances[[dist.metric]]
 
         # set side of heatmap to place row dendrogram
         ,side=
@@ -1742,6 +1791,11 @@ generate.heatmap<-
       # by default, don't use any heatmap option
       character(0)
 
+    # distance metric to use for clustering
+    ,distance.metric=
+
+      # by default, use default distance metric for clustering
+      params$distance.metric.input.default
 
     # end heatmap generation function parameter definition
     )
@@ -1766,6 +1820,9 @@ generate.heatmap<-
 
         # cluster genes into as many clusters as specified
         ,nclust=nclust.genes
+
+        # cluster genes according to distance metric specified
+        ,dist.metric=distance.metric
 
         # end row-clustered heatmap generation
         )

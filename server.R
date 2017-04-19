@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-04-18
+# last update:  2017-04-19
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-04-19: added user specified distance metric choice
 # 2017-04-18: added user specified gene type filtering
 # 2017-04-13: added gene table annotation
 # 2017-04-12: switched (back) from gene rank to count based filtering
@@ -274,6 +275,9 @@ function(
 
           # set heatmap options specified by the user
           ,heatmap.options=input$heatmap.options
+
+          # set distance metric specified by the user
+          ,distance.metric=input$distance.metric
 
           # end heatmap generation
           )

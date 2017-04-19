@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-04-18
+# last update:  2017-04-19
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -31,6 +31,7 @@
 ######################################
 
 
+# 2017-04-19: added distance metric input panel parameters
 # 2017-04-18: added gene type input panel parameters
 # 2017-04-12: (re-)replaced maximum gene rank by maximum number of genes parameter
 #             replaced maximum number of genes by maximum gene rank parameter
@@ -291,6 +292,22 @@ if(!exists("params"))
       # default selection of heatmap option input panel
       ,heatmap.options.input.default=c("row.scaling"
                                       )
+
+
+        ###############################
+        # distance metric input panel #
+        ###############################
+
+      # label of distance metric input panel
+      ,distance.metric.input.label="Distance metric"
+
+      # choices for distance metric input panel
+      ,distance.metric.input.choices=c("1 - Pearson's r"
+                                      ,"Euclidean distance"
+                                      )
+
+      # default selection of distance metric input panel
+      ,distance.metric.input.default="1 - Pearson's r"
 
 
         ###############################
