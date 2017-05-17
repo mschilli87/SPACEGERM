@@ -31,7 +31,9 @@
 ######################################
 
 
-# 2017-05-17: added row normalization input panel parameters / removed row.scaling heatmap option
+# 2017-05-17: replaced heatmap options input panel parameters by abundance measure input panel
+#             parameters
+#             added row normalization input panel parameters / removed row.scaling heatmap option
 # 2017-04-19: added distance metric input panel parameters
 # 2017-04-18: added gene type input panel parameters
 # 2017-04-12: (re-)replaced maximum gene rank by maximum number of genes parameter
@@ -278,16 +280,21 @@ if(!exists("params"))
       ,nclust.genes.input.default=5
 
 
-        ###############################
-        # heatmap options input panel #
-        ###############################
+        #################################
+        # abundance measure input panel #
+        #################################
 
-      # label of heatmap option input panel
-      ,heatmap.options.input.label="Heatmap options"
+      # label of abundance measure input panel
+      ,abundance.measure.input.label="Abundance measure"
 
-      # heatmap options
-      ,heatmap.options=c(`log-transform gene expression (log2 1+CPM)`="log.transform"
-                        )
+      # choices for abundance measure input panel
+      ,abundance.measure.input.choices=c("CPM"
+                                        ,"log2(1 + CPM)"
+                                        ,"log10(1 + CPM)"
+                                        )
+
+      # default selection of abundance measure input panel
+      ,abundance.measure.input.default="CPM"
 
 
         #################################

@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-05-17: added row normalization input panel
+# 2017-05-17: replaced heatmap options input panel by abundance measure input panel
+#             added row normalization input panel
 # 2017-04-19: added distance metric input panel
 # 2017-04-18: added dynamically generated gene type input panel
 # 2017-04-11: added gene list file import panel
@@ -301,25 +302,25 @@ fluidPage(
             # end plot columns count input panel definition
             )
 
-          # add heatmap options input panel
-          ,checkboxGroupInput(
+          # add abundance measure input panel
+          ,selectInput(
 
-            # name heatmap options input
-            inputId="heatmap.options"
+            # name abundance measure input
+            inputId="abundance.measure"
 
-            # label heatmap options input panel
-            ,label=params$heatmap.options.input.label %>%
+            # label abundance measure input panel
+            ,label=params$abundance.measure.input.label %>%
 
               # make label 3rd level header
               h3
 
-            # set choices for heatmap options input panel
-            ,choices=params$heatmap.options
+            # set choices for abundance measure input panel
+            ,choices=params$abundance.measure.input.choices
 
-            # set default selection for heatmap options input panel
-            ,selected=params$heatmap.options.input.default
+            # set default selection for abundance measure input panel
+            ,selected=params$abundance.measure.input.default
 
-            # end heatmap options input panel definition
+            # end abundance measure input panel definition
             )
 
           # add row normalization input panel

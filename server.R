@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-05-17: added user specified row normalization choice
+# 2017-05-17: replaced user specified heatmap options by user specified abundance measure
+#             added user specified row normalization choice
 # 2017-04-19: added user specified distance metric choice
 # 2017-04-18: added user specified gene type filtering
 # 2017-04-13: added gene table annotation
@@ -274,8 +275,8 @@ function(
           # cluster genes into as many clusters as specified by the user
           nclust.genes=input$nclust.genes
 
-          # set heatmap options specified by the user
-          ,heatmap.options=input$heatmap.options
+          # set abundance measure specified by the user
+          ,abundance.measure=input$abundance.measure
 
           # set row normalization specified by the user
           ,row.normalization=input$row.normalization

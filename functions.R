@@ -30,7 +30,9 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-05-17: replaced row.scaling heatmap option by row normalization scheme (scaling, centering or
+# 2017-05-17: replaced log.transform heatmap option by abundance measure (CPM, log2(1 + CPM) or
+#             log10(1 + CPM))
+#             replaced row.scaling heatmap option by row normalization scheme (scaling, centering or
 #             none)
 # 2017-04-19: added Euclidean distance as possible alternative to "1 - Pearson's r" metric for
 #             gene clustering
@@ -890,6 +892,105 @@ get.row.distances<-
     )
 
 
+# log2-transform abundance estimates
+transformation.log2p1<-
+
+  # define log2-transformation function
+  function(
+
+    # abundance estimates to log2-transform
+    abundance
+
+    # pseudocount to add to abundance values before log2-transformation
+    ,pseudocount=1
+
+    # end log2-transformation function parameter definition
+    )
+
+    # end log2-transformation function definition
+    {
+
+      # take abundance estimates to log2-transform
+      abundance %>%
+
+      # add pseudocount
+      `+`(pseudocount) %>%
+
+      # log2-transform abundance estimates
+      log2
+
+    # end log2-transformation function definition
+    }
+
+
+# log10-transform abundance estimates
+transformation.log10p1<-
+
+  # define log10-transformation function
+  function(
+
+    # abundance estimates to log10-transform
+    abundance
+
+    # pseudocount to add to abundance values before log10-transformation
+    ,pseudocount=1
+
+    # end log10-transformation function parameter definition
+    )
+
+    # end log10-transformation function definition
+    {
+
+      # take abundance estimates to log10-transform
+      abundance %>%
+
+      # add pseudocount
+      `+`(pseudocount) %>%
+
+      # log10-transform abundance estimates
+      log10
+
+    # end log10-transformation function definition
+    }
+
+
+# get transformation to apply to CPM abundances to obtain specified measure
+get.transformation<-
+
+  # define transformation assignment function
+  function(
+
+    # abundance measure to transform CPM to
+    measure=
+
+      # by default, use default abundance measure scheme
+      params$abundance.measure.input.default
+
+    # end transformation assignment function parameter definition
+    )
+
+    # begin transformation assignment function definition
+    {
+
+      # check if log2 transformed CPM were requested
+      if(grepl("log2(",measure,fixed=T))
+
+        # return log2 transform function
+        return(transformation.log2p1)
+
+      # check if log10 transformed CPM were requested
+      if(grepl("log10(",measure,fixed=T))
+
+        # return log10 transform function
+        return(transformation.log10p1)
+
+      # if no transformation was requested, 'transform' CPM by identity function
+      return(identity)
+
+    # end transformation assignment function definition
+    }
+
+
 # generate heatmap clustering rows
 heatmap.rows<-
 
@@ -899,12 +1000,14 @@ heatmap.rows<-
     # expression matrix (genes as columns)
     expression.matrix
 
-    # log-transform gene expression
-    ,log.transform=
+    # transformation to apply to abundance
+    ,transformation=
 
-      # by default, log-transform gene expression if specified in heatmap
-      # options
-      "log.transform" %in% params$heatmap.options.input.default
+      # by default, use default abundance measure scheme
+      params$abundance.measure.input.default %>%
+
+      # get corresponding transformation function
+      get.transformation
 
     # number of clusters to cluster rows into
     ,nclust=
@@ -996,17 +1099,11 @@ heatmap.rows<-
     # begin row-clustered heatmap function definition
     {
 
-      # log-transform gene expression if specified
-      if(log.transform)
+      # take expression matrix
+      expression.matrix %<>%
 
-        # take expression matrix
-        expression.matrix %<>%
-
-        # add pseudocount
-        `+`(1) %>%
-
-        # log-transform
-        log2
+      # apply specified transformation
+      transformation
 
       # normalize rows if specified
       if(row.norm != "none")
@@ -1805,11 +1902,11 @@ generate.heatmap<-
       # by default, use default number of gene clusters
       params$nclust.genes.input.default
 
-    # heatmap options to use
-    ,heatmap.options=
+    # abundance measure to use for gene profiles
+    ,abundance.measure=
 
-      # by default, don't use any heatmap option
-      character(0)
+      # by default, use default normalization scheme
+      params$abundance.measure.input.default
 
     # normalization scheme to use for gene profiles
     ,row.normalization=
@@ -1838,8 +1935,8 @@ generate.heatmap<-
       # generate heatmap clustering rows (i.e. genes)
       heatmap.rows(
 
-        # log-transform gene expression if specified in heatmap options
-        log.transform="log.transform" %in% heatmap.options
+        # transform abundance to obtain the measure specified
+        transformation=get.transformation(abundance.measure)
 
         # cluster genes into as many clusters as specified
         ,nclust=nclust.genes
