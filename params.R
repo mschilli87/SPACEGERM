@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-04-19
+# last update:  2017-05-17
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -31,6 +31,7 @@
 ######################################
 
 
+# 2017-05-17: added row normalization input panel parameters / removed row.scaling heatmap option
 # 2017-04-19: added distance metric input panel parameters
 # 2017-04-18: added gene type input panel parameters
 # 2017-04-12: (re-)replaced maximum gene rank by maximum number of genes parameter
@@ -286,12 +287,24 @@ if(!exists("params"))
 
       # heatmap options
       ,heatmap.options=c(`log-transform gene expression (log2 1+CPM)`="log.transform"
-                        ,`row-normalize expression matrix (z-scores)`="row.scaling"
                         )
 
-      # default selection of heatmap option input panel
-      ,heatmap.options.input.default=c("row.scaling"
-                                      )
+
+        #################################
+        # row normalization input panel #
+        #################################
+
+      # label of row normalization input panel
+      ,row.normalization.input.label="Row normalization"
+
+      # choices for row normalization input panel
+      ,row.normalization.input.choices=c("scaling (z-scores)"
+                                        ,"centering only"
+                                        ,"none"
+                                        )
+
+      # default selection of row normalization input panel
+      ,row.normalization.input.default="scaling (z-scores)"
 
 
         ###############################

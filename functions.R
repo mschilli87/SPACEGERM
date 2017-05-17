@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-04-19
+# last update:  2017-05-17
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-05-17: replaced row.scaling heatmap option by row normalization scheme (scaling, centering or
+#             none)
 # 2017-04-19: added Euclidean distance as possible alternative to "1 - Pearson's r" metric for
 #             gene clustering
 # 2017-04-18: added gene type input panel generation and gene type based filtering functions
@@ -757,59 +759,65 @@ get.column.distances.pearson<-
     }
 
 
-# scale matrix columns
-scale.columns<-
+# normalize matrix columns
+normalize.columns<-
 
-  # define matrix column scaling function
+  # define matrix column normalization function
   function(
 
-    # matrix to scale columns of
+    # matrix to normalize columns of
     column.matrix
 
-    # end matrix column scaling function parameter definition
+    # should columns be z-transformed (FALSE: centering only)
+    ,z.transform = TRUE
+
+    # end matrix column normalization function parameter definition
     )
 
-    # begin matrix column scaling function definition
+    # begin matrix column normalization function definition
     {
 
-      # take matrix to scale columns of
+      # take matrix to normalize columns of
       column.matrix %>%
 
-      # z-transform columns
-      scale
+      # scale columns (z-transform if specified, otherwise center only)
+      scale(scale = z.transform)
 
-    # end matrix column scaling function definition
+    # end matrix column normalization function definition
     }
 
 
-# scale matrix rows
-scale.rows<-
+# normalize matrix rows
+normalize.rows<-
 
-  # define matrix row scaling function
+  # define matrix row normalization function
   function(
 
-    # matrix to scale rows of
+    # matrix to normalize rows of
     row.matrix
 
-    # end matrix row scaling function parameter definition
+    # should rows be z-transformed (FALSE: centering only)
+    ,scaling = TRUE
+
+    # end matrix row normalization function parameter definition
     )
 
-    # begin matrix row scaling function definition
+    # begin matrix row normalization function definition
     {
 
-      # take matrix to scale rows of
+      # take matrix to normalize rows of
       row.matrix %>%
 
       # treat rows as columns
       t %>%
 
-      # scale columns
-      scale.columns %>%
+      # normalize columns (scale if specified)
+      normalize.columns(z.transform = scaling) %>%
 
       # treat columns as rows
       t
 
-    # end matrix row scaling function definition
+    # end matrix row normalization function definition
     }
 
 
@@ -898,19 +906,19 @@ heatmap.rows<-
       # options
       "log.transform" %in% params$heatmap.options.input.default
 
-    # scale rows (z-scores)
-    ,row.scaling=
-
-      # by default, scale rows if specified in default heatmap options
-      "row.scaling" %in% params$heatmap.options.input.default
-
     # number of clusters to cluster rows into
     ,nclust=
 
       # by default, use default number of gene clusters
       params$nclust.genes.input.default
 
-    # distance matrix to cluster rows by
+    # normalization scheme to use for rows
+    ,row.norm=
+
+      # by default, use default row normalization scheme
+      params$row.normalization.input.default
+
+    # distance metric to cluster rows by
     ,dist.metric=
 
       # by default, use default distance metric
@@ -1000,14 +1008,26 @@ heatmap.rows<-
         # log-transform
         log2
 
-      # scale rows if specified
-      if(row.scaling)
+      # normalize rows if specified
+      if(row.norm != "none")
 
         # take expression matrix
         expression.matrix %<>%
 
-        # scale rows (i.e. genes)
-        scale.rows
+        # normalize rows (i.e. genes)
+        normalize.rows(
+
+          # determine if scaling should be performed (or centering only)
+          scaling =
+
+            # take row normalization scheme
+            row.norm %>%
+
+            # search for "scaling" substring
+            grepl("scaling",.)
+
+          # end row normalization
+          )
 
       # take expression matrix (genes as columns)
       expression.matrix %>%
@@ -1791,6 +1811,12 @@ generate.heatmap<-
       # by default, don't use any heatmap option
       character(0)
 
+    # normalization scheme to use for gene profiles
+    ,row.normalization=
+
+      # by default, use default normalization scheme
+      params$row.normalization.input.default
+
     # distance metric to use for clustering
     ,distance.metric=
 
@@ -1815,11 +1841,11 @@ generate.heatmap<-
         # log-transform gene expression if specified in heatmap options
         log.transform="log.transform" %in% heatmap.options
 
-        # scale rows if specified in heatmap options
-        ,row.scaling="row.scaling" %in% heatmap.options
-
         # cluster genes into as many clusters as specified
         ,nclust=nclust.genes
+
+        # normalize gene profiles using the scheme specified
+        ,row.norm=row.normalization
 
         # cluster genes according to distance metric specified
         ,dist.metric=distance.metric

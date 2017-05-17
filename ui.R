@@ -21,7 +21,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-04-19
+# last update:  2017-05-17
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define front end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-05-17: added row normalization input panel
 # 2017-04-19: added distance metric input panel
 # 2017-04-18: added dynamically generated gene type input panel
 # 2017-04-11: added gene list file import panel
@@ -319,6 +320,27 @@ fluidPage(
             ,selected=params$heatmap.options.input.default
 
             # end heatmap options input panel definition
+            )
+
+          # add row normalization input panel
+          ,selectInput(
+
+            # name row normalization input
+            inputId="row.normalization"
+
+            # label row normalization input panel
+            ,label=params$row.normalization.input.label %>%
+
+              # make label 3rd level header
+              h3
+
+            # set choices for row normalization input panel
+            ,choices=params$row.normalization.input.choices
+
+            # set default selection for row normalization input panel
+            ,selected=params$row.normalization.input.default
+
+            # end row normalization input panel definition
             )
 
           # add distance metric input panel
