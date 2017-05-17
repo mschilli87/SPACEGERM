@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-05-17: replaced log.transform heatmap option by abundance measure (CPM, log2(1 + CPM) or
+# 2017-05-17: made string-matching for normalization scheme determination fixed (i.e. non-regex)
+#             replaced log.transform heatmap option by abundance measure (CPM, log2(1 + CPM) or
 #             log10(1 + CPM))
 #             replaced row.scaling heatmap option by row normalization scheme (scaling, centering or
 #             none)
@@ -1121,7 +1122,7 @@ heatmap.rows<-
             row.norm %>%
 
             # search for "scaling" substring
-            grepl("scaling",.)
+            grepl("scaling",.,fixed=T)
 
           # end row normalization
           )
