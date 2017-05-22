@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-05-17
+# last update:  2017-05-22
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-05-22: added support for user specified y-axis limits
 # 2017-05-17: replaced user specified heatmap options by user specified abundance measure
 #             added user specified row normalization choice
 # 2017-04-19: added user specified distance metric choice
@@ -101,6 +102,42 @@ function(
   # begin shiny server function definition
   {
 
+    # assign y-axis minimum input panel output
+    output$manual.ymin.input<-
+
+      # render y-axis minimum input panel
+      renderUI(
+
+        # take plot options selected by the user
+        input$plot.options %>%
+
+        # generate y-axis minimum input panel
+        generate.manual.ymin.input
+
+        # end y-axis minimum input panel rendering
+        )
+
+    # assign y-axis maximum input panel output
+    output$manual.ymax.input<-
+
+      # render y-axis maximum input panel
+      renderUI(
+
+        # take plot options selected by the user
+        input$plot.options %>%
+
+        # generate y-axis maximum input panel
+        generate.manual.ymax.input(
+
+          # pass on y-axis minimum specified by the user
+          ymin=input$manual.ymin
+
+          # end y-axis maximum input panel generation
+          )
+
+        # end y-axis maximum input panel rendering
+        )
+
     # assign sample shifts input panel output
     output$shifts.input<-
 
@@ -136,6 +173,9 @@ function(
 
           # set plot options specified by the user
           ,plot.options=input$plot.options
+
+          # set manual y-axis limits specified by the user
+          ,manual.ylim=c(input$manual.ymin,input$manual.ymax)
 
           # set plot columns count specified by the user
           ,ncols.plot=input$ncols.plot

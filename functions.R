@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-05-17
+# last update:  2017-05-22
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-05-22: added support for overwriting y-axis limits with user specified values
 # 2017-05-17: made string-matching for normalization scheme determination fixed (i.e. non-regex)
 #             replaced log.transform heatmap option by abundance measure (CPM, log2(1 + CPM) or
 #             log10(1 + CPM))
@@ -120,6 +121,139 @@ source("params.R")
   ####################
   # helper functions #
   ####################
+
+# generate y-axis minimum input panel
+generate.manual.ymin.input<-
+
+  # define y-axis minimum input panel generation function
+  function(
+
+    # plot options selected by the user
+    plot.options
+
+    # end y-axis minimum input panel generation function parameter definition
+    )
+
+    # begin y-axis minimum input panel generation function definition
+    {
+
+      # assign input panel if manual y-axis limits plot option selected by the user
+      if("set.ylim" %in% plot.options){
+
+        # define minimal y-axis minimum (0 for linear, 1 for log-scale)
+        min.value=as.numeric("logscale" %in% plot.options)
+
+        # assign input panel
+        manual.ymin.input<-
+
+          # define y-axis minimum input panel
+          numericInput(
+
+            # name y-axis minimum input
+            inputId="manual.ymin"
+
+            # label y-axis minimum input panel
+            ,label=params$manual.ymin.input.label %>%
+
+              # make label 3rd level header
+              h3
+
+            # set minimal value for y-axis minimum input panel
+            ,min=min.value
+
+            # set maximal value for y-axis minimum input panel
+            ,max=params$manual.ymin.input.max
+
+            # set default value for y-axis minimum input panel to minimum
+            ,value=min.value
+
+            # end y-axis minimum input panel definition
+            )
+
+      # hide input panel if manual y-axis limits plot option not selected by the user
+      } else {
+
+        # assign placeholder
+        manual.ymin.input<-
+
+          # use empty HTML object as valid placeholder for input panel
+          HTML("")
+
+        # end input panel/placeholder assignment
+        }
+
+      # return input panel/placeholder for rendering
+      return(manual.ymin.input)
+
+    # end y-axis minimum input panel generation function definition
+    }
+
+
+# generate y-axis maximum input panel
+generate.manual.ymax.input<-
+
+  # define y-axis maximum input panel generation function
+  function(
+
+    # plot options selected by the user
+    plot.options
+
+    # manual y-axis limit set by the user
+    ,ymin
+
+    # end y-axis maximum input panel generation function parameter definition
+    )
+
+    # begin y-axis maximum input panel generation function definition
+    {
+
+      # assign input panel if manual y-axis limits plot option selected by the user
+      if("set.ylim" %in% plot.options){
+
+        # assign input panel
+        manual.ymax.input<-
+
+          # define y-axis maximum input panel
+          numericInput(
+
+            # name y-axis maximum input
+            inputId="manual.ymax"
+
+            # label y-axis maximum input panel
+            ,label=params$manual.ymax.input.label %>%
+
+              # make label 3rd level header
+              h3
+
+            # set minimal value for y-axis maximum input panel
+            ,min=ymin+1
+
+            # set maximal value for y-axis maximum input panel
+            ,max=params$manual.ymax.input.max
+
+            # set default value for y-axis maximum input panel to maximum
+            ,value=params$manual.ymax.input.max
+
+            # end y-axis maximum input panel definition
+            )
+
+      # hide input panel if manual y-axis limits plot option not selected by the user
+      } else {
+
+        # assign placeholder
+        manual.ymax.input<-
+
+          # use empty HTML object as valid placeholder for input panel
+          HTML("")
+
+        # end input panel/placeholder assignment
+        }
+
+      # return input panel/placeholder for rendering
+      return(manual.ymax.input)
+
+    # end y-axis maximum input panel generation function definition
+    }
 
 # get sample shift input names by sample name
 get.sample.shift.inputId<-
@@ -396,6 +530,9 @@ plot.profiles<-
     # use a single y-scale for all sub-plots by default
     ,single.y.scale=T
 
+    # set y-axis limits automatically by default
+    ,y.limits=NULL
+
     # use default plot columns count by default
     ,ncols=params$ncols.plot.input.default
 
@@ -590,13 +727,55 @@ plot.profiles<-
               )
 
         # scale y-axis logarithmically if specified
-        if(logscale)
+        if(logscale){
 
-          # modify profile plot
-          profile.plot %<>%
+          # only log2-transform y-axis if no y-axis limits specified
+          if(is.null(y.limits)) {
 
-          # log2-transform y-axis
-          + scale_y_continuous(trans=log2_trans())
+            # modify profile plot
+            profile.plot %<>%
+
+            # log2-transform y-axis
+            + scale_y_continuous(trans=log2_trans())
+
+          # log2-transform y-axis & overwrite y-axis limits if specified
+          } else {
+
+            # modify profile plot
+            profile.plot %<>%
+
+            # adjust y-axis
+            + scale_y_continuous(
+
+                # log2-transform y-axis
+                trans=log2_trans()
+
+                # overwrite y-axis limits
+                ,limits=y.limits
+
+                # end y-axis adjustment
+                )
+
+          # end logarithmic y-axis adjustment
+          }
+
+        # adjust linear y-axis if specified
+        } else {
+
+          # overwrite y-axis limits if specified
+          if(!is.null(y.limits)) {
+
+            # modify profile plot
+            profile.plot %<>%
+
+            # overwrite y-axis limits
+            + ylim(y.limits)
+
+          # end overwriting of y-axis limits
+          }
+
+        # end linear y-axis adjustment
+        }
 
         # fix x-axis limits if specified
         if(fix.xlim)
@@ -1782,6 +1961,12 @@ generate.profile.plot<-
       # by default, don't use any plot option
       character(0)
 
+    # manual y-axis limits specified by the user
+    ,manual.ylim=
+
+      # by default, set y-axis limits automatically
+      NULL
+
     # plot columns count to use
     ,ncols.plot=
 
@@ -1799,6 +1984,12 @@ generate.profile.plot<-
 
     # begin profile plot generation function definition
     {
+
+      # if manual y-axis limits plot option not selected by the user
+      if(!("set.ylim" %in% plot.options))
+
+        # discard any manual y-axis limits specified
+        manual.ylim<-NULL
 
       # take tomo-seq data
       tomoseq.data %>%
@@ -1877,6 +2068,9 @@ generate.profile.plot<-
 
         # use a single y-scale for all sub-plots if specified in plot options
         ,single.y.scale="single.y.scale" %in% plot.options
+
+        # use y-axis limits specified
+        ,y.limits=manual.ylim
 
         # use plot columns count specified
         ,ncols=ncols.plot

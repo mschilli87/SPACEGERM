@@ -21,7 +21,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-05-17
+# last update:  2017-05-22
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define front end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-05-22: added manual y-axis limits plot option & corresponding minimum/maximum input panels
 # 2017-05-17: replaced heatmap options input panel by abundance measure input panel
 #             added row normalization input panel
 # 2017-04-19: added distance metric input panel
@@ -162,6 +163,24 @@ fluidPage(
       ,selected=params$plot.options.input.default
 
       # end plot options input panel definition
+      )
+
+    # add dynamically generated manual y-axis minimum input panel
+    ,uiOutput(
+
+      # name manual y-axis minimum input panel
+      outputId="manual.ymin.input"
+
+      # end manual y-axis minimum input panel definition
+      )
+
+    # add dynamically generated manual y-axis maximum input panel
+    ,uiOutput(
+
+      # name manual y-axis maximum input panel
+      outputId="manual.ymax.input"
+
+      # end manual y-axis maximum input panel definition
       )
 
     # add plot columns count input panel

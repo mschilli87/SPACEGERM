@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-05-17
+# last update:  2017-05-22
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -31,6 +31,7 @@
 ######################################
 
 
+# 2017-05-22: added set.ylim option & manual ymin/ymax input panel parameters
 # 2017-05-17: replaced heatmap options input panel parameters by abundance measure input panel
 #             parameters
 #             added row normalization input panel parameters / removed row.scaling heatmap option
@@ -164,6 +165,7 @@ if(!exists("params"))
                      ,`scale y-axis logarithmically (log2)`="logscale"
                      ,`fix x-axis limits`="fix.xlim"
                      ,`use single y-scale for all sub-plots`="single.y.scale"
+                     ,`manually set y-axis limits`="set.ylim"
                      )
 
       # default selection of plot option input panel
@@ -173,6 +175,28 @@ if(!exists("params"))
                                    ,"logscale"
                                    ,"single.y.scale"
                                    )
+
+
+        ##############################
+        # y-axis minimum input panel #
+        ##############################
+
+      # label of y-axis minimum input panel
+      ,manual.ymin.input.label="y-axis minimum"
+
+      # maximum value of y-axis minimum input panel
+      ,manual.ymin.input.max=10^6-1
+
+
+        ##############################
+        # y-axis maximum input panel #
+        ##############################
+
+      # label of y-axis maximum input panel
+      ,manual.ymax.input.label="y-axis maximum"
+
+      # maximum value of y-axis maximum input panel
+      ,manual.ymax.input.max=10^6
 
 
         ##################################
