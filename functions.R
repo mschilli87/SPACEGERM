@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-05-22
+# last update:  2017-05-23
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-05-23: added gene filtering by peak CPM minimum function
 # 2017-05-22: added support for overwriting y-axis limits with user specified values
 # 2017-05-17: made string-matching for normalization scheme determination fixed (i.e. non-regex)
 #             replaced log.transform heatmap option by abundance measure (CPM, log2(1 + CPM) or
@@ -1751,6 +1752,40 @@ filter.data.by.gene.type<-
         )
 
     # end filter by gene type function definition
+    }
+
+
+# filter data by minimum peak CPM
+filter.data.by.min.cpm.max<-
+
+  # define filter by minimum peak CPM function
+  function(
+
+    # unfiltered data
+    unfiltered.data
+
+    # peak CPM lower threshold
+    ,min.cpm.max
+
+    # end filter by minimum peak CPM function parameter definition
+    )
+
+    # begin filter by minimum peak CPM function definition
+    {
+
+      # take unfiltered data
+      unfiltered.data %>%
+
+      # subset unfiltered data
+      filter(
+
+        # select data exceeding peak CPM lower threshold
+        cpm.max>=min.cpm.max
+
+        # end data subsetting
+        )
+
+    # end filter by minimum peak CPM function definition
     }
 
 

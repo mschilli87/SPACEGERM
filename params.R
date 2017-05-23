@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-05-22
+# last update:  2017-05-23
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -30,7 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
-
+# 2017-05-23: added minimum peak CPM input panel parameters
 # 2017-05-22: added set.ylim option & manual ymin/ymax input panel parameters
 # 2017-05-17: replaced heatmap options input panel parameters by abundance measure input panel
 #             parameters
@@ -369,6 +369,23 @@ if(!exists("params"))
 
       # placeholder to use for gene list file import
       ,gene.list.file.import.placeholder="use most variable genes"
+
+
+        #################################
+        # minimum peak CPM input panel  #
+        #################################
+
+      # label of minimum peak CPM input panel
+      ,min.cpm.max.input.label="Peak CPM minimum"
+
+      # minimum value of minimum peak CPM input panel
+      ,min.cpm.max.input.min=0
+
+      # maximum value of minimum peak CPM input panel
+      ,min.cpm.max.input.max=10^6
+
+      # default value of minimum peak CPM input panel
+      ,min.cpm.max.input.default=0
 
 
       ##############

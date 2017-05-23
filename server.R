@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-05-22
+# last update:  2017-05-23
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-05-23: added filtering of genes by peak CPM minimum specified by the user
 # 2017-05-22: added support for user specified y-axis limits
 # 2017-05-17: replaced user specified heatmap options by user specified abundance measure
 #             added user specified row normalization choice
@@ -285,14 +286,29 @@ function(
         # end gene type filtered gene profiles re-calculation
         )
 
+    # assign minimum peak CPM filtered gene profiles
+    gene.profiles.filtered.min.cpm.max<-
+
+      # re-calculate minimum peak CPM filtered gene profiles when necessary
+      reactive(
+
+        # take gene type filtered gene profiles
+        gene.profiles.filtered.gene.type() %>%
+
+        # extract gene profiles for genes with peak CPM above minimum specified by the user
+        filter.data.by.min.cpm.max(input$min.cpm.max)
+
+        # end minimum peak CPM filtered gene profiles re-calculation
+        )
+
     # assign top gene profiles
     gene.profiles.top<-
 
       # re-calculate top gene profiles when necessary
       reactive(
 
-        # take gene type filtered gene profiles
-        gene.profiles.filtered.gene.type() %>%
+        # take minimum peak CPM filtered gene profiles
+        gene.profiles.filtered.min.cpm.max() %>%
 
         # keep top varying genes
         keep.top.genes
