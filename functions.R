@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-05-23
+# last update:  2017-05-24
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-05-24: added support for non-positive y-axis minumum for linearly scaled gene profiles
 # 2017-05-23: added gene filtering by peak CPM minimum function
 # 2017-05-22: added support for overwriting y-axis limits with user specified values
 # 2017-05-17: made string-matching for normalization scheme determination fixed (i.e. non-regex)
@@ -141,8 +142,14 @@ generate.manual.ymin.input<-
       # assign input panel if manual y-axis limits plot option selected by the user
       if("set.ylim" %in% plot.options){
 
-        # define minimal y-axis minimum (0 for linear, 1 for log-scale)
-        min.value=as.numeric("logscale" %in% plot.options)
+        # initiate minimal y-axis minimum
+        min.value=params$manual.ymin.input.min
+
+        # adjust minimal y-axis minimum based on logscale plot option
+        if("logscale" %in% plot.options)
+
+            # don't allow non-positive y-axis minimum for logarithmically scaled plots
+            min.value %<>% max(1)
 
         # assign input panel
         manual.ymin.input<-
