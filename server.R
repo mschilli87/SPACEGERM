@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-05-23
+# last update:  2017-05-29
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-05-29: added dynamic sample stretch input panel assignment & corresponding user input support
 # 2017-05-23: added filtering of genes by peak CPM minimum specified by the user
 # 2017-05-22: added support for user specified y-axis limits
 # 2017-05-17: replaced user specified heatmap options by user specified abundance measure
@@ -154,6 +155,21 @@ function(
         # end sample shifts input panel rendering
         )
 
+    # assign sample stretches input panel output
+    output$stretches.input<-
+
+      # render sample stretches input panel
+      renderUI(
+
+        # take sample names to include in plot
+        input$sample.names %>%
+
+        # generate sample stretches input panel
+        generate.sample.stretches.input
+
+        # end sample stretches input panel rendering
+        )
+
     # assign profile plot output
     output$profile.plot<-
 
@@ -189,6 +205,15 @@ function(
 
             # extract corresponding sample shifts specified by user
             get.sample.shifts(input)
+
+          # set sample stretches specified by the user
+          ,sample.stretches=
+
+            # take sample names of samples included in plot
+            input$sample.names %>%
+
+            # extract corresponding sample stretches specified by user
+            get.sample.stretches(input)
 
           # end profile plot generation
           )

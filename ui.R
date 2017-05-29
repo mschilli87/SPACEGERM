@@ -21,7 +21,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-05-23
+# last update:  2017-05-29
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define front end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-05-29: added dynamically generated sample stretches input panel
 # 2017-05-23: added minimum peak CPM input panel
 # 2017-05-22: added manual y-axis limits plot option & corresponding minimum/maximum input panels
 # 2017-05-17: replaced heatmap options input panel by abundance measure input panel
@@ -218,6 +219,21 @@ fluidPage(
       outputId="shifts.input"
 
       # end sample shifts input panel definition
+      )
+
+    # label sample stretches input panel
+    ,params$sample.stretches.input.label %>%
+
+        # make label 3rd level header
+        h3
+
+    # add dynamically generated sample stretches panel
+    ,uiOutput(
+
+      # name sample stretches input panel output
+      outputId="stretches.input"
+
+      # end sample stretches input panel definition
       )
 
     ) %>%

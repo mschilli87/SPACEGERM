@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-05-24
+# last update:  2017-05-29
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-05-29: added sample stretch input panel parameters
 # 2017-05-24: added minimum y-axis minimum parameter
 # 2017-05-23: added minimum peak CPM input panel parameters
 # 2017-05-22: added set.ylim option & manual ymin/ymax input panel parameters
@@ -235,6 +236,26 @@ if(!exists("params"))
 
       # value suffix of sampleshift input panel
       ,sample.shifts.input.suffix="%"
+
+
+        ################################
+        # sample stretches input panel #
+        ################################
+
+      # label of sample shift input panel
+      ,sample.stretches.input.label="Sample stretches"
+
+      # minimum value of sample shift input panel
+      ,sample.stretches.input.min=.5
+
+      # maximum value of sample shift input panel
+      ,sample.stretches.input.max=2
+
+      # default value of sample shift input panel
+      ,sample.stretches.input.default=1
+
+      # value suffix of sampleshift input panel
+      ,sample.stretches.input.suffix="x"
 
 
       ##############
