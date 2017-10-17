@@ -21,7 +21,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-05-29
+# last update:  2017-10-17
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define front end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-10-17: replaced plotlyOutput by (new) iheatmaprOutput
 # 2017-05-29: added dynamically generated sample stretches input panel
 # 2017-05-23: added minimum peak CPM input panel
 # 2017-05-22: added manual y-axis limits plot option & corresponding minimum/maximum input panels
@@ -63,8 +64,8 @@
 # get pipe operators
 require(magrittr)
 
-# get plotlyOutput
-require(plotly)
+# get iheatmaprOutput
+require(iheatmapr)
 
 
 ##############
@@ -456,7 +457,7 @@ fluidPage(
         ,mainPanel(
 
           # generate heatmap output panel
-          plotlyOutput(
+          iheatmaprOutput(
 
             # name heatmaps output
             outputId="heatmap"

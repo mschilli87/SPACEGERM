@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-05-29
+# last update:  2017-10-17
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-10-17: replaced renderPlotly by (new) renderIheatmap
 # 2017-05-29: added dynamic sample stretch input panel assignment & corresponding user input support
 # 2017-05-23: added filtering of genes by peak CPM minimum specified by the user
 # 2017-05-22: added support for user specified y-axis limits
@@ -65,8 +66,8 @@
 # get pipe operators
 require(magrittr)
 
-# get renderPlotly
-require(plotly)
+# get renderIheatmap
+require(iheatmapr)
 
 
 #############
@@ -375,13 +376,10 @@ function(
     output$heatmap<-
 
       # render heatmap
-      renderPlotly(
+      renderIheatmap(
 
         # take heatmap object
-        heatmap.object() %>%
-
-        # convert to plotly object for interactive rendering
-        as_plotly
+        heatmap.object()
 
         # end heatmap rendering
         )
