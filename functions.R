@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-05-29
+# last update:  2017-10-20
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-10-20: added support for filtering by expression level type (gene/isoform profiles?) to
+#             account for inclusion of isoform-specific CPM data (not used by now)
 # 2017-05-29: added sample stretches input panel generation & input extraction functions / added
 #             sample based stretch assignment / added stretch support to profile plot function
 # 2017-05-24: added support for non-positive y-axis minumum for linearly scaled gene profiles
@@ -497,6 +499,41 @@ filter.data.by.gene.names<-
 
     # end filter by gene names function definition
     }
+
+
+# filter data by expression level type (gene/isoform profiles?)
+filter.data.by.expression.level<-
+
+  # define filter by expression level type (gene/isoform profiles?) function
+  function(
+
+    # unfiltered data
+    unfiltered.data
+
+    # use isoform-level expression estimates?
+    ,isoform.level
+
+    # end filter by expression level type (gene/isoform profiles?) function parameter definition
+    )
+
+    # begin filter by expression level type (gene/isoform profiles?) function definition
+    {
+
+      # take unfiltered data
+      unfiltered.data %>%
+
+      # subset unfiltered data
+      subset(
+
+        # select data isoform-level data for isoform-level profiles
+        is.na(transcript.name) != isoform.level
+
+        # end data subsetting
+        )
+
+    # end filter by expression level type (gene/isoform profiles?) function definition
+    }
+
 
 # convert named sample shift list (or NULL) to named (default) sample shift vector
 parse.sample.shifts<-
@@ -2243,6 +2280,12 @@ generate.profile.plot<-
       # use default sample stretch input values for all samples by default
       NULL
 
+    # plot isoform-specific profiles?
+    ,per.isoform=
+
+      # by default, plot gene level profiles
+      FALSE
+
     # end profile plot generation parameter definition
     )
 
@@ -2286,6 +2329,18 @@ generate.profile.plot<-
           parse.gene.names
 
         # end data filtering by gene names
+        ) %>%
+
+      # filter tomo-seq data by expression level type (gene/isoform profiles?)
+      filter.data.by.expression.level(
+
+        # specify wether to use isoform-level expression estimates
+        isoform.level=
+
+          # take expression level type to use for plot
+          per.isoform
+
+        # end data filtering by expression level type (gene/isoform profiles?)
         ) %>%
 
       # add shift column to data
