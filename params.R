@@ -30,7 +30,9 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-10-23: added isoform level input panel parameters / added isoform legend parameter for
+# 2017-10-23: replaced smooth fit color parameter by linetype parameter (color now used for
+#             isoforms)
+#             added isoform level input panel parameters / added isoform legend parameter for
 #             profile plot / removed linetype parameters for profile plot (now used for isoforms)
 # 2017-05-29: added sample stretch input panel parameters
 # 2017-05-24: added minimum y-axis minimum parameter
@@ -534,13 +536,13 @@ if(!exists("params"))
       # smooth data line size of profile plot
       ,profile.plot.linesize.pooled=2
 
+      # smooth data linetype of profile plot
+      ,profile.plot.linetype.smooth="solid"
+
 
         ##########
         # colors #
         ##########
-
-      # smooth data color of profile plot
-      ,profile.plot.color.smooth="black"
 
       # brewer palette of profile plot
       # See http://colorbrewer2.org for available palettes.

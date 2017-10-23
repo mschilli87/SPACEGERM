@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2017-10-23: added support for isoform-level profiles (using shape & linetype)
+# 2017-10-23: switched from encoding samples by color and isoforms by shape/linetype to the opposite
+#             added support for isoform-level profiles (using shape & linetype)
 # 2017-10-20: added support for filtering by expression level type (gene/isoform profiles?) to
 #             account for inclusion of isoform-specific CPM data (not used by now)
 # 2017-05-29: added sample stretches input panel generation & input extraction functions / added
@@ -762,18 +763,13 @@ plot.profiles<-
             # on the y-axis, plot the gene abundance (counts per million reads mapped)
             ,y=cpm
 
-            # group data by sample name & color points/lines accordingly
-            ,color=sample.name
-
-            # group data by transcript name & shape points accordingly
-            ,shape=isoform.level %>%
-                   ifelse(list(transcript.name), list("dot")) %>%
+            # group data by isoform & color points/lines accordingly
+            ,color=isoform.level %>%
+                   ifelse(list(transcript.name), list("black")) %>%
                    unlist
 
-            # group data by transcript name & shape lines accordingly
-            ,linetype=isoform.level %>%
-                      ifelse(list(transcript.name), list("solid")) %>%
-                      unlist
+            # group data by sample name & shape lines accordingly
+            ,linetype=sample.name
 
             # end data derived plot parameter definition
             )
@@ -847,43 +843,47 @@ plot.profiles<-
             # end y-axis label parameter definition
             ) %>%
 
-        # adjust color (i.e. sample name) palette/legend
-        + scale_color_brewer(
-
-            # adjust sample name -> color mapping
-            palette=params$profile.plot.brewer.palette
-
-            # adjust color legend label
-            ,name=params$profile.plot.sample.legend.label
-
-            # end color palette/legend parameter definition
-            ) %>%
-
-        # adjust shape (i.e. isoform) legend
-        + scale_shape_discrete(
-
-            # only show isoform legend for isoform-specific profiles
-            guide=isoform.level %>%
-                  ifelse("legend", "none")
-
-            # adjust shape legend label
-            ,name=params$profile.plot.isoform.legend.label
-
-            # end shape legend parameter definition
-            ) %>%
-
-        # adjust linetype (i.e. isoform) legend
+        # adjust linetype (i.e. sample name) legend
         + scale_linetype_discrete(
 
-            # only show isoform legend for isoform-specific profiles
-            guide=isoform.level %>%
-                  ifelse("legend", "none")
-
             # adjust linetype legend label
-            ,name=params$profile.plot.isoform.legend.label
+            name=params$profile.plot.sample.legend.label
 
             # end linetype legend parameter definition
             )
+
+        # use color for isoform-level profiles
+        if(isoform.level)
+
+          # modify profile plot
+          profile.plot %<>%
+
+          # adjust color (i.e. isoform) palette/legend
+          + scale_color_brewer(
+
+              # adjust sample name -> color mapping
+              palette=params$profile.plot.brewer.palette
+
+              # adjust color legend label
+              ,name=params$profile.plot.isoform.legend.label
+
+              # end color palette/legend parameter definition
+              )
+
+        # keep gene-level profiles black & white
+        else
+
+          # modify profile plot
+          profile.plot %<>%
+
+          # adjust color (i.e. isoform) palette/legend
+          + scale_color_grey(
+
+              # hide color legend
+              guide="none"
+
+              # end color palette/legend parameter definition
+              )
 
         # add raw data points if specified
         if(raw.points)
@@ -894,10 +894,22 @@ plot.profiles<-
           # plot raw data as points
           + geom_point(
 
+              # group data by sample name & shape points accordingly
+              aes(shape=sample.name)
+
               # adjust data point size
-              size=params$profile.plot.pointsize
+              ,size=params$profile.plot.pointsize
 
               # end data point parameter definition
+              ) %>%
+
+          # adjust shape (i.e. sample name) legend
+          + scale_shape_discrete(
+
+              # adjust shape legend label
+              name=params$profile.plot.sample.legend.label
+
+              # end shape legend parameter definition
               )
 
         # add raw data lines if specified
@@ -943,7 +955,7 @@ plot.profiles<-
           + geom_smooth(
 
               # pool data across samples & adjust smooth line color
-              color=params$profile.plot.color.smooth
+              linetype=params$profile.plot.linetype.smooth
 
               # adjust smoothing method
               ,method=params$profile.plot.smoothing.method
