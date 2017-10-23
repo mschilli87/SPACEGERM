@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-05-29
+# last update:  2017-10-23
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -30,6 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-10-23: added isoform level input panel parameters / added isoform legend parameter for
+#             profile plot / removed linetype parameters for profile plot (now used for isoforms)
 # 2017-05-29: added sample stretch input panel parameters
 # 2017-05-24: added minimum y-axis minimum parameter
 # 2017-05-23: added minimum peak CPM input panel parameters
@@ -135,6 +137,22 @@ if(!exists("params"))
 
       # placeholder of gene names input panel
       ,gene.names.input.placeholder="enter gene names to plot (space separated)"
+
+
+        #############################
+        # isoform level input panel #
+        #############################
+
+      # label of isoform level input panel
+      ,isoform.level.input.label="Expression level"
+
+      # possible choices for isoform level input panel
+      ,isoform.level.input.choices=c(`gene level estimates`=FALSE
+                                    ,`isoform level estimates`=TRUE
+                                    )
+
+      # default choice for isoform level input panel
+      ,isoform.level.input.default=FALSE
 
 
         ############################
@@ -513,14 +531,8 @@ if(!exists("params"))
       # per-sample data line size of profile plot
       ,profile.plot.linesize.each=1
 
-      # raw data line type of profile plot
-      ,profile.plot.linetype.raw="dashed"
-
       # smooth data line size of profile plot
       ,profile.plot.linesize.pooled=2
-
-      # smooth data linetype of profile plot
-      ,profile.plot.linetype.smooth="solid"
 
 
         ##########
@@ -566,6 +578,9 @@ if(!exists("params"))
 
       # sample legend label of profile plot
       ,profile.plot.sample.legend.label="sample"
+
+      # isoform legend label of profile plot
+      ,profile.plot.isoform.legend.label="transcript"
 
 
     ###########

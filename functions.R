@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-10-20
+# last update:  2017-10-23
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2017-10-23: added support for isoform-level profiles (using shape & linetype)
 # 2017-10-20: added support for filtering by expression level type (gene/isoform profiles?) to
 #             account for inclusion of isoform-specific CPM data (not used by now)
 # 2017-05-29: added sample stretches input panel generation & input extraction functions / added
@@ -733,6 +734,9 @@ plot.profiles<-
     # use default plot columns count by default
     ,ncols=params$ncols.plot.input.default
 
+    # plot gene level estimates by default
+    ,isoform.level=F
+
     # end profile plot function parameter definition
     )
 
@@ -760,6 +764,16 @@ plot.profiles<-
 
             # group data by sample name & color points/lines accordingly
             ,color=sample.name
+
+            # group data by transcript name & shape points accordingly
+            ,shape=isoform.level %>%
+                   ifelse(list(transcript.name), list("dot")) %>%
+                   unlist
+
+            # group data by transcript name & shape lines accordingly
+            ,linetype=isoform.level %>%
+                      ifelse(list(transcript.name), list("solid")) %>%
+                      unlist
 
             # end data derived plot parameter definition
             )
@@ -843,6 +857,32 @@ plot.profiles<-
             ,name=params$profile.plot.sample.legend.label
 
             # end color palette/legend parameter definition
+            ) %>%
+
+        # adjust shape (i.e. isoform) legend
+        + scale_shape_discrete(
+
+            # only show isoform legend for isoform-specific profiles
+            guide=isoform.level %>%
+                  ifelse("legend", "none")
+
+            # adjust shape legend label
+            ,name=params$profile.plot.isoform.legend.label
+
+            # end shape legend parameter definition
+            ) %>%
+
+        # adjust linetype (i.e. isoform) legend
+        + scale_linetype_discrete(
+
+            # only show isoform legend for isoform-specific profiles
+            guide=isoform.level %>%
+                  ifelse("legend", "none")
+
+            # adjust linetype legend label
+            ,name=params$profile.plot.isoform.legend.label
+
+            # end linetype legend parameter definition
             )
 
         # add raw data points if specified
@@ -869,11 +909,8 @@ plot.profiles<-
           # plot per-slice data as lines
           + geom_line(
 
-              # adjust data line style
-              linetype=params$profile.plot.linetype.raw
-
               # adjust data line size
-              ,size=params$profile.plot.linesize.each
+              size=params$profile.plot.linesize.each
 
               # end data line parameter definition
               )
@@ -889,9 +926,6 @@ plot.profiles<-
 
               # adjust smoothing method
               ,method=params$profile.plot.smoothing.method
-
-              # adjust smooth line style
-              ,linetype=params$profile.plot.linetype.smooth
 
               # adjust smooth line size
               ,size=params$profile.plot.linesize.each
@@ -913,9 +947,6 @@ plot.profiles<-
 
               # adjust smoothing method
               ,method=params$profile.plot.smoothing.method
-
-              # adjust smooth line style
-              ,linetype=params$profile.plot.linetype.smooth
 
               # adjust smooth line size
               ,size=params$profile.plot.linesize.pooled
@@ -2414,6 +2445,9 @@ generate.profile.plot<-
 
         # use plot columns count specified
         ,ncols=ncols.plot
+
+        # plot isoform-specific profiles if specified
+        ,isoform.level=per.isoform
 
         # end profile plotting
         )
