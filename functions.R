@@ -1,5 +1,5 @@
 # tomo-seq shiny app function definition script
-# Copyright (C) 2017  Marcel Schilling
+# Copyright (C) 2017-2018  Marcel Schilling
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-10-23
+# last update:  2018-01-05
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,9 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-01-05: switched from identifying transcripts by name to isoform number (for color assignment)
+#             (identied as part after the last dot (".") in the transcript name; this enables
+#             re-using the same color for different genes)
 # 2017-10-23: switched from encoding samples by color and isoforms by shape/linetype to the opposite
 #             added support for isoform-level profiles (using shape & linetype)
 # 2017-10-20: added support for filtering by expression level type (gene/isoform profiles?) to
@@ -765,7 +768,10 @@ plot.profiles<-
 
             # group data by isoform & color points/lines accordingly
             ,color=isoform.level %>%
-                   ifelse(list(transcript.name), list("black")) %>%
+                   ifelse(list(transcript.name %>%
+                               sub(".*[.]", "isoform ", .)
+                              ),
+                          list("black")) %>%
                    unlist
 
             # group data by sample name & shape lines accordingly
