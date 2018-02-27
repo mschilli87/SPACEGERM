@@ -1,5 +1,5 @@
 # tomo-seq shiny app parameter definition script
-# Copyright (C) 2017  Marcel Schilling
+# Copyright (C) 2017-2018  Marcel Schilling
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-10-23
+# last update:  2018-02-27
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-02-27: added smooth fit span and number of points parameters
 # 2017-10-23: replaced smooth fit color parameter by linetype parameter (color now used for
 #             isoforms)
 #             added isoform level input panel parameters / added isoform legend parameter for
@@ -504,6 +505,12 @@ if(!exists("params"))
 
       # data smoothing method of profile plot
       ,profile.plot.smoothing.method="loess"
+
+      # data smoothing span of profile plot
+      ,profile.plot.smoothing.span=.75
+
+      # number of data smoothing points of profile plot
+      ,profile.plot.smoothing.n=80
 
 
       ##############
