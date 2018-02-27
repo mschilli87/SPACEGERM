@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-02-27: added smooth fit span and number of points parameters
+# 2018-02-27: adjusted smooth fit parameters according to Filippos
+#             added smooth fit span and number of points parameters
 # 2017-10-23: replaced smooth fit color parameter by linetype parameter (color now used for
 #             isoforms)
 #             added isoform level input panel parameters / added isoform legend parameter for
@@ -507,10 +508,10 @@ if(!exists("params"))
       ,profile.plot.smoothing.method="loess"
 
       # data smoothing span of profile plot
-      ,profile.plot.smoothing.span=.75
+      ,profile.plot.smoothing.span=.2
 
       # number of data smoothing points of profile plot
-      ,profile.plot.smoothing.n=80
+      ,profile.plot.smoothing.n=20
 
 
       ##############
