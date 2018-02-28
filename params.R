@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-02-27
+# last update:  2018-02-28
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-02-28: increased smooth fit span as agreed with Filippos
 # 2018-02-27: adjusted smooth fit parameters according to Filippos
 #             added smooth fit span and number of points parameters
 # 2017-10-23: replaced smooth fit color parameter by linetype parameter (color now used for
@@ -508,7 +509,7 @@ if(!exists("params"))
       ,profile.plot.smoothing.method="loess"
 
       # data smoothing span of profile plot
-      ,profile.plot.smoothing.span=.2
+      ,profile.plot.smoothing.span=.35
 
       # number of data smoothing points of profile plot
       ,profile.plot.smoothing.n=20
