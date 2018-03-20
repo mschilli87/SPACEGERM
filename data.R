@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-03-20: added gonad model loading
+# 2018-03-20: added slice width calculation
+#             added gonad model loading
 # 2017-04-18: fixed changelog comments (broken since 2017-03-29/baea8e9)
 #             added gene type extraction
 #             fixed copy/paste-error in comment
@@ -82,6 +83,14 @@ if(!exists("input.data"))
     input.data <- list(tomoseq.data = readRDS(params$tomoseq.data.file),
                        gene.profiles = readRDS(params$gene.profiles.file),
                        gonad.model = readRDS(params$gonad.model.file))
+
+    # get slice width [% gonad arm]
+    input.data$tomoseq.data %<>%
+        group_by(sample.name, gene, transcript.name) %>%
+        mutate(n.slices = n()) %>%
+        ungroup %>%
+        mutate(width.percent = 100 / n.slices) %>%
+        select(-n.slices)
 
     # get sample names
     input.data$sample.names<-

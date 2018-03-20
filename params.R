@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-03-20: added gonad arm model input file & plot options
+# 2018-03-20: added slice width bar plot option
+#             added gonad arm model input file & plot options
 # 2018-02-28: increased smooth fit span as agreed with Filippos
 # 2018-02-27: adjusted smooth fit parameters according to Filippos
 #             added smooth fit span and number of points parameters
@@ -194,6 +195,7 @@ if(!exists("params"))
           `fix x-axis limits`="fix.xlim",
           `use single y-scale for all sub-plots`="single.y.scale",
           `manually set y-axis limits`="set.ylim",
+          `show slice width bars`="show.slice.width",
           `show gonad arm model (if single column & fixed x-axis limits)`=
             "show.model"),
 

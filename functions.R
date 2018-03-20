@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-03-20: added support for gonad arm model plot
+# 2018-03-20: added support for slice width bars
+#             added support for gonad arm model plot
 # 2018-02-27: added usage of smooth fit span and number of points parameters
 # 2018-01-05: switched from identifying transcripts by name to isoform number (for color assignment)
 #             (identied as part after the last dot (".") in the transcript name; this enables
@@ -815,6 +816,8 @@ plot.profiles<-
     # plot gene level estimates by default
     ,isoform.level=F,
 
+    show.slice.width = TRUE,
+
     show.model = TRUE)
 
     # begin profile plot function definition
@@ -825,36 +828,19 @@ plot.profiles<-
 
         # take plot data
         plot.data %>%
+        mutate(percent.center = percent.center * stretch + shift,
+               percent.start = percent.center - (width.percent / 2 * stretch),
+               percent.end = percent.center + (width.percent / 2 * stretch),
+               tx_color = isoform.level %>%
+                          ifelse(list(transcript.name %>%
+                                      sub(".*[.]", "isoform ", .)
+                                     ),
+                                 list("black")) %>%
+                          unlist) %>%
 
         # generate plot object
-        ggplot(
-
-          # bind data variables to plot parameters
-          aes(
-
-            # position points on the x-axis according to the (shifted & stretched) center of the
-            # corresponding slice (percent distal-to-proximal)
-            x=percent.center*stretch+shift
-
-            # on the y-axis, plot the gene abundance (counts per million reads mapped)
-            ,y=cpm
-
-            # group data by isoform & color points/lines accordingly
-            ,color=isoform.level %>%
-                   ifelse(list(transcript.name %>%
-                               sub(".*[.]", "isoform ", .)
-                              ),
-                          list("black")) %>%
-                   unlist
-
-            # group data by sample name & shape lines accordingly
-            ,linetype=sample.name
-
-            # end data derived plot parameter definition
-            )
-
-          # end general plot parameter definition
-          ) %>%
+        ggplot(aes(x = percent.center, y = cpm, color = tx_color,
+                   linetype = sample.name)) %>%
 
         # split plot into panels
         + facet_wrap(
@@ -1116,6 +1102,10 @@ plot.profiles<-
 
           # fix x-axis limits
           + xlim(params$profile.plot.xlim)
+
+        if(show.slice.width)
+          profile.plot %<>%
+          + geom_errorbarh(aes(xmin = percent.start, xmax = percent.end))
 
         if(show.model)
           profile.plot %<>%
@@ -2555,6 +2545,8 @@ generate.profile.plot<-
 
         # plot isoform-specific profiles if specified
         ,isoform.level=per.isoform,
+
+        show.slice.width = "show.slice.width" %in% plot.options,
 
         show.model =
           ("show.model" %in% plot.options) & ("fix.xlim" %in% plot.options) &
