@@ -1,5 +1,5 @@
 # tomo-seq shiny app .gitignore
-# Copyright (C) 2017  Marcel Schilling
+# Copyright (C) 2017-2018  Marcel Schilling
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -20,7 +20,7 @@
 
 # file:         .gitignore
 # created:      2017-02-23
-# last update:  2017-03-29
+# last update:  2018-03-20
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # purpose:      untrack input files for tomo-seq shiny app
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-03-20: added Rds file providing gonad arm model
 # 2017-03-29: added Rds file providing gene profiles
 # 2017-02-24: added license comment
 # 2017-02-23: initial version (Rds file providing tomo-seq data)
@@ -44,3 +45,6 @@
 
 # Rds file providing gene profiles
 /gene.profiles.Rds
+
+# Rds file providing gonad arm model
+/gonad.model.Rds

@@ -1,5 +1,5 @@
 # tomo-seq shiny app data loading script
-# Copyright (C) 2017  Marcel Schilling
+# Copyright (C) 2017-2018  Marcel Schilling
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -21,7 +21,7 @@
 # file:         data.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2017-04-18
+# last update:  2018-03-20
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      load input data for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-03-20: added gonad model loading
 # 2017-04-18: fixed changelog comments (broken since 2017-03-29/baea8e9)
 #             added gene type extraction
 #             fixed copy/paste-error in comment
@@ -78,19 +79,9 @@ if(!exists("input.data"))
   {
 
     # load input data
-    input.data<-
-
-      # store input data in a named list
-      list(
-
-        # load tomo-seq data from file
-        tomoseq.data=readRDS(params$tomoseq.data.file)
-
-        # load gene profile from file
-        ,gene.profiles=readRDS(params$gene.profiles.file)
-
-        # load input data list definition
-        )
+    input.data <- list(tomoseq.data = readRDS(params$tomoseq.data.file),
+                       gene.profiles = readRDS(params$gene.profiles.file),
+                       gonad.model = readRDS(params$gonad.model.file))
 
     # get sample names
     input.data$sample.names<-

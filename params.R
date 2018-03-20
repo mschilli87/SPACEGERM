@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-02-28
+# last update:  2018-03-20
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-03-20: added gonad arm model input file & plot options
 # 2018-02-28: increased smooth fit span as agreed with Filippos
 # 2018-02-27: adjusted smooth fit parameters according to Filippos
 #             added smooth fit span and number of points parameters
@@ -183,23 +184,23 @@ if(!exists("params"))
       ,plot.options.input.label="Plot options"
 
       # plot options
-      ,plot.options=c(`show raw data points`="raw.points"
-                     ,`show raw data lines`="raw.lines"
-                     ,`show per-sample smooth fits (LOESS)`="smooth.each"
-                     ,`show across-sample smooth fit (LOESS)`="smooth.pooled"
-                     ,`scale y-axis logarithmically (log2)`="logscale"
-                     ,`fix x-axis limits`="fix.xlim"
-                     ,`use single y-scale for all sub-plots`="single.y.scale"
-                     ,`manually set y-axis limits`="set.ylim"
-                     )
+      ,plot.options =
+
+        c(`show raw data points`="raw.points",
+          `show raw data lines`="raw.lines",
+          `show per-sample smooth fits (LOESS)`="smooth.each",
+          `show across-sample smooth fit (LOESS)`="smooth.pooled",
+          `scale y-axis logarithmically (log2)`="logscale",
+          `fix x-axis limits`="fix.xlim",
+          `use single y-scale for all sub-plots`="single.y.scale",
+          `manually set y-axis limits`="set.ylim",
+          `show gonad arm model (if single column & fixed x-axis limits)`=
+            "show.model"),
 
       # default selection of plot option input panel
-      ,plot.options.input.default=c("raw.points"
-                                   ,"smooth.each"
-                                   ,"smooth.pooled"
-                                   ,"logscale"
-                                   ,"single.y.scale"
-                                   )
+       plot.options.input.default =
+         c("raw.points", "smooth.each", "smooth.pooled", "logscale",
+           "single.y.scale", "show.model")
 
 
         ##############################
@@ -475,7 +476,10 @@ if(!exists("params"))
       ,tomoseq.data.file="tomoseq.data.Rds"
 
       # (relative) file path of Rds file with gene profiles
-      ,gene.profiles.file="gene.profiles.Rds"
+      ,gene.profiles.file="gene.profiles.Rds",
+
+      # (relative) file path of Rds file with gene profiles
+      gonad.model.file = "gonad.model.Rds"
 
 
   ################

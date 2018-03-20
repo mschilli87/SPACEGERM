@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2018-02-27
+# last update:  2018-03-20
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-03-20: added support for gonad arm model plot
 # 2018-02-27: added usage of smooth fit span and number of points parameters
 # 2018-01-05: switched from identifying transcripts by name to isoform number (for color assignment)
 #             (identied as part after the last dot (".") in the transcript name; this enables
@@ -108,6 +109,12 @@ require(tibble)
 # get filter
 require(dplyr)
 
+# get geom_circle
+require(ggforce)
+
+# get plot_grid
+require(cowplot)
+
 # get acast
 require(reshape2)
 
@@ -121,6 +128,9 @@ require(xlsx)
 ##############
 # parameters #
 ##############
+
+# load input data
+source("data.R")
 
 # load parameter definitions
 source("params.R")
@@ -703,6 +713,69 @@ add.stretch.column<-
     # end stretch column addition function definition
     }
 
+# generate gonad arm model plot
+plot.model <- function(model.data)
+  model.data$fit.radii %>%
+  ggplot(aes(dist.to.dtc.um * 100 / model.data$len.gonad.arm.um,
+             radius.gonad.um * 100 / model.data$len.gonad.arm.um)) %>%
+  + geom_circle(data = model.data$germ.layers %>%
+                       mutate(center.dist.um =
+                                (start.dist.um + end.dist.um) / 2,
+                              n.circles =
+                                as.integer(diam.gonad.um /
+                                             model.data$diam.germ.cell.um)) %>%
+                       group_by(germ.layer) %>%
+                       do(data_frame(center.dist.um = .$center.dist.um,
+                                     n.circles = .$n.circles,
+                                     circle = 1:.$n.circles)) %>%
+                       ungroup %>%
+                       mutate(y.center = (circle -.5 - n.circles / 2) *
+                                           model.data$diam.germ.cell.um,
+                              radius.um = model.data$diam.germ.cell.um / 2),
+                aes(x0 = center.dist.um * 100 / model.data$len.gonad.arm.um,
+                    y0 = y.center * 100 / model.data$len.gonad.arm.um,
+                    r = radius.um * 100 / model.data$len.gonad.arm.um),
+                inherit.aes = FALSE, color = "grey") %>%
+  + geom_circle(data = model.data$oocytes %>%
+                       mutate(center.dist.um =
+                                (start.dist.um + end.dist.um) / 2,
+                              radius.um = diam.um / 2),
+                aes(x0 = center.dist.um * 100 / model.data$len.gonad.arm.um,
+                    y0 = 0, r = radius.um * 100 / model.data$len.gonad.arm.um),
+                inherit.aes = FALSE, color = "grey") %>%
+  + geom_segment(data = model.data$zones %>%
+                        filter(end.dist.um != model.data$len.gonad.arm.um),
+                 aes(x = end.dist.um * 100 / model.data$len.gonad.arm.um,
+                     xend = end.dist.um * 100 / model.data$len.gonad.arm.um,
+                     y = -2500 / model.data$len.gonad.arm.um,
+                     yend = 2500 / model.data$len.gonad.arm.um),
+                 linetype = "dotted") %>%
+  + geom_line() %>%
+  + geom_line(data=model.data$fit.radii %>%
+                     mutate(radius.gonad.um = -radius.gonad.um)) %>%
+  + geom_segment(
+      data = model.data$fit.radii[c(1, nrow(model.data$fit.radii)),],
+      aes(xend = dist.to.dtc.um * 100 / model.data$len.gonad.arm.um,
+          yend = -radius.gonad.um * 100 / model.data$len.gonad.arm.um)) %>%
+  + annotate("segment",
+             x = (model.data$len.gonad.arm.um - 60) * 100 /
+                   model.data$len.gonad.arm.um,
+             xend = (model.data$len.gonad.arm.um - 10) * 100 /
+                      model.data$len.gonad.arm.um,
+             y = -3000 / model.data$len.gonad.arm.um,
+             yend = -3000 / model.data$len.gonad.arm.um, size = 1) %>%
+  + annotate("text",
+             x = (model.data$len.gonad.arm.um - 35) * 100 /
+                   model.data$len.gonad.arm.um,
+             y = -3500 / model.data$len.gonad.arm.um, vjust = 1,
+             label = "50 μm") %>%
+  + expand_limits(y = -5000 / model.data$len.gonad.arm.um) %>%
+  + coord_fixed() %>%
+  + theme_void()
+
+# globally define gonad arm model plot
+model.plot <- plot.model(input.data$gonad.model)
+
 # plot gene profiles
 plot.profiles<-
 
@@ -740,10 +813,9 @@ plot.profiles<-
     ,ncols=params$ncols.plot.input.default
 
     # plot gene level estimates by default
-    ,isoform.level=F
+    ,isoform.level=F,
 
-    # end profile plot function parameter definition
-    )
+    show.model = TRUE)
 
     # begin profile plot function definition
     {
@@ -1044,6 +1116,10 @@ plot.profiles<-
 
           # fix x-axis limits
           + xlim(params$profile.plot.xlim)
+
+        if(show.model)
+          profile.plot %<>%
+            plot_grid(model.plot, ncol = 1, align = "v", axis = "lr")
 
         # return profile plot
         profile.plot
@@ -2478,7 +2554,11 @@ generate.profile.plot<-
         ,ncols=ncols.plot
 
         # plot isoform-specific profiles if specified
-        ,isoform.level=per.isoform
+        ,isoform.level=per.isoform,
+
+        show.model =
+          ("show.model" %in% plot.options) & ("fix.xlim" %in% plot.options) &
+            ((ncols.plot == 1) | (length(parse.gene.names(gene.names)) == 1))
 
         # end profile plotting
         )
