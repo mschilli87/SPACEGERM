@@ -1,5 +1,5 @@
 # tomo-seq shiny app server script
-# Copyright (C) 2017  Marcel Schilling
+# Copyright (C) 2017-2018  Marcel Schilling
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-10-23
+# last update:  2018-03-21
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-03-21: added user specified abundance unit
 # 2017-10-23: added user specified expression level (gene/isoform profiles?)
 # 2017-10-17: replaced renderPlotly by (new) renderIheatmap
 # 2017-05-29: added dynamic sample stretch input panel assignment & corresponding user input support
@@ -59,6 +60,7 @@
 #             replaced gene names output assignment by profile plot output assignment
 # 2017-02-21: added gene names output assignment
 #             initial version (empty template)
+
 
 #############
 # libraries #
@@ -218,13 +220,9 @@ function(
             get.sample.stretches(input)
 
           # set expression level specified by the user
-          ,per.isoform=input$isoform.level
+          ,per.isoform=input$isoform.level,
 
-          # end profile plot generation
-          )
-
-        # end profile plot rendering
-        )
+           unit = input$abundance.unit))
 
     # assign genotype input panel output
     output$genotype.input<-

@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2018-03-20
+# last update:  2018-03-21
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-03-21: added support for CPM / cell abundance unit
 # 2018-03-20: added support for slice width bars
 #             added support for gonad arm model plot
 # 2018-02-27: added usage of smooth fit span and number of points parameters
@@ -777,6 +778,29 @@ plot.model <- function(model.data)
 # globally define gonad arm model plot
 model.plot <- plot.model(input.data$gonad.model)
 
+dist2n.cells <- function(end.dist.um, start.dist.um = 0,
+                         cell.data = input.data$gonad.model$cells){
+
+  # keep only relevant cell data
+  cell.data %<>%
+    filter(center.dist.um + radius.um >= start.dist.um &
+           center.dist.um - radius.um <= end.dist.um)
+
+  # catch zero-cells case
+  if(!nrow(cell.data)) return(0)
+
+  # weight cells by contained fraction of their total volume
+  cell.data %>%
+    mutate(width.um = pmin(center.dist.um + radius.um, end.dist.um) -
+                      pmax(center.dist.um - radius.um, start.dist.um),
+           vol.um3 = (pi * width.um^2) / 3 * (3 * radius.um - width.um),
+           fraction = vol.um3 / (4 / 3 * pi * radius.um^3)) %$%
+    sum(n.cells * fraction)
+}
+
+unit2col <- function(unit.name)
+  ifelse(unit.name == "CPM / cell", "cpm.per.cell", "cpm")
+
 # plot gene profiles
 plot.profiles<-
 
@@ -818,6 +842,8 @@ plot.profiles<-
 
     show.slice.width = TRUE,
 
+    abundance.unit = params$abundance.unit.default,
+
     show.model = TRUE)
 
     # begin profile plot function definition
@@ -831,16 +857,22 @@ plot.profiles<-
         mutate(percent.center = percent.center * stretch + shift,
                percent.start = percent.center - (width.percent / 2 * stretch),
                percent.end = percent.center + (width.percent / 2 * stretch),
+               dist.start.um = percent.start / 100 *
+                                 input.data$gonad.model$len.gonad.arm.um,
+               dist.end.um = percent.end / 100 *
+                               input.data$gonad.model$len.gonad.arm.um,
                tx_color = isoform.level %>%
                           ifelse(list(transcript.name %>%
                                       sub(".*[.]", "isoform ", .)
                                      ),
                                  list("black")) %>%
                           unlist) %>%
-
-        # generate plot object
-        ggplot(aes(x = percent.center, y = cpm, color = tx_color,
-                   linetype = sample.name)) %>%
+        group_by(dist.start.um, dist.end.um) %>%
+        mutate(n.cells = dist2n.cells(dist.end.um[1], dist.start.um[1])) %>%
+        ungroup %>%
+        mutate(cpm.per.cell = cpm / n.cells) %>%
+        ggplot(aes_string(x = "percent.center", y = unit2col(abundance.unit),
+                          color = "tx_color", linetype = "sample.name")) %>%
 
         # split plot into panels
         + facet_wrap(
@@ -898,15 +930,10 @@ plot.profiles<-
 
             # end x-axis label parameter definition
             ) %>%
-
-        # adjust y-axis labelling
-        + ylab(
-
-            # adjust y-axis label
-            label=params$profile.plot.ylab
-
-            # end y-axis label parameter definition
-            ) %>%
+        + ylab(label = params$profile.plot.ylab %>%
+                       paste(paste0("[", abundance.unit, "]"),
+                             sep = ifelse((nchar(abundance.unit) > 4) &
+                                            show.model, "\n", " "))) %>%
 
         # adjust linetype (i.e. sample name) legend
         + scale_linetype_discrete(
@@ -949,6 +976,10 @@ plot.profiles<-
 
               # end color palette/legend parameter definition
               )
+
+        if(show.slice.width)
+          profile.plot %<>%
+          + geom_errorbarh(aes(xmin = percent.start, xmax = percent.end))
 
         # add raw data points if specified
         if(raw.points)
@@ -1102,10 +1133,6 @@ plot.profiles<-
 
           # fix x-axis limits
           + xlim(params$profile.plot.xlim)
-
-        if(show.slice.width)
-          profile.plot %<>%
-          + geom_errorbarh(aes(xmin = percent.start, xmax = percent.end))
 
         if(show.model)
           profile.plot %<>%
@@ -2412,7 +2439,9 @@ generate.profile.plot<-
     ,per.isoform=
 
       # by default, plot gene level profiles
-      FALSE
+      FALSE,
+
+    unit = params$abundance.unit.default
 
     # end profile plot generation parameter definition
     )
@@ -2545,6 +2574,8 @@ generate.profile.plot<-
 
         # plot isoform-specific profiles if specified
         ,isoform.level=per.isoform,
+
+        abundance.unit = unit,
 
         show.slice.width = "show.slice.width" %in% plot.options,
 

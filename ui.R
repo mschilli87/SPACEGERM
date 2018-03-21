@@ -1,5 +1,5 @@
 # tomo-seq shiny app user interface script
-# Copyright (C) 2017  Marcel Schilling
+# Copyright (C) 2017-2018  Marcel Schilling
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -21,7 +21,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2017-10-23
+# last update:  2018-03-21
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define front end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-03-21: added abundance unit input panel
 # 2017-10-23: added isoform level input panel
 # 2017-10-17: replaced plotlyOutput by (new) iheatmaprOutput
 # 2017-05-29: added dynamically generated sample stretches input panel
@@ -146,7 +147,12 @@ fluidPage(
       ,selected=params$isoform.level.input.default
 
       # end isoform level input panel definition
-      )
+      ),
+
+      selectInput(inputId="abundance.unit",
+                  label=h3(params$abundance.unit.input.label),
+                  choices=params$abundance.unit.input.choices,
+                  selected=params$abundance.unit.input.default)
 
     # add sample names input panel
     ,checkboxGroupInput(

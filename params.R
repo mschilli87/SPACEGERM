@@ -159,7 +159,21 @@ if(!exists("params"))
                                     )
 
       # default choice for isoform level input panel
-      ,isoform.level.input.default=FALSE
+      ,isoform.level.input.default=FALSE,
+
+
+        ##############################
+        # abundance unit input panel #
+        ##############################
+
+       # label of abundance unit input panel
+       abundance.unit.input.label = "Abundance unit",
+
+       # choices for abundance unit input panel
+       abundance.unit.input.choices = c("CPM", "CPM / cell"),
+
+       # default selection of abundance unit input panel
+       abundance.unit.input.default = "CPM"
 
 
         ############################
@@ -591,7 +605,7 @@ if(!exists("params"))
       ,profile.plot.xlab="distal-to-proximal position [%]"
 
       # y-axis label of profile plot
-      ,profile.plot.ylab="gene abundance [CPM]"
+      ,profile.plot.ylab="gene abundance"
 
       # sample legend label of profile plot
       ,profile.plot.sample.legend.label="sample"
