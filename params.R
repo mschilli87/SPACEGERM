@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-03-20
+# last update:  2018-04-03
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-03: added smoothing point count input panel parameters
 # 2018-03-20: added slice width bar plot option
 #             added gonad arm model input file & plot options
 # 2018-02-28: increased smooth fit span as agreed with Filippos
@@ -255,15 +256,25 @@ if(!exists("params"))
       ,ncols.plot.input.min=1
 
       # default value of plot columns count input panel
-      ,ncols.plot.input.default=2
+      ,ncols.plot.input.default = 2,
 
+
+        #####################################
+        # smoothing point count input panel #
+        #####################################
+
+      smoothing.n.input.label = "# points to impute for smoothing",
+
+      smoothing.n.input.min = 1,
+
+      smoothing.n.input.default = 20,
 
         #############################
         # sample shifts input panel #
         #############################
 
       # label of sample shift input panel
-      ,sample.shifts.input.label="Sample shifts"
+      sample.shifts.input.label = "Sample shifts"
 
       # minimum value of sample shift input panel
       ,sample.shifts.input.min=-50
@@ -530,9 +541,6 @@ if(!exists("params"))
 
       # data smoothing span of profile plot
       ,profile.plot.smoothing.span=.35
-
-      # number of data smoothing points of profile plot
-      ,profile.plot.smoothing.n=20
 
 
       ##############

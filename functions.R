@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2018-03-21
+# last update:  2018-04-03
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-03: parameterized number of points to impute for smoothing
 # 2018-03-21: added support for CPM / cell abundance unit
 # 2018-03-20: added support for slice width bars
 #             added support for gonad arm model plot
@@ -843,7 +844,7 @@ plot.profiles<-
     show.slice.width = TRUE,
 
     abundance.unit = params$abundance.unit.default,
-
+    n.points.smooth = params$smoothing.n.input.default,
     show.model = TRUE)
 
     # begin profile plot function definition
@@ -1036,13 +1037,9 @@ plot.profiles<-
               ,method=params$profile.plot.smoothing.method
 
               # adjust smoothing span
-              ,span=params$profile.plot.smoothing.span
-
-              # adjust number of smoothing points
-              ,n=params$profile.plot.smoothing.n
-
-              # adjust smooth line size
-              ,size=params$profile.plot.linesize.each
+              ,span = params$profile.plot.smoothing.span,
+              n = n.points.smooth,
+              size = params$profile.plot.linesize.each
 
               # end smooth line parameter definition
               )
@@ -1063,13 +1060,9 @@ plot.profiles<-
               ,method=params$profile.plot.smoothing.method
 
               # adjust smoothing span
-              ,span=params$profile.plot.smoothing.span
-
-              # adjust number of smoothing points
-              ,n=params$profile.plot.smoothing.n
-
-              # adjust smooth line size
-              ,size=params$profile.plot.linesize.pooled
+              ,span = params$profile.plot.smoothing.span,
+              n = n.points.smooth,
+              size = params$profile.plot.linesize.pooled
 
               # end smooth line parameter definition
               )
@@ -2441,10 +2434,8 @@ generate.profile.plot<-
       # by default, plot gene level profiles
       FALSE,
 
-    unit = params$abundance.unit.default
-
-    # end profile plot generation parameter definition
-    )
+    unit = params$abundance.unit.default,
+    smoothing.n = params$smoothing.n.input.default)
 
     # begin profile plot generation function definition
     {
@@ -2576,6 +2567,8 @@ generate.profile.plot<-
         ,isoform.level=per.isoform,
 
         abundance.unit = unit,
+
+        n.points.smooth = smoothing.n,
 
         show.slice.width = "show.slice.width" %in% plot.options,
 

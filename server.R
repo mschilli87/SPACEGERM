@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-03-21
+# last update:  2018-04-03
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-03: added user specified smoothing point count
 # 2018-03-21: added user specified abundance unit
 # 2017-10-23: added user specified expression level (gene/isoform profiles?)
 # 2017-10-17: replaced renderPlotly by (new) renderIheatmap
@@ -222,7 +223,8 @@ function(
           # set expression level specified by the user
           ,per.isoform=input$isoform.level,
 
-           unit = input$abundance.unit))
+           unit = input$abundance.unit,
+           smoothing.n = input$smoothing.n))
 
     # assign genotype input panel output
     output$genotype.input<-

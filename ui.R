@@ -21,7 +21,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-03-21
+# last update:  2018-04-03
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define front end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-03: added smoothing point count input panel parameters
 # 2018-03-21: added abundance unit input panel
 # 2017-10-23: added isoform level input panel
 # 2017-10-17: replaced plotlyOutput by (new) iheatmaprOutput
@@ -233,10 +234,15 @@ fluidPage(
       ,value=params$ncols.plot.input.default
 
       # end plot columns count input panel definition
-      )
+      ),
+
+    numericInput(inputId = "smoothing.n",
+                 label = h3(params$smoothing.n.input.label),
+                 min = params$smoothing.n.input.min,
+                 value = params$smoothing.n.input.default),
 
     # label sample shifts input panel
-    ,params$sample.shifts.input.label %>%
+    params$sample.shifts.input.label %>%
 
         # make label 3rd level header
         h3
