@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-03: added user specified smoothing point count
+# 2018-04-03: added user specified smoothing span
+#             added user specified smoothing point count
 # 2018-03-21: added user specified abundance unit
 # 2017-10-23: added user specified expression level (gene/isoform profiles?)
 # 2017-10-17: replaced renderPlotly by (new) renderIheatmap
@@ -224,7 +225,8 @@ function(
           ,per.isoform=input$isoform.level,
 
            unit = input$abundance.unit,
-           smoothing.n = input$smoothing.n))
+           smoothing.n = input$smoothing.n,
+           smoothing.span = input$smoothing.span))
 
     # assign genotype input panel output
     output$genotype.input<-

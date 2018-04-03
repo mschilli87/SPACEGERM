@@ -31,6 +31,7 @@
 ######################################
 
 # 2018-04-03: added smoothing point count input panel parameters
+#             added smoothing span input panel parameters
 # 2018-03-21: added abundance unit input panel
 # 2017-10-23: added isoform level input panel
 # 2017-10-17: replaced plotlyOutput by (new) iheatmaprOutput
@@ -240,6 +241,11 @@ fluidPage(
                  label = h3(params$smoothing.n.input.label),
                  min = params$smoothing.n.input.min,
                  value = params$smoothing.n.input.default),
+    numericInput(inputId = "smoothing.span",
+                 label = h3(params$smoothing.span.input.label),
+                 min = params$smoothing.span.input.min,
+                 max = params$smoothing.span.input.max,
+                 value = params$smoothing.span.input.default),
 
     # label sample shifts input panel
     params$sample.shifts.input.label %>%

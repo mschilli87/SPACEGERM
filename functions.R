@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-03: parameterized number of points to impute for smoothing
+# 2018-04-03: parameterized span to use for smoothing
+#             parameterized number of points to impute for smoothing
 # 2018-03-21: added support for CPM / cell abundance unit
 # 2018-03-20: added support for slice width bars
 #             added support for gonad arm model plot
@@ -845,6 +846,7 @@ plot.profiles<-
 
     abundance.unit = params$abundance.unit.default,
     n.points.smooth = params$smoothing.n.input.default,
+    span.smooth = params$smoothing.span.input.default,
     show.model = TRUE)
 
     # begin profile plot function definition
@@ -1034,10 +1036,9 @@ plot.profiles<-
           + geom_smooth(
 
               # adjust smoothing method
-              ,method=params$profile.plot.smoothing.method
+              ,method = params$profile.plot.smoothing.method,
 
-              # adjust smoothing span
-              ,span = params$profile.plot.smoothing.span,
+              span = span.smooth,
               n = n.points.smooth,
               size = params$profile.plot.linesize.each
 
@@ -1057,10 +1058,9 @@ plot.profiles<-
               linetype=params$profile.plot.linetype.smooth
 
               # adjust smoothing method
-              ,method=params$profile.plot.smoothing.method
+              ,method=params$profile.plot.smoothing.method,
 
-              # adjust smoothing span
-              ,span = params$profile.plot.smoothing.span,
+              span = span.smooth,
               n = n.points.smooth,
               size = params$profile.plot.linesize.pooled
 
@@ -2435,7 +2435,8 @@ generate.profile.plot<-
       FALSE,
 
     unit = params$abundance.unit.default,
-    smoothing.n = params$smoothing.n.input.default)
+    smoothing.n = params$smoothing.n.input.default,
+    smoothing.span = params$smoothing.span.input.default)
 
     # begin profile plot generation function definition
     {
@@ -2567,9 +2568,8 @@ generate.profile.plot<-
         ,isoform.level=per.isoform,
 
         abundance.unit = unit,
-
         n.points.smooth = smoothing.n,
-
+        span.smooth = smoothing.span,
         show.slice.width = "show.slice.width" %in% plot.options,
 
         show.model =

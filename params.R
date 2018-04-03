@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-03: added smoothing point count input panel parameters
+# 2018-04-03: added smoothing span input panel parameters
+#             added smoothing point count input panel parameters
 # 2018-03-20: added slice width bar plot option
 #             added gonad arm model input file & plot options
 # 2018-02-28: increased smooth fit span as agreed with Filippos
@@ -268,6 +269,17 @@ if(!exists("params"))
       smoothing.n.input.min = 1,
 
       smoothing.n.input.default = 20,
+
+
+        ##############################
+        # smoothing span input panel #
+        ##############################
+
+      smoothing.span.input.label = "Span to use for smoothing",
+      smoothing.span.input.min = 0,
+      smoothing.span.input.max = 1,
+      smoothing.span.input.default = .35,
+
 
         #############################
         # sample shifts input panel #
@@ -538,9 +550,6 @@ if(!exists("params"))
 
       # data smoothing method of profile plot
       ,profile.plot.smoothing.method="loess"
-
-      # data smoothing span of profile plot
-      ,profile.plot.smoothing.span=.35
 
 
       ##############
