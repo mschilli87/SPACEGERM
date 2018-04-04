@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2018-04-03
+# last update:  2018-04-04
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-04: corrected y-axis truncation to not discard hidden data
 # 2018-04-03: parameterized span to use for smoothing
 #             parameterized number of points to impute for smoothing
 # 2018-03-21: added support for CPM / cell abundance unit
@@ -1108,9 +1109,7 @@ plot.profiles<-
 
             # modify profile plot
             profile.plot %<>%
-
-            # overwrite y-axis limits
-            + ylim(y.limits)
+              + coord_cartesian(ylim = y.limits)
 
           # end overwriting of y-axis limits
           }
