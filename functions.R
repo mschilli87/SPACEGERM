@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-04: corrected y-axis truncation to not discard hidden data
+# 2018-04-04: added support for default shifts/stretches from input data
+#             corrected y-axis truncation to not discard hidden data
 # 2018-04-03: parameterized span to use for smoothing
 #             parameterized number of points to impute for smoothing
 # 2018-03-21: added support for CPM / cell abundance unit
@@ -367,13 +368,12 @@ generate.sample.shift.input<-
         ,min=params$sample.shifts.input.min
 
         # set sample shift input panel maximum value
-        ,max=params$sample.shifts.input.max
+        ,max = params$sample.shifts.input.max,
 
-        # set sample shift input panel default value
-        ,value=params$sample.shifts.input.default
+        value = input.data$sample.shift.defaults[sample.name],
 
         # set sample shift input panel value suffix
-        ,post=params$sample.shifts.input.suffix
+        post = params$sample.shifts.input.suffix
 
         # end sample shift input panel generation
         )
@@ -412,13 +412,12 @@ generate.sample.stretch.input<-
         ,min=params$sample.stretches.input.min
 
         # set sample stretch input panel maximum value
-        ,max=params$sample.stretches.input.max
+        ,max = params$sample.stretches.input.max,
 
-        # set sample stretch input panel default value
-        ,value=params$sample.stretches.input.default
+        value = input.data$sample.stretch.defaults[sample.name],
 
         # set sample stretch input panel value suffix
-        ,post=params$sample.stretches.input.suffix
+        post = params$sample.stretches.input.suffix
 
         # end sample stretch input panel generation
         )

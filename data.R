@@ -21,7 +21,7 @@
 # file:         data.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2018-03-20
+# last update:  2018-04-04
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      load input data for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-04: added default shift/stretch file loading and formatting
 # 2018-03-20: added slice width calculation
 #             added gonad model loading
 # 2017-04-18: fixed changelog comments (broken since 2017-03-29/baea8e9)
@@ -81,6 +82,7 @@ if(!exists("input.data"))
 
     # load input data
     input.data <- list(tomoseq.data = readRDS(params$tomoseq.data.file),
+                       shift_stretch = readRDS(params$shift_stretch.file),
                        gene.profiles = readRDS(params$gene.profiles.file),
                        gonad.model = readRDS(params$gonad.model.file))
 
@@ -106,6 +108,36 @@ if(!exists("input.data"))
 
       # drop names
       unname
+
+    # get default sample shifts
+    input.data$sample.shift.defaults <-
+      data_frame(sample.name = input.data$sample.names) %>%
+      left_join(input.data$shift_stretch) %>%
+      mutate(
+        shift.default = ifelse(is.na(shift.default),
+                               params$sample.shifts.input.default,
+                               shift.default),
+        shift.default = ifelse(shift.default < params$sample.shifts.input.min,
+                               params$sample.shifts.input.min, shift.default),
+        shift.default = ifelse(shift.default > params$sample.shifts.input.max,
+                               params$sample.shifts.input.max,
+                               shift.default)) %$%
+        setNames(shift.default, sample.name)
+
+    # get default sample stretches
+    input.data$sample.stretch.defaults <-
+      data_frame(sample.name = input.data$sample.names) %>%
+      left_join(input.data$shift_stretch) %>%
+      mutate(stretch.default = ifelse(is.na(stretch.default),
+                                params$sample.stretches.input.default,
+                                stretch.default),
+             stretch.default =
+               ifelse(stretch.default < params$sample.stretches.input.min,
+                      params$sample.stretches.input.min, stretch.default),
+             stretch.default =
+               ifelse(stretch.default > params$sample.stretches.input.max,
+                      params$sample.stretches.input.max, stretch.default)) %$%
+      setNames(stretch.default, sample.name)
 
     # get sample descriptions
     input.data$sample.descriptions<-

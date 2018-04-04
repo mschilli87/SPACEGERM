@@ -20,7 +20,7 @@
 
 # file:         .gitignore
 # created:      2017-02-23
-# last update:  2018-03-20
+# last update:  2018-04-04
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # purpose:      untrack input files for tomo-seq shiny app
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-04: added Rds file providing default shifts/stretches
 # 2018-03-20: added Rds file providing gonad arm model
 # 2017-03-29: added Rds file providing gene profiles
 # 2017-02-24: added license comment
@@ -42,6 +43,9 @@
 
 # Rds file providing tomo-seq data
 /tomoseq.data.Rds
+
+# Rds file providing default shifts/stretches
+/shift_stretch.Rds
 
 # Rds file providing gene profiles
 /gene.profiles.Rds

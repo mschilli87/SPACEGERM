@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-04-03
+# last update:  2018-04-04
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-04: added default shift/stretch input file
 # 2018-04-03: added smoothing span input panel parameters
 #             added smoothing point count input panel parameters
 # 2018-03-20: added slice width bar plot option
@@ -512,10 +513,12 @@ if(!exists("params"))
   ##############
 
       # (relative) file path of Rds file with tomo-seq data
-      ,tomoseq.data.file="tomoseq.data.Rds"
+      ,tomoseq.data.file = "tomoseq.data.Rds",
+
+      shift_stretch.file = "shift_stretch.Rds",
 
       # (relative) file path of Rds file with gene profiles
-      ,gene.profiles.file="gene.profiles.Rds",
+      gene.profiles.file = "gene.profiles.Rds",
 
       # (relative) file path of Rds file with gene profiles
       gonad.model.file = "gonad.model.Rds"
