@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-05: adjusted (panel/plot/axes/legend) labels
+# 2018-04-05: adjusted defaults
+#             adjusted (panel/plot/axes/legend) labels
 # 2018-04-04: added default shift/stretch input file
 # 2018-04-03: added smoothing span input panel parameters
 #             added smoothing point count input panel parameters
@@ -185,14 +186,11 @@ if(!exists("params"))
         ############################
 
       # label of sample names input panel
-      ,sample.names.input.label="Samples"
+      ,sample.names.input.label = "Samples",
 
       # default selection of sample names input panel
-      ,sample.names.input.default=c("ad_PG50um"
-                                   ,"ad_PG20um"
-                                   ,"ad_PG_wt_50"
-                                   ,"ad_PG_wt_50_2"
-                                   )
+      sample.names.input.default =
+        paste0("N2_mRNA_", rep(c("A", "P"), each = 3), 1:3),
 
 
         ############################
@@ -200,7 +198,7 @@ if(!exists("params"))
         ############################
 
       # label of plot option input panel
-      ,plot.options.input.label="Plot options"
+      plot.options.input.label = "Plot options"
 
       # plot options
       ,plot.options =
@@ -219,8 +217,7 @@ if(!exists("params"))
 
       # default selection of plot option input panel
        plot.options.input.default =
-         c("raw.points", "smooth.each", "smooth.pooled", "logscale",
-           "single.y.scale", "show.model")
+         c("raw.points", "smooth.pooled", "fix.xlim", "single.y.scale", "show.model")
 
 
         ##############################
