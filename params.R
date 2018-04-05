@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-04-04
+# last update:  2018-04-05
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-05: adjusted (panel/plot/axes/legend) labels
 # 2018-04-04: added default shift/stretch input file
 # 2018-04-03: added smoothing span input panel parameters
 #             added smoothing point count input panel parameters
@@ -133,7 +134,7 @@ if(!exists("params"))
         ##########################
 
       # label of gene names input panel
-      ,gene.names.input.label="Gene names"
+      ,gene.names.input.label="Gene/miRNA names"
 
       # gene names input separator
       ,gene.names.input.separator=" "
@@ -170,7 +171,7 @@ if(!exists("params"))
         ##############################
 
        # label of abundance unit input panel
-       abundance.unit.input.label = "Abundance unit",
+       abundance.unit.input.label = "Expression measure",
 
        # choices for abundance unit input panel
        abundance.unit.input.choices = c("CPM", "CPM / cell"),
@@ -398,7 +399,7 @@ if(!exists("params"))
         #################################
 
       # label of abundance measure input panel
-      ,abundance.measure.input.label="Abundance measure"
+      ,abundance.measure.input.label="Expression measure"
 
       # choices for abundance measure input panel
       ,abundance.measure.input.choices=c("CPM"
@@ -619,19 +620,19 @@ if(!exists("params"))
       ##########
 
       # title of profile plot
-      ,profile.plot.title="Spatial gene abundance"
+      ,profile.plot.title="Spatial gene expression"
 
       # x-axis label of profile plot
-      ,profile.plot.xlab="distal-to-proximal position [%]"
+      ,profile.plot.xlab="Position [% distal-to-proximal]"
 
       # y-axis label of profile plot
-      ,profile.plot.ylab="gene abundance"
+      ,profile.plot.ylab="Expression"
 
       # sample legend label of profile plot
-      ,profile.plot.sample.legend.label="sample"
+      ,profile.plot.sample.legend.label="Sample"
 
       # isoform legend label of profile plot
-      ,profile.plot.isoform.legend.label="transcript"
+      ,profile.plot.isoform.legend.label="Isoform"
 
 
     ###########
