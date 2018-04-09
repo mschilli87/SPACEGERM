@@ -21,7 +21,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-04-03
+# last update:  2018-04-09
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define front end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-09: removed sample stretches input panel
 # 2018-04-03: added smoothing point count input panel parameters
 #             added smoothing span input panel parameters
 # 2018-03-21: added abundance unit input panel
@@ -260,21 +261,6 @@ fluidPage(
       outputId="shifts.input"
 
       # end sample shifts input panel definition
-      )
-
-    # label sample stretches input panel
-    ,params$sample.stretches.input.label %>%
-
-        # make label 3rd level header
-        h3
-
-    # add dynamically generated sample stretches panel
-    ,uiOutput(
-
-      # name sample stretches input panel output
-      outputId="stretches.input"
-
-      # end sample stretches input panel definition
       )
 
     ) %>%

@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-04-03
+# last update:  2018-04-09
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-09: removed sample stretches input
 # 2018-04-03: added user specified smoothing span
 #             added user specified smoothing point count
 # 2018-03-21: added user specified abundance unit
@@ -161,21 +162,6 @@ function(
         # end sample shifts input panel rendering
         )
 
-    # assign sample stretches input panel output
-    output$stretches.input<-
-
-      # render sample stretches input panel
-      renderUI(
-
-        # take sample names to include in plot
-        input$sample.names %>%
-
-        # generate sample stretches input panel
-        generate.sample.stretches.input
-
-        # end sample stretches input panel rendering
-        )
-
     # assign profile plot output
     output$profile.plot<-
 
@@ -211,15 +197,6 @@ function(
 
             # extract corresponding sample shifts specified by user
             get.sample.shifts(input)
-
-          # set sample stretches specified by the user
-          ,sample.stretches=
-
-            # take sample names of samples included in plot
-            input$sample.names %>%
-
-            # extract corresponding sample stretches specified by user
-            get.sample.stretches(input)
 
           # set expression level specified by the user
           ,per.isoform=input$isoform.level,
