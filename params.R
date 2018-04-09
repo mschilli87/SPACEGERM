@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-04-05
+# last update:  2018-04-09
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-09: disabled gonad arm model by default
 # 2018-04-05: adjusted defaults
 #             adjusted (panel/plot/axes/legend) labels
 # 2018-04-04: added default shift/stretch input file
@@ -217,7 +218,7 @@ if(!exists("params"))
 
       # default selection of plot option input panel
        plot.options.input.default =
-         c("raw.points", "smooth.pooled", "fix.xlim", "single.y.scale", "show.model")
+         c("raw.points", "smooth.pooled", "fix.xlim", "single.y.scale")
 
 
         ##############################
