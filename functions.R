@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-10: added support to hide smoothing standard errors
+# 2018-04-10: added support for dropout slices
+#             added support to hide smoothing standard errors
 # 2018-04-04: added support for default shifts/stretches from input data
 #             corrected y-axis truncation to not discard hidden data
 # 2018-04-03: parameterized span to use for smoothing
@@ -849,16 +850,13 @@ plot.profiles<-
     n.points.smooth = params$smoothing.n.input.default,
     span.smooth = params$smoothing.span.input.default,
     show.model = TRUE,
-    show.smoothing.se = TRUE)
+    show.smoothing.se = TRUE,
+    show.dropouts = TRUE)
 
     # begin profile plot function definition
     {
 
-      # create profile plot
-      profile.plot<-
-
-        # take plot data
-        plot.data %>%
+      plot.data %<>%
         mutate(percent.center = percent.center * stretch + shift,
                percent.start = percent.center - (width.percent / 2 * stretch),
                percent.end = percent.center + (width.percent / 2 * stretch),
@@ -875,7 +873,12 @@ plot.profiles<-
         group_by(dist.start.um, dist.end.um) %>%
         mutate(n.cells = dist2n.cells(dist.end.um[1], dist.start.um[1])) %>%
         ungroup %>%
-        mutate(cpm.per.cell = cpm / n.cells) %>%
+        mutate(cpm.per.cell = cpm / n.cells)
+
+      # create profile plot
+      profile.plot <-
+        plot.data %>%
+        filter(!dropout) %>%
         ggplot(aes_string(x = "percent.center", y = unit2col(abundance.unit),
                           color = "tx_color", linetype = "sample.name")) %>%
 
@@ -982,12 +985,25 @@ plot.profiles<-
               # end color palette/legend parameter definition
               )
 
-        if(show.slice.width)
+        if(show.slice.width){
+          if(show.dropouts)
+            profile.plot %<>%
+            + geom_errorbarh(aes(xmin = percent.start, xmax = percent.end),
+                             data = plot.data %>%
+                                    filter(dropout),
+                             alpha = params$profile.plot.dropouts.alpha)
           profile.plot %<>%
-          + geom_errorbarh(aes(xmin = percent.start, xmax = percent.end))
+          + geom_errorbarh(aes(xmin = percent.start, xmax = percent.end))}
 
         # add raw data points if specified
-        if(raw.points)
+        if(raw.points){
+          if(show.dropouts)
+            profile.plot %<>%
+            + geom_point(aes(shape = sample.name),
+                         data = plot.data %>%
+                                filter(dropout),
+                         size = params$profile.plot.pointsize,
+                         alpha = params$profile.plot.dropouts.alpha)
 
           # modify profile plot
           profile.plot %<>%
@@ -1011,7 +1027,7 @@ plot.profiles<-
               name=params$profile.plot.sample.legend.label
 
               # end shape legend parameter definition
-              )
+              )}
 
         # add raw data lines if specified
         if(raw.lines)
@@ -2576,7 +2592,8 @@ generate.profile.plot<-
         show.model =
           ("show.model" %in% plot.options) & ("fix.xlim" %in% plot.options) &
             ((ncols.plot == 1) | (length(parse.gene.names(gene.names)) == 1)),
-        show.smoothing.se = "show.smoothing.se" %in% plot.options)}
+        show.smoothing.se = "show.smoothing.se" %in% plot.options,
+        show.dropouts = "show.dropouts" %in% plot.options)}
 
 
 # heatmap generation function

@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-10: added plot option to show/hide smoothing standard error
+# 2018-04-10: added plot option to show/hide dropout slices
+#             added plot option to show/hide smoothing standard error
 # 2018-04-09: disabled gonad arm model by default
 # 2018-04-05: adjusted defaults
 #             adjusted (panel/plot/axes/legend) labels
@@ -216,11 +217,12 @@ if(!exists("params"))
           `show slice width bars`="show.slice.width",
           `show gonad arm model (if single column & fixed x-axis limits)`=
             "show.model",
-          `show smoothing standard error` = "show.smoothing.se"),
+          `show smoothing standard error` = "show.smoothing.se",
+          `show dropout slices (<10K pseudoaligned reads)` = "show.dropouts"),
 
       # default selection of plot option input panel
        plot.options.input.default =
-         c("raw.points", "smooth.pooled", "fix.xlim", "single.y.scale", "show.smoothing.se")
+         c("raw.points", "smooth.pooled", "fix.xlim", "single.y.scale", "show.smoothing.se", "show.dropouts")
 
 
         ##############################
@@ -573,7 +575,8 @@ if(!exists("params"))
         ##########
 
       # point size of profile plot
-      ,profile.plot.pointsize=2
+      ,profile.plot.pointsize = 2,
+      profile.plot.dropouts.alpha = .5,
 
 
         #########
@@ -581,7 +584,7 @@ if(!exists("params"))
         #########
 
       # per-sample data line size of profile plot
-      ,profile.plot.linesize.each=1
+      profile.plot.linesize.each = 1
 
       # smooth data line size of profile plot
       ,profile.plot.linesize.pooled=2
