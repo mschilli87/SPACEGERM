@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2018-04-04
+# last update:  2018-04-10
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-10: added support to hide smoothing standard errors
 # 2018-04-04: added support for default shifts/stretches from input data
 #             corrected y-axis truncation to not discard hidden data
 # 2018-04-03: parameterized span to use for smoothing
@@ -847,7 +848,8 @@ plot.profiles<-
     abundance.unit = params$abundance.unit.default,
     n.points.smooth = params$smoothing.n.input.default,
     span.smooth = params$smoothing.span.input.default,
-    show.model = TRUE)
+    show.model = TRUE,
+    show.smoothing.se = TRUE)
 
     # begin profile plot function definition
     {
@@ -1040,6 +1042,7 @@ plot.profiles<-
 
               span = span.smooth,
               n = n.points.smooth,
+              se = show.smoothing.se,
               size = params$profile.plot.linesize.each
 
               # end smooth line parameter definition
@@ -1062,6 +1065,7 @@ plot.profiles<-
 
               span = span.smooth,
               n = n.points.smooth,
+              se = show.smoothing.se,
               size = params$profile.plot.linesize.pooled
 
               # end smooth line parameter definition
@@ -2569,16 +2573,10 @@ generate.profile.plot<-
         n.points.smooth = smoothing.n,
         span.smooth = smoothing.span,
         show.slice.width = "show.slice.width" %in% plot.options,
-
         show.model =
           ("show.model" %in% plot.options) & ("fix.xlim" %in% plot.options) &
-            ((ncols.plot == 1) | (length(parse.gene.names(gene.names)) == 1))
-
-        # end profile plotting
-        )
-
-    # end profile plot generation function definition
-    }
+            ((ncols.plot == 1) | (length(parse.gene.names(gene.names)) == 1)),
+        show.smoothing.se = "show.smoothing.se" %in% plot.options)}
 
 
 # heatmap generation function
