@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-04-10
+# last update:  2018-04-12
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-12: disabled single-y-scale by default
 # 2018-04-10: added plot option to show/hide dropout slices
 #             added plot option to show/hide smoothing standard error
 # 2018-04-09: disabled gonad arm model by default
@@ -222,7 +223,7 @@ if(!exists("params"))
 
       # default selection of plot option input panel
        plot.options.input.default =
-         c("raw.points", "smooth.pooled", "fix.xlim", "single.y.scale", "show.smoothing.se", "show.dropouts")
+         c("raw.points", "smooth.pooled", "fix.xlim", "show.smoothing.se", "show.dropouts")
 
 
         ##############################
