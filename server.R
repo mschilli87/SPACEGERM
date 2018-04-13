@@ -74,6 +74,7 @@ require(magrittr)
 
 # get renderIheatmap
 require(iheatmapr)
+library(plotly)
 
 
 #############
@@ -366,6 +367,9 @@ function(
 
         # end heatmap rendering
         )
+
+    output$model3d <-
+      renderPlotly(plot.model3d(input.data$gonad.model$outline))
 
     # assign gene annotation
     gene.annotation<-

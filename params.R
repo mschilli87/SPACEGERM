@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-04-12
+# last update:  2018-04-13
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-13: added 3D model tab & plot parameters
 # 2018-04-12: disabled single-y-scale by default
 # 2018-04-10: added plot option to show/hide dropout slices
 #             added plot option to show/hide smoothing standard error
@@ -509,7 +510,8 @@ if(!exists("params"))
       ,gene.table.xlsx.export.button.label="Export gene table as XLSX"
 
       # file name to use for gene table XLSX export
-      ,gene.table.xlsx.name="gene_table.xlsx"
+      ,gene.table.xlsx.name = "gene_table.xlsx",
+      model3d.tab.title = "3D model",
 
 
   ##############
@@ -517,7 +519,7 @@ if(!exists("params"))
   ##############
 
       # (relative) file path of Rds file with tomo-seq data
-      ,tomoseq.data.file = "tomoseq.data.Rds",
+      tomoseq.data.file = "tomoseq.data.Rds",
 
       shift_stretch.file = "shift_stretch.Rds",
 
@@ -695,7 +697,13 @@ if(!exists("params"))
       ,heatmap.color.values=
 
         # use viridis colors with heatmaply default settings
-        viridis(n=256,alpha=1,begin=0,end=1,option="viridis")
+        viridis(n = 256, alpha = 1, begin = 0, end = 1, option = "viridis"),
 
-      # end parameter list definition
-      )
+
+  plot.title.model3d = "Gonad arm model",
+  dplab.model3d = "distal-proximal [μm from DTC]",
+  lrlab.model3d = "left-right [μm from center]",
+  dvlab.model3d = "dorsal-ventral [μm from center]" ,
+  eye.model3d.dp = 0,
+  eye.model3d.lr = -3,
+  eye.model3d.dv = 1.5)

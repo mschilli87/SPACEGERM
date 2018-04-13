@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2018-04-10
+# last update:  2018-04-13
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-13: added 3D model plot function (outline colored by distal-to-proximal only)
 # 2018-04-10: added support for dropout slices
 #             added support to hide smoothing standard errors
 # 2018-04-04: added support for default shifts/stretches from input data
@@ -131,6 +132,7 @@ require(iheatmapr)
 
 # get write.xlsx & read.xlsx
 require(xlsx)
+library(plotly)
 
 
 ##############
@@ -2661,6 +2663,19 @@ generate.heatmap<-
 
     # end heatmap generation function definition
     }
+
+plot.model3d <- function(outline.data)
+  outline.data %>%
+  plot_ly(x = ~dp, y = ~lr, z = ~dv) %>%
+  add_lines(color = ~dp) %>%
+  layout(title = params$plot.title.model3d,
+         scene = list(xaxis = list(title = params$dplab.model3d),
+                      yaxis = list(title = params$lrlab.model3d),
+                      zaxis = list(title = params$dvlab.model3d),
+                      aspectmode = "data",
+                      camera = list(eye = list(x = params$eye.model3d.dp,
+                                               y = params$eye.model3d.lr,
+                                               z = params$eye.model3d.dv))))
 
 
     ##########################
