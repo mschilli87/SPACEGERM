@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: added 3D model span input panel
+# 2018-04-13: removed sample description input panel for heatmap
+#             added 3D model span input panel
 #             added 3D model gene name & genotype input panels
 #             added 3D model tab & plot output panel
 # 2018-04-09: removed sample stretches input panel
@@ -309,29 +310,8 @@ fluidPage(
         # define sidebar panel for heatmap tab panel
         sidebarPanel(
 
-          # add sample description input panel
-          selectInput(
-
-            # name sample description input
-            inputId="sample.description"
-
-            # label sample description input panel
-            ,label=params$sample.description.input.label %>%
-
-              # make label 3rd level header
-              h3
-
-            # set choices for sample description input panel
-            ,choices=input.data$sample.descriptions
-
-            # set default selection for sample description input panel
-            ,selected=params$sample.description.input.default
-
-            # end sample description input panel definition
-            )
-
           # add dynamically generated genotype input panel
-          ,uiOutput(
+          uiOutput(
 
             # name genotype input panel output
             outputId="genotype.input"

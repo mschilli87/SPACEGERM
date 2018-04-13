@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: added user specified smoothing span for 3D model
+# 2018-04-13: replaced user specified sample description for heatmap by default
+#             added user specified smoothing span for 3D model
 #             added 3D model gene/genotype selection and CPM fitting support / fixed indentation
 # 2018-04-09: removed sample stretches input
 # 2018-04-03: added user specified smoothing span
@@ -199,38 +200,18 @@ function(input, output, session){
          smoothing.span = input$smoothing.span))
 
   # assign genotype input panel output
-  output$genotype.input<-
-
-    # render genotype input panel
-    renderUI(
-
-      # take sample description to use for heatmap
-      input$sample.description %>%
-
-      # generate genotype input panel
-      generate.genotype.input
-
-      # end genotype input panel rendering
-      )
+  output$genotype.input <-
+    renderUI(generate.genotype.input(params$sample.description.input.default))
 
   output$genotype3d.input <-
     renderUI(generate.genotype.input(params$sample.description.input.default,
                                      id = "genotype3d"))
 
   # assign gene type input panel output
-  output$gene.type.input<-
-
-    # render gene type input panel
+  output$gene.type.input <-
     renderUI(
-
-      # take sample description to use for heatmap
-      input$sample.description %>%
-
-      # generate gene type input panel for genotype to use for heatmap
-      generate.gene.type.input(input$genotype)
-
-      # end gene type input panel rendering
-      )
+      generate.gene.type.input(params$sample.description.input.default,
+                               input$genotype))
 
   # assign gene list filtered gene profiles
   gene.profiles.filtered.gene.list<-
@@ -257,10 +238,7 @@ function(input, output, session){
       gene.profiles.filtered.gene.list() %>%
 
       # extract gene profiles for sample description specified by the user
-      filter.data.by.sample.description(input$sample.description)
-
-      # end sample description filtered gene profiles re-calculation
-      )
+      filter.data.by.sample.description(params$sample.description.input.default))
 
   # assign genotype filtered gene profiles
   gene.profiles.filtered.genotype<-
