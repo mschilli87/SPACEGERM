@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: added default ymin/max values
+# 2018-04-13: removed un-needed parameters left over from sample shift/stretch input panels
+#             added default ymin/max values
 #             adjusted sample description and genotype defaults
 #             added 3D model colorbar parameters
 #             added 3D model tab & plot parameters
@@ -296,40 +297,18 @@ if(!exists("params"))
         # sample shifts input panel #
         #############################
 
-      # label of sample shift input panel
-      sample.shifts.input.label = "Sample shifts"
-
-      # minimum value of sample shift input panel
-      ,sample.shifts.input.min=-50
-
-      # maximum value of sample shift input panel
-      ,sample.shifts.input.max=50
-
-      # default value of sample shift input panel
-      ,sample.shifts.input.default=0
-
-      # value suffix of sampleshift input panel
-      ,sample.shifts.input.suffix="%"
+      sample.shifts.input.min = -50,
+      sample.shifts.input.max = 50,
+      sample.shifts.input.default = 0,
 
 
         ################################
         # sample stretches input panel #
         ################################
 
-      # label of sample shift input panel
-      ,sample.stretches.input.label="Sample stretches"
-
-      # minimum value of sample shift input panel
-      ,sample.stretches.input.min=.5
-
-      # maximum value of sample shift input panel
-      ,sample.stretches.input.max=2
-
-      # default value of sample shift input panel
-      ,sample.stretches.input.default=1
-
-      # value suffix of sampleshift input panel
-      ,sample.stretches.input.suffix="x"
+      sample.stretches.input.min = .5,
+      sample.stretches.input.max = 2,
+      sample.stretches.input.default = 1,
 
 
       ##############
@@ -349,7 +328,7 @@ if(!exists("params"))
     #####################
 
       # title of heatmap tab panel
-      ,heatmap.tab.title="Heatmap"
+      heatmap.tab.title = "Heatmap"
 
 
       #################

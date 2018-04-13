@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: removed support for user specified sample shifts
+# 2018-04-13: removed left-over code from user specified sample shift/strech support
+#             removed support for user specified sample shifts
 #             added support for default ymin/max values
 #             parameterized span to use for smoothing for 3D model
 #             added 3D model CPM fitting and coloring support
@@ -287,74 +288,6 @@ generate.manual.ymax.input<-
     # end y-axis maximum input panel generation function definition
     }
 
-# get sample stretch input names by sample name
-get.sample.stretch.inputId<-
-
-  # define sample stretch input name function
-  function(
-
-    # sample name to get sample stretch input name for
-    sample.name
-
-    # end sample stretch input name function parameter definition
-    )
-
-    # begin sample stretch input name function definition
-    {
-
-      # take sample name to get sample stretch input name for
-      sample.name %>%
-
-      # add sample stretch input name prefix
-      paste0("sample.stretch.",.)
-
-    # end sample stretch input name function definition
-    }
-
-# generate sample stretch input panel
-generate.sample.stretch.input<-
-
-  # define sample stretch input panel generation function
-  function(
-
-    # sample name of generate sample stretch input panel for
-    sample.name
-
-    # end sample stretch input panel generation function parameter definition
-    )
-
-    # begin sample stretch input panel generation function definition
-    {
-
-      # take sample name of generate sample stretch input panel for
-      sample.name %>%
-
-      # generate sample stretch input panel
-      sliderInput(
-
-        # name sample stretch input value
-        inputId=get.sample.stretch.inputId(.)
-
-        # label sample stretch input panel
-        ,label=.
-
-        # set sample stretch input panel minimum value
-        ,min=params$sample.stretches.input.min
-
-        # set sample stretch input panel maximum value
-        ,max = params$sample.stretches.input.max,
-
-        value = input.data$sample.stretch.defaults[sample.name],
-
-        # set sample stretch input panel value suffix
-        post = params$sample.stretches.input.suffix
-
-        # end sample stretch input panel generation
-        )
-
-    # end sample stretch input panel generation function definition
-    }
-
 # parse gene names input from single string to vector
 parse.gene.names<-
 
@@ -484,51 +417,6 @@ filter.data.by.expression.level<-
     # end filter by expression level type (gene/isoform profiles?) function definition
     }
 
-
-# convert named sample stretch list (or NULL) to named (default) sample stretch vector
-parse.sample.stretches<-
-
-  # define sample stretch conversion function
-  function(
-
-    # list with sample stretches labeled with sample names (or NULL)
-    stretches
-
-    # sample names to include in output sample stretch vector
-    ,samples
-
-    # end sample stretch conversion function parameter definition
-    )
-
-    # begin sample stretch conversion function definition
-    {
-
-      # if no sample stretches were specified, use default values
-      if(is.null(stretches))
-
-        # take default sample stretch input value
-        params$sample.stretches.input.default %>%
-
-        # repeat for each sample specified
-        rep(times=length(samples)) %>%
-
-        # label default sample stretches with sample names
-        setNames(samples)
-
-      # if sample stretches were specified, convert list to vector
-      else
-
-        # take sample names to include in output sample stretch vector
-        samples %>%
-
-        # extract corresponding sample stretches
-        stretches[.] %>%
-
-        # convert names list to vector
-        unlist
-
-    # end sample stretch conversion function definition
-    }
 
 # add shift column to data
 add.shift.column<-
@@ -1768,40 +1656,6 @@ get.gene.table.xlsx.name<-
     # data extraction functions #
     #############################
 
-# extract sample stretch inputs from inputs list
-get.sample.stretches<-
-
-  # define sample stretch input extraction function
-  function(
-
-    # sample names of samples to extract sample stretch inputs for
-    sample.names
-
-    # input list to extract sample stretch inputs from
-    ,inputs
-
-    # end sample stretch input extraction function parameter definition
-    )
-
-    # begin sample stretch input extraction function definition
-    {
-
-      # take sample names of samples to extract sample stretch inputs for
-      sample.names %>%
-
-      # get corresponding sample stretch input names
-      get.sample.stretch.inputId %>%
-
-      # extract sample stretch inputs from input list by input names
-      llply(. %>% inputs[[.]]) %>%
-
-      # label sample stretch inputs with sample names
-      setNames(sample.names)
-
-    # end sample stretch input extraction function definition
-    }
-
-
 # extract gene annotation from gene profiles table
 get.gene.annotation<-
 
@@ -2097,68 +1951,6 @@ fit.cpm <-
     # input panel functions #
     #########################
 
-# sample shifts input panel generation
-generate.sample.shifts.input<-
-
-  # define sample shifts input panel generation function
-  function(
-
-    # sample names to include in sample shifts input panel
-    sample.names
-
-    # end sample shifts input panel generation function parameter definition
-    )
-
-    # begin sample shifts input panel generation function
-    {
-
-      # take sample names to include in sample shifts input panel
-      sample.names %>%
-
-      # generate sample shift input panel per sample
-      llply(
-
-        # generate sample shift input panel
-        generate.sample.shift.input
-
-        # end sample shift input panel generate per sample
-        )
-
-    # end sample shifts input panel generation function
-    }
-
-
-# sample stretches input panel generation
-generate.sample.stretches.input<-
-
-  # define sample stretches input panel generation function
-  function(
-
-    # sample names to include in sample stretches input panel
-    sample.names
-
-    # end sample stretches input panel generation function parameter definition
-    )
-
-    # begin sample stretches input panel generation function
-    {
-
-      # take sample names to include in sample stretches input panel
-      sample.names %>%
-
-      # generate sample stretch input panel per sample
-      llply(
-
-        # generate sample stretch input panel
-        generate.sample.stretch.input
-
-        # end sample stretch input panel generate per sample
-        )
-
-    # end sample stretches input panel generation function
-    }
-
-
 # generate genotype input panel
 generate.genotype.input<-
 
@@ -2304,12 +2096,10 @@ generate.profile.plot<-
 
     # sample stretch input list
     sample.stretches =
-
-      # use default sample stretch input values for all samples by default
-      NULL
+      input.data$sample.stretch.defaults,
 
     # plot isoform-specific profiles?
-    ,per.isoform=
+    per.isoform =
 
       # by default, plot gene level profiles
       FALSE,
@@ -2376,25 +2166,7 @@ generate.profile.plot<-
       add.shift.column(shifts.by.sample = sample.shifts) %>%
 
       # add stretch column to data
-      add.stretch.column(
-
-        # specify stretches to add by sample
-        stretches.by.sample=
-
-          # take sample stretch
-          sample.stretches %>%
-
-          # convert named list (or NULL) to named vector
-          parse.sample.stretches(
-
-            # specify samples to convert sample stretches for
-            samples=sample.names
-
-            # end sample stretch conversion
-            )
-
-        # end addition of stretch column
-        ) %>%
+      add.stretch.column(stretches.by.sample = sample.stretches) %>%
 
       # plot profiles based on filtered tomo-seq data
       plot.profiles(
