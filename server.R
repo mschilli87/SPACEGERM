@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: replaced user specified sample description for heatmap by default
+# 2018-04-13: replaced user specified sample shifts by defaults
+#             replaced user specified sample description for heatmap by default
 #             added user specified smoothing span for 3D model
 #             added 3D model gene/genotype selection and CPM fitting support / fixed indentation
 # 2018-04-09: removed sample stretches input
@@ -141,21 +142,6 @@ function(input, output, session){
       # end y-axis maximum input panel rendering
       )
 
-  # assign sample shifts input panel output
-  output$shifts.input<-
-
-    # render sample shifts input panel
-    renderUI(
-
-      # take sample names to include in plot
-      input$sample.names %>%
-
-      # generate sample shifts input panel
-      generate.sample.shifts.input
-
-      # end sample shifts input panel rendering
-      )
-
   # assign profile plot output
   output$profile.plot<-
 
@@ -181,19 +167,10 @@ function(input, output, session){
         ,manual.ylim=c(input$manual.ymin,input$manual.ymax)
 
         # set plot columns count specified by the user
-        ,ncols.plot=input$ncols.plot
-
-        # set sample shifts specified by the user
-        ,sample.shifts=
-
-          # take sample names of samples included in plot
-          input$sample.names %>%
-
-          # extract corresponding sample shifts specified by user
-          get.sample.shifts(input)
+        ,ncols.plot = input$ncols.plot,
 
         # set expression level specified by the user
-        ,per.isoform=input$isoform.level,
+        per.isoform = input$isoform.level,
 
          unit = input$abundance.unit,
          smoothing.n = input$smoothing.n,

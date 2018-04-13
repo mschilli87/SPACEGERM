@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: removed sample description input panel for heatmap
+# 2018-04-13: removed sample shift input panel
+#             removed sample description input panel for heatmap
 #             added 3D model span input panel
 #             added 3D model gene name & genotype input panels
 #             added 3D model tab & plot output panel
@@ -251,24 +252,7 @@ fluidPage(
                  label = h3(params$smoothing.span.input.label),
                  min = params$smoothing.span.input.min,
                  max = params$smoothing.span.input.max,
-                 value = params$smoothing.span.input.default),
-
-    # label sample shifts input panel
-    params$sample.shifts.input.label %>%
-
-        # make label 3rd level header
-        h3
-
-    # add dynamically generated sample shifts panel
-    ,uiOutput(
-
-      # name sample shifts input panel output
-      outputId="shifts.input"
-
-      # end sample shifts input panel definition
-      )
-
-    ) %>%
+                 value = params$smoothing.span.input.default)) %>%
 
   # initialize side bar layout
   sidebarLayout(
