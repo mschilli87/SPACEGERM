@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: removed sample shift input panel
+# 2018-04-13: relabeled 3D model gene input panel
+#             removed sample shift input panel
 #             removed sample description input panel for heatmap
 #             added 3D model span input panel
 #             added 3D model gene name & genotype input panels
@@ -494,7 +495,7 @@ fluidPage(
       sidebarLayout(
         sidebarPanel(uiOutput(outputId = "genotype3d.input"),
                      selectizeInput(inputId = "gene3d",
-                                    label = h3(params$gene.names.input.label),
+                                    label = h3(params$gene3d.input.label),
                                     choices  = NULL),
                      numericInput(inputId = "span3d",
                                   label = h3(params$smoothing.span.input.label),
