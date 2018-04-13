@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: added 3D model CPM fitting and coloring support
+# 2018-04-13: parameterized span to use for smoothing for 3D model
+#             added 3D model CPM fitting and coloring support
 #             added 3D model plot function (outline colored by distal-to-proximal only)
 # 2018-04-10: added support for dropout slices
 #             added support to hide smoothing standard errors
@@ -2235,15 +2236,15 @@ keep.top.genes<-
     #############################
 
 fit.cpm <-
-  function(slice.data, model.length){
+  function(slice.data, model.length,
+           smoothing.span = params$smoothing.span.input.default){
     slice.data %<>%
       filter(is.na(transcript.name), !dropout)
     if(!nrow(slice.data)) return(NULL)
     else
       slice.data %>%
         mutate(dp = percent.center / 100 * model.length) %>%
-        loess(cpm ~ dp, data = .,
-              span = params$smoothing.span.input.default)}
+        loess(cpm ~ dp, data = ., span = smoothing.span)}
 
 
     #########################

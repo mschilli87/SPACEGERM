@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: added 3D model gene/genotype selection and CPM fitting support / fixed indentation
+# 2018-04-13: added user specified smoothing span for 3D model
+#             added 3D model gene/genotype selection and CPM fitting support / fixed indentation
 # 2018-04-09: removed sample stretches input
 # 2018-04-03: added user specified smoothing span
 #             added user specified smoothing point count
@@ -370,7 +371,8 @@ function(input, output, session){
         cpm.fit = input.data$tomoseq.data %>%
                   filter(gene.name == input$gene3d,
                          genotype == input$genotype3d) %>%
-                  fit.cpm(model.length = max(input.data$gonad.model$outline$dp))))
+                  fit.cpm(model.length = max(input.data$gonad.model$outline$dp),
+                          smoothing.span = input$span3d)))
 
   # assign gene annotation
   gene.annotation<-

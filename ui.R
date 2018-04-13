@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: added 3D model gene name & genotype input panels
+# 2018-04-13: added 3D model span input panel
+#             added 3D model gene name & genotype input panels
 #             added 3D model tab & plot output panel
 # 2018-04-09: removed sample stretches input panel
 # 2018-04-03: added smoothing point count input panel parameters
@@ -530,7 +531,12 @@ fluidPage(
         sidebarPanel(uiOutput(outputId = "genotype3d.input"),
                      selectizeInput(inputId = "gene3d",
                                     label = h3(params$gene.names.input.label),
-                                    choices  = NULL)),
+                                    choices  = NULL),
+                     numericInput(inputId = "span3d",
+                                  label = h3(params$smoothing.span.input.label),
+                                  min = params$smoothing.span.input.min,
+                                  max = params$smoothing.span.input.max,
+                                  value = params$smoothing.span.input.default)),
         mainPanel(plotlyOutput(outputId = "model3d")))))) %>%
 
 # initialize user interface
