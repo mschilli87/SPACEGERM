@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: added 3D model colorbar parameters
+# 2018-04-13: adjusted sample description and genotype defaults
+#             added 3D model colorbar parameters
 #             added 3D model tab & plot parameters
 # 2018-04-12: disabled single-y-scale by default
 # 2018-04-10: added plot option to show/hide dropout slices
@@ -357,10 +358,10 @@ if(!exists("params"))
         ##################################
 
       # label of sample names input panel
-      ,sample.description.input.label="Sample description"
+      ,sample.description.input.label = "Sample description",
 
       # default selection of sample names input panel
-      ,sample.description.input.default="anterior gonad"
+      sample.description.input.default = "gonad",
 
 
         ########################
@@ -368,10 +369,10 @@ if(!exists("params"))
         ########################
 
       # label of genotype input panel
-      ,genotype.input.label="Genotype"
+      genotype.input.label = "Genotype",
 
       # default selection of genotype input panel
-      ,genotype.input.default="wild type"
+      genotype.input.default = "N2",
 
 
         #########################
@@ -379,7 +380,7 @@ if(!exists("params"))
         #########################
 
       # label of gene type input panel
-      ,gene.type.input.label="Gene type"
+      gene.type.input.label = "Gene type"
 
       # default selection of gene type input panel
       ,gene.type.input.default="mRNA"
