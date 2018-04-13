@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-04-09
+# last update:  2018-04-13
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-13: added 3D model gene/genotype selection and CPM fitting support / fixed indentation
 # 2018-04-09: removed sample stretches input
 # 2018-04-03: added user specified smoothing span
 #             added user specified smoothing point count
@@ -98,383 +99,383 @@ source("data.R")
 ################
 
 # define shiny server function parameters
-function(
+function(input, output, session){
+  updateSelectizeInput(session, 'gene3d', choices = input.data$genes.name,
+                       server = TRUE)
 
-  # app input list
-  input
+  # assign y-axis minimum input panel output
+  output$manual.ymin.input<-
 
-  # app output list
-  ,output
+    # render y-axis minimum input panel
+    renderUI(
 
-  # end shiny server function parameter definition
-  )
+      # take plot options selected by the user
+      input$plot.options %>%
 
-  # begin shiny server function definition
-  {
+      # generate y-axis minimum input panel
+      generate.manual.ymin.input
 
-    # assign y-axis minimum input panel output
-    output$manual.ymin.input<-
+      # end y-axis minimum input panel rendering
+      )
 
-      # render y-axis minimum input panel
-      renderUI(
+  # assign y-axis maximum input panel output
+  output$manual.ymax.input<-
 
-        # take plot options selected by the user
-        input$plot.options %>%
+    # render y-axis maximum input panel
+    renderUI(
 
-        # generate y-axis minimum input panel
-        generate.manual.ymin.input
+      # take plot options selected by the user
+      input$plot.options %>%
 
-        # end y-axis minimum input panel rendering
+      # generate y-axis maximum input panel
+      generate.manual.ymax.input(
+
+        # pass on y-axis minimum specified by the user
+        ymin=input$manual.ymin
+
+        # end y-axis maximum input panel generation
         )
 
-    # assign y-axis maximum input panel output
-    output$manual.ymax.input<-
+      # end y-axis maximum input panel rendering
+      )
 
-      # render y-axis maximum input panel
-      renderUI(
+  # assign sample shifts input panel output
+  output$shifts.input<-
 
-        # take plot options selected by the user
-        input$plot.options %>%
+    # render sample shifts input panel
+    renderUI(
 
-        # generate y-axis maximum input panel
-        generate.manual.ymax.input(
+      # take sample names to include in plot
+      input$sample.names %>%
 
-          # pass on y-axis minimum specified by the user
-          ymin=input$manual.ymin
+      # generate sample shifts input panel
+      generate.sample.shifts.input
 
-          # end y-axis maximum input panel generation
+      # end sample shifts input panel rendering
+      )
+
+  # assign profile plot output
+  output$profile.plot<-
+
+    # render gene profiles plot
+    renderPlot(
+
+      # take tomo-seq data
+      input.data$tomoseq.data %>%
+
+      # generate profile plot
+      generate.profile.plot(
+
+        # plot profiles of genes specified by the user
+        gene.names=input$gene.names
+
+        # include sample specified by the user in plot
+        ,sample.names=input$sample.names
+
+        # set plot options specified by the user
+        ,plot.options=input$plot.options
+
+        # set manual y-axis limits specified by the user
+        ,manual.ylim=c(input$manual.ymin,input$manual.ymax)
+
+        # set plot columns count specified by the user
+        ,ncols.plot=input$ncols.plot
+
+        # set sample shifts specified by the user
+        ,sample.shifts=
+
+          # take sample names of samples included in plot
+          input$sample.names %>%
+
+          # extract corresponding sample shifts specified by user
+          get.sample.shifts(input)
+
+        # set expression level specified by the user
+        ,per.isoform=input$isoform.level,
+
+         unit = input$abundance.unit,
+         smoothing.n = input$smoothing.n,
+         smoothing.span = input$smoothing.span))
+
+  # assign genotype input panel output
+  output$genotype.input<-
+
+    # render genotype input panel
+    renderUI(
+
+      # take sample description to use for heatmap
+      input$sample.description %>%
+
+      # generate genotype input panel
+      generate.genotype.input
+
+      # end genotype input panel rendering
+      )
+
+  output$genotype3d.input <-
+    renderUI(generate.genotype.input(params$sample.description.input.default,
+                                     id = "genotype3d"))
+
+  # assign gene type input panel output
+  output$gene.type.input<-
+
+    # render gene type input panel
+    renderUI(
+
+      # take sample description to use for heatmap
+      input$sample.description %>%
+
+      # generate gene type input panel for genotype to use for heatmap
+      generate.gene.type.input(input$genotype)
+
+      # end gene type input panel rendering
+      )
+
+  # assign gene list filtered gene profiles
+  gene.profiles.filtered.gene.list<-
+
+    # re-calculate gene list filtered gene profiles when necessary
+    reactive(
+
+      # take gene profiles
+      input.data$gene.profiles %>%
+
+      # extract gene profiles for genes in gene list file specified by the user
+      filter.data.by.genes.file(input$gene.list.file)
+
+      # end gene list filtered gene profiles re-calculation
+      )
+
+  # assign sample description filtered gene profiles
+  gene.profiles.filtered.sample.description<-
+
+    # re-calculate sample description filtered gene profiles when necessary
+    reactive(
+
+      # take gene list filtered gene profiles
+      gene.profiles.filtered.gene.list() %>%
+
+      # extract gene profiles for sample description specified by the user
+      filter.data.by.sample.description(input$sample.description)
+
+      # end sample description filtered gene profiles re-calculation
+      )
+
+  # assign genotype filtered gene profiles
+  gene.profiles.filtered.genotype<-
+
+    # re-calculate genotype filtered gene profiles when necessary
+    reactive(
+
+      # take sample description filtered gene profiles
+      gene.profiles.filtered.sample.description() %>%
+
+      # extract gene profiles for genotype specified by the user
+      filter.data.by.genotype(input$genotype)
+
+      # end genotype filtered gene profiles re-calculation
+      )
+
+  # assign gene type filtered gene profiles
+  gene.profiles.filtered.gene.type<-
+
+    # re-calculate gene type filtered gene profiles when necessary
+    reactive(
+
+      # take genotype filtered gene profiles
+      gene.profiles.filtered.genotype() %>%
+
+      # extract gene profiles for gene type specified by the user
+      filter.data.by.gene.type(input$gene.type)
+
+      # end gene type filtered gene profiles re-calculation
+      )
+
+  # assign minimum peak CPM filtered gene profiles
+  gene.profiles.filtered.min.cpm.max<-
+
+    # re-calculate minimum peak CPM filtered gene profiles when necessary
+    reactive(
+
+      # take gene type filtered gene profiles
+      gene.profiles.filtered.gene.type() %>%
+
+      # extract gene profiles for genes with peak CPM above minimum specified by the user
+      filter.data.by.min.cpm.max(input$min.cpm.max)
+
+      # end minimum peak CPM filtered gene profiles re-calculation
+      )
+
+  # assign top gene profiles
+  gene.profiles.top<-
+
+    # re-calculate top gene profiles when necessary
+    reactive(
+
+      # take minimum peak CPM filtered gene profiles
+      gene.profiles.filtered.min.cpm.max() %>%
+
+      # keep top varying genes
+      keep.top.genes
+
+      # end top gene profiles re-calculation
+      )
+
+  # assign heatmap object
+  heatmap.object<-
+
+    # re-calculate heatmap when necessary
+    reactive(
+
+      # take top gene profiles
+      gene.profiles.top() %>%
+
+      # generate heatmap
+      generate.heatmap(
+
+        # cluster genes into as many clusters as specified by the user
+        nclust.genes=input$nclust.genes
+
+        # set abundance measure specified by the user
+        ,abundance.measure=input$abundance.measure
+
+        # set row normalization specified by the user
+        ,row.normalization=input$row.normalization
+
+        # set distance metric specified by the user
+        ,distance.metric=input$distance.metric
+
+        # end heatmap generation
+        )
+
+      # end heatmap re-calculation
+      )
+
+  # assign heatmap output
+  output$heatmap<-
+
+    # render heatmap
+    renderIheatmap(
+
+      # take heatmap object
+      heatmap.object()
+
+      # end heatmap rendering
+      )
+
+  output$model3d <-
+    renderPlotly(
+      plot.model3d(
+        outline = input.data$gonad.model$outline,
+        cpm.fit = input.data$tomoseq.data %>%
+                  filter(gene.name == input$gene3d,
+                         genotype == input$genotype3d) %>%
+                  fit.cpm(model.length = max(input.data$gonad.model$outline$dp))))
+
+  # assign gene annotation
+  gene.annotation<-
+
+    # re-calculate gene annotation when necessary
+    reactive(
+
+      # take gene profiles
+      gene.profiles.top() %>%
+
+      # extract gene annotation
+      get.gene.annotation
+
+      # end gene annotation re-calculation
+      )
+
+  # assign gene table object
+  gene.table.object<-
+
+    # re-calculate gene table when necessary
+    reactive(
+
+      # take heatmap object
+      heatmap.object() %>%
+
+      # generate gene table
+      generate.gene.table(
+
+        # annotate gene table with annotation extracted from gene profile table
+        annotation=gene.annotation()
+
+        # end gene table generation
+        )
+
+      # end gene table re-calculation
+      )
+
+  # assign gene table output
+  output$gene.table<-
+
+    # render gene table
+    renderDataTable(
+
+      # take gene table object
+      gene.table.object()
+
+      # set table rendering option
+      ,options=
+
+        # generate gene table options using helper function
+        generate.gene.table.options
+
+      # end gene table rendering
+      )
+
+  # assign gene table XLSX export button
+  output$gene.table.xlsx.export.button<-
+
+    # generate file download for gene table XLSX export
+    downloadHandler(
+
+      # set file name for file download
+      filename=
+
+        # use file name defined for gene table XLSX export
+        get.gene.table.xlsx.name
+
+      # set file content for file download
+      ,content=
+
+        # define gene table XLSX export file content generation function
+        function(
+
+          # out file name specified by downloadHandler
+          file
+
+          # end gene table XLSX export file content generation function parameter definition
           )
 
-        # end y-axis maximum input panel rendering
-        )
+          # begin gene table XLSX export file content generation function definition
+          {
 
-    # assign sample shifts input panel output
-    output$shifts.input<-
+            # use gene table object
+            gene.table.object() %>%
 
-      # render sample shifts input panel
-      renderUI(
+            # save gene table to XLSX
+            save.gene.table.xlsx(
 
-        # take sample names to include in plot
-        input$sample.names %>%
+              # set output file name for gene table XLSX
+              output.xlsx=
 
-        # generate sample shifts input panel
-        generate.sample.shifts.input
+                # use file name specified by downloadHandler
+                file
 
-        # end sample shifts input panel rendering
-        )
+              # end gene table XLSX export
+              )
 
-    # assign profile plot output
-    output$profile.plot<-
+          # end gene table XLSX export file content generation function definition
+          }
 
-      # render gene profiles plot
-      renderPlot(
+      # end file download generation for gene table XLSX export
+      )
 
-        # take tomo-seq data
-        input.data$tomoseq.data %>%
-
-        # generate profile plot
-        generate.profile.plot(
-
-          # plot profiles of genes specified by the user
-          gene.names=input$gene.names
-
-          # include sample specified by the user in plot
-          ,sample.names=input$sample.names
-
-          # set plot options specified by the user
-          ,plot.options=input$plot.options
-
-          # set manual y-axis limits specified by the user
-          ,manual.ylim=c(input$manual.ymin,input$manual.ymax)
-
-          # set plot columns count specified by the user
-          ,ncols.plot=input$ncols.plot
-
-          # set sample shifts specified by the user
-          ,sample.shifts=
-
-            # take sample names of samples included in plot
-            input$sample.names %>%
-
-            # extract corresponding sample shifts specified by user
-            get.sample.shifts(input)
-
-          # set expression level specified by the user
-          ,per.isoform=input$isoform.level,
-
-           unit = input$abundance.unit,
-           smoothing.n = input$smoothing.n,
-           smoothing.span = input$smoothing.span))
-
-    # assign genotype input panel output
-    output$genotype.input<-
-
-      # render genotype input panel
-      renderUI(
-
-        # take sample description to use for heatmap
-        input$sample.description %>%
-
-        # generate genotype input panel
-        generate.genotype.input
-
-        # end genotype input panel rendering
-        )
-
-    # assign gene type input panel output
-    output$gene.type.input<-
-
-      # render gene type input panel
-      renderUI(
-
-        # take sample description to use for heatmap
-        input$sample.description %>%
-
-        # generate gene type input panel for genotype to use for heatmap
-        generate.gene.type.input(input$genotype)
-
-        # end gene type input panel rendering
-        )
-
-    # assign gene list filtered gene profiles
-    gene.profiles.filtered.gene.list<-
-
-      # re-calculate gene list filtered gene profiles when necessary
-      reactive(
-
-        # take gene profiles
-        input.data$gene.profiles %>%
-
-        # extract gene profiles for genes in gene list file specified by the user
-        filter.data.by.genes.file(input$gene.list.file)
-
-        # end gene list filtered gene profiles re-calculation
-        )
-
-    # assign sample description filtered gene profiles
-    gene.profiles.filtered.sample.description<-
-
-      # re-calculate sample description filtered gene profiles when necessary
-      reactive(
-
-        # take gene list filtered gene profiles
-        gene.profiles.filtered.gene.list() %>%
-
-        # extract gene profiles for sample description specified by the user
-        filter.data.by.sample.description(input$sample.description)
-
-        # end sample description filtered gene profiles re-calculation
-        )
-
-    # assign genotype filtered gene profiles
-    gene.profiles.filtered.genotype<-
-
-      # re-calculate genotype filtered gene profiles when necessary
-      reactive(
-
-        # take sample description filtered gene profiles
-        gene.profiles.filtered.sample.description() %>%
-
-        # extract gene profiles for genotype specified by the user
-        filter.data.by.genotype(input$genotype)
-
-        # end genotype filtered gene profiles re-calculation
-        )
-
-    # assign gene type filtered gene profiles
-    gene.profiles.filtered.gene.type<-
-
-      # re-calculate gene type filtered gene profiles when necessary
-      reactive(
-
-        # take genotype filtered gene profiles
-        gene.profiles.filtered.genotype() %>%
-
-        # extract gene profiles for gene type specified by the user
-        filter.data.by.gene.type(input$gene.type)
-
-        # end gene type filtered gene profiles re-calculation
-        )
-
-    # assign minimum peak CPM filtered gene profiles
-    gene.profiles.filtered.min.cpm.max<-
-
-      # re-calculate minimum peak CPM filtered gene profiles when necessary
-      reactive(
-
-        # take gene type filtered gene profiles
-        gene.profiles.filtered.gene.type() %>%
-
-        # extract gene profiles for genes with peak CPM above minimum specified by the user
-        filter.data.by.min.cpm.max(input$min.cpm.max)
-
-        # end minimum peak CPM filtered gene profiles re-calculation
-        )
-
-    # assign top gene profiles
-    gene.profiles.top<-
-
-      # re-calculate top gene profiles when necessary
-      reactive(
-
-        # take minimum peak CPM filtered gene profiles
-        gene.profiles.filtered.min.cpm.max() %>%
-
-        # keep top varying genes
-        keep.top.genes
-
-        # end top gene profiles re-calculation
-        )
-
-    # assign heatmap object
-    heatmap.object<-
-
-      # re-calculate heatmap when necessary
-      reactive(
-
-        # take top gene profiles
-        gene.profiles.top() %>%
-
-        # generate heatmap
-        generate.heatmap(
-
-          # cluster genes into as many clusters as specified by the user
-          nclust.genes=input$nclust.genes
-
-          # set abundance measure specified by the user
-          ,abundance.measure=input$abundance.measure
-
-          # set row normalization specified by the user
-          ,row.normalization=input$row.normalization
-
-          # set distance metric specified by the user
-          ,distance.metric=input$distance.metric
-
-          # end heatmap generation
-          )
-
-        # end heatmap re-calculation
-        )
-
-    # assign heatmap output
-    output$heatmap<-
-
-      # render heatmap
-      renderIheatmap(
-
-        # take heatmap object
-        heatmap.object()
-
-        # end heatmap rendering
-        )
-
-    output$model3d <-
-      renderPlotly(plot.model3d(input.data$gonad.model$outline))
-
-    # assign gene annotation
-    gene.annotation<-
-
-      # re-calculate gene annotation when necessary
-      reactive(
-
-        # take gene profiles
-        gene.profiles.top() %>%
-
-        # extract gene annotation
-        get.gene.annotation
-
-        # end gene annotation re-calculation
-        )
-
-    # assign gene table object
-    gene.table.object<-
-
-      # re-calculate gene table when necessary
-      reactive(
-
-        # take heatmap object
-        heatmap.object() %>%
-
-        # generate gene table
-        generate.gene.table(
-
-          # annotate gene table with annotation extracted from gene profile table
-          annotation=gene.annotation()
-
-          # end gene table generation
-          )
-
-        # end gene table re-calculation
-        )
-
-    # assign gene table output
-    output$gene.table<-
-
-      # render gene table
-      renderDataTable(
-
-        # take gene table object
-        gene.table.object()
-
-        # set table rendering option
-        ,options=
-
-          # generate gene table options using helper function
-          generate.gene.table.options
-
-        # end gene table rendering
-        )
-
-    # assign gene table XLSX export button
-    output$gene.table.xlsx.export.button<-
-
-      # generate file download for gene table XLSX export
-      downloadHandler(
-
-        # set file name for file download
-        filename=
-
-          # use file name defined for gene table XLSX export
-          get.gene.table.xlsx.name
-
-        # set file content for file download
-        ,content=
-
-          # define gene table XLSX export file content generation function
-          function(
-
-            # out file name specified by downloadHandler
-            file
-
-            # end gene table XLSX export file content generation function parameter definition
-            )
-
-            # begin gene table XLSX export file content generation function definition
-            {
-
-              # use gene table object
-              gene.table.object() %>%
-
-              # save gene table to XLSX
-              save.gene.table.xlsx(
-
-                # set output file name for gene table XLSX
-                output.xlsx=
-
-                  # use file name specified by downloadHandler
-                  file
-
-                # end gene table XLSX export
-                )
-
-            # end gene table XLSX export file content generation function definition
-            }
-
-        # end file download generation for gene table XLSX export
-        )
-
-  # end shiny server function definition
-  } %>%
+# end shiny server function definition
+} %>%
 
 # initialize shiny server
 shinyServer

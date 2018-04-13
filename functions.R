@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: added 3D model plot function (outline colored by distal-to-proximal only)
+# 2018-04-13: added 3D model CPM fitting and coloring support
+#             added 3D model plot function (outline colored by distal-to-proximal only)
 # 2018-04-10: added support for dropout slices
 #             added support to hide smoothing standard errors
 # 2018-04-04: added support for default shifts/stretches from input data
@@ -2229,6 +2230,22 @@ keep.top.genes<-
     }
 
 
+    #############################
+    # data processing functions #
+    #############################
+
+fit.cpm <-
+  function(slice.data, model.length){
+    slice.data %<>%
+      filter(is.na(transcript.name), !dropout)
+    if(!nrow(slice.data)) return(NULL)
+    else
+      slice.data %>%
+        mutate(dp = percent.center / 100 * model.length) %>%
+        loess(cpm ~ dp, data = .,
+              span = params$smoothing.span.input.default)}
+
+
     #########################
     # input panel functions #
     #########################
@@ -2302,10 +2319,8 @@ generate.genotype.input<-
   function(
 
     # sample description to generate genotype input panel for
-    sample.description
-
-    # end genotype input panel generation function parameter definition
-    )
+    sample.description,
+    id = "genotype")
 
     # begin genotype input panel generation function definition
     {
@@ -2320,10 +2335,10 @@ generate.genotype.input<-
       selectInput(
 
         # name genotype input
-        inputId="genotype"
+        inputId = id,
 
         # label genotype input panel
-        ,label=params$genotype.input.label %>%
+        label = params$genotype.input.label %>%
 
           # make label 3rd level header
           h3
@@ -2664,10 +2679,16 @@ generate.heatmap<-
     # end heatmap generation function definition
     }
 
-plot.model3d <- function(outline.data)
-  outline.data %>%
+plot.model3d <- function(outline, cpm.fit = NULL){
+  if(is.null(cpm.fit)) outline %<>% mutate(cpm = NA)
+  else
+    outline %<>%
+      left_join(distinct(., dp) %>%
+                mutate(cpm = predict(cpm.fit, dp)))
+  outline %>%
   plot_ly(x = ~dp, y = ~lr, z = ~dv) %>%
-  add_lines(color = ~dp) %>%
+  add_lines(color = ~cpm, colors = params$colorscale.model3d) %>%
+  colorbar(title = params$colorlab.model3d) %>%
   layout(title = params$plot.title.model3d,
          scene = list(xaxis = list(title = params$dplab.model3d),
                       yaxis = list(title = params$lrlab.model3d),
@@ -2675,7 +2696,7 @@ plot.model3d <- function(outline.data)
                       aspectmode = "data",
                       camera = list(eye = list(x = params$eye.model3d.dp,
                                                y = params$eye.model3d.lr,
-                                               z = params$eye.model3d.dv))))
+                                               z = params$eye.model3d.dv))))}
 
 
     ##########################

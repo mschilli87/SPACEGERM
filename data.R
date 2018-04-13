@@ -21,7 +21,7 @@
 # file:         data.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2018-04-04
+# last update:  2018-04-13
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      load input data for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-13: added extraction of gene names
 # 2018-04-04: added default shift/stretch file loading and formatting
 # 2018-03-20: added slice width calculation
 #             added gonad model loading
@@ -60,6 +61,7 @@ require(plyr)
 # get %>% & distinct
 # Note: dplyr must be loaded after plyr!
 require(dplyr)
+require(magrittr)
 
 
 ##############
@@ -181,5 +183,6 @@ if(!exists("input.data"))
       # extract used gene types per sample description/genotype combination
       llply(dlply,"genotype",with,unique(gene.type))
 
-  # end data loading
-  }
+  input.data$genes.names <-
+    input.data$tomoseq.data %$%
+    unique(gene.name)}

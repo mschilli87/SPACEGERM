@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: added 3D model tab & plot output panel
+# 2018-04-13: added 3D model gene name & genotype input panels
+#             added 3D model tab & plot output panel
 # 2018-04-09: removed sample stretches input panel
 # 2018-04-03: added smoothing point count input panel parameters
 #             added smoothing span input panel parameters
@@ -523,10 +524,14 @@ fluidPage(
       # end heatmap tab panel definition
       ),
 
-    tabPanel(title = params$model3d.tab.title,
-             sidebarLayout(
-               sidebarPanel(),
-               mainPanel(plotlyOutput(outputId = "model3d")))))) %>%
+    tabPanel(
+      title = params$model3d.tab.title,
+      sidebarLayout(
+        sidebarPanel(uiOutput(outputId = "genotype3d.input"),
+                     selectizeInput(inputId = "gene3d",
+                                    label = h3(params$gene.names.input.label),
+                                    choices  = NULL)),
+        mainPanel(plotlyOutput(outputId = "model3d")))))) %>%
 
 # initialize user interface
 shinyUI

@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: added 3D model tab & plot parameters
+# 2018-04-13: added 3D model colorbar parameters
+#             added 3D model tab & plot parameters
 # 2018-04-12: disabled single-y-scale by default
 # 2018-04-10: added plot option to show/hide dropout slices
 #             added plot option to show/hide smoothing standard error
@@ -701,6 +702,8 @@ if(!exists("params"))
 
 
   plot.title.model3d = "Gonad arm model",
+  colorscale.model3d = "Reds",
+  colorlab.model3d = "Expression [CPM]",
   dplab.model3d = "distal-proximal [μm from DTC]",
   lrlab.model3d = "left-right [μm from center]",
   dvlab.model3d = "dorsal-ventral [μm from center]" ,
