@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: parameterized span to use for smoothing for 3D model
+# 2018-04-13: added support for default ymin/max values
+#             parameterized span to use for smoothing for 3D model
 #             added 3D model CPM fitting and coloring support
 #             added 3D model plot function (outline colored by distal-to-proximal only)
 # 2018-04-10: added support for dropout slices
@@ -202,13 +203,8 @@ generate.manual.ymin.input<-
             ,min=min.value
 
             # set maximal value for y-axis minimum input panel
-            ,max=params$manual.ymin.input.max
-
-            # set default value for y-axis minimum input panel to minimum
-            ,value=min.value
-
-            # end y-axis minimum input panel definition
-            )
+            ,max = params$manual.ymin.input.max,
+            value = max(min.value, params$manual.ymin.input.default))
 
       # hide input panel if manual y-axis limits plot option not selected by the user
       } else {
@@ -269,13 +265,8 @@ generate.manual.ymax.input<-
             ,min=ymin+1
 
             # set maximal value for y-axis maximum input panel
-            ,max=params$manual.ymax.input.max
-
-            # set default value for y-axis maximum input panel to maximum
-            ,value=params$manual.ymax.input.max
-
-            # end y-axis maximum input panel definition
-            )
+            ,max = params$manual.ymax.input.max,
+            value = max(ymin + 1, params$manual.ymax.input.default))
 
       # hide input panel if manual y-axis limits plot option not selected by the user
       } else {

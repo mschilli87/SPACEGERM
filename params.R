@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: adjusted sample description and genotype defaults
+# 2018-04-13: added default ymin/max values
+#             adjusted sample description and genotype defaults
 #             added 3D model colorbar parameters
 #             added 3D model tab & plot parameters
 # 2018-04-12: disabled single-y-scale by default
@@ -240,7 +241,8 @@ if(!exists("params"))
       ,manual.ymin.input.min=-10^4
 
       # maximum value of y-axis minimum input panel
-      ,manual.ymin.input.max=10^6-1
+      ,manual.ymin.input.max = 10^6 - 1,
+      manual.ymin.input.default = 0,
 
 
         ##############################
@@ -248,10 +250,11 @@ if(!exists("params"))
         ##############################
 
       # label of y-axis maximum input panel
-      ,manual.ymax.input.label="y-axis maximum"
+      manual.ymax.input.label = "y-axis maximum"
 
       # maximum value of y-axis maximum input panel
-      ,manual.ymax.input.max=10^6
+      ,manual.ymax.input.max = 10^6,
+      manual.ymax.input.default = 10^4,
 
 
         ##################################
@@ -259,7 +262,7 @@ if(!exists("params"))
         ##################################
 
       # label of plot columns count input panel
-      ,ncols.plot.input.label="# plot columns"
+      ncols.plot.input.label = "# plot columns"
 
       # minimum value of plot columns count input panel
       ,ncols.plot.input.min=1
