@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: removed left-over code from user specified sample shift/strech support
+# 2018-04-13: added sample shifts & stretches to 3D model coloring
+#             removed left-over code from user specified sample shift/strech support
 #             removed support for user specified sample shifts
 #             added support for default ymin/max values
 #             parameterized span to use for smoothing for 3D model
@@ -1937,13 +1938,18 @@ keep.top.genes<-
 
 fit.cpm <-
   function(slice.data, model.length,
-           smoothing.span = params$smoothing.span.input.default){
+           smoothing.span = params$smoothing.span.input.default,
+           sample.shifts = input.data$sample.shift.defaults,
+           sample.stretches = input.data$sample.stretch.defaults){
     slice.data %<>%
       filter(is.na(transcript.name), !dropout)
     if(!nrow(slice.data)) return(NULL)
     else
       slice.data %>%
-        mutate(dp = percent.center / 100 * model.length) %>%
+        mutate(shift = sample.shifts[sample.name],
+               stretch = sample.stretches[sample.name],
+               percent.center = (percent.center + shift) * stretch,
+               dp = percent.center / 100 * model.length) %>%
         loess(cpm ~ dp, data = ., span = smoothing.span)}
 
 
