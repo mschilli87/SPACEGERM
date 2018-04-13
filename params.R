@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: added 3D model gene name input panel label parameter
+# 2018-04-13: added 3D model gene name input default parameter
+#             added 3D model gene name input panel label parameter
 #             removed un-needed parameters left over from sample shift/stretch input panels
 #             added default ymin/max values
 #             adjusted sample description and genotype defaults
@@ -498,6 +499,7 @@ if(!exists("params"))
       ,gene.table.xlsx.name = "gene_table.xlsx",
       model3d.tab.title = "3D model",
       gene3d.input.label = "Gene/miRNA name",
+      gene3d.input.default = "rpl-17",
 
 
   ##############

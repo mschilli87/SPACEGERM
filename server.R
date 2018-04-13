@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-04-13: replaced user specified sample shifts by defaults
+# 2018-04-13: added 3D model gene name default
+#             replaced user specified sample shifts by defaults
 #             replaced user specified sample description for heatmap by default
 #             added user specified smoothing span for 3D model
 #             added 3D model gene/genotype selection and CPM fitting support / fixed indentation
@@ -104,7 +105,7 @@ source("data.R")
 # define shiny server function parameters
 function(input, output, session){
   updateSelectizeInput(session, 'gene3d', choices = input.data$genes.name,
-                       server = TRUE)
+                       selected = params$gene3d.input.default, server = TRUE)
 
   # assign y-axis minimum input panel output
   output$manual.ymin.input<-
