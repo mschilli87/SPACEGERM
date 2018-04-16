@@ -21,7 +21,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-04-13
+# last update:  2018-04-16
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define front end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-16: renamed y-axis limits inputs to expression range inputs
 # 2018-04-13: relabeled 3D model gene input panel
 #             removed sample shift input panel
 #             removed sample description input panel for heatmap
@@ -204,28 +205,13 @@ fluidPage(
       ,selected=params$plot.options.input.default
 
       # end plot options input panel definition
-      )
+      ),
 
-    # add dynamically generated manual y-axis minimum input panel
-    ,uiOutput(
-
-      # name manual y-axis minimum input panel
-      outputId="manual.ymin.input"
-
-      # end manual y-axis minimum input panel definition
-      )
-
-    # add dynamically generated manual y-axis maximum input panel
-    ,uiOutput(
-
-      # name manual y-axis maximum input panel
-      outputId="manual.ymax.input"
-
-      # end manual y-axis maximum input panel definition
-      )
+    uiOutput(outputId = "manual.exprmin.input"),
+    uiOutput(outputId = "manual.exprmax.input"),
 
     # add plot columns count input panel
-    ,numericInput(
+    numericInput(
 
       # name plot columns count input
       inputId="ncols.plot"

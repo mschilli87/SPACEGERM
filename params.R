@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-04-13
+# last update:  2018-04-16
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-16: renamed y-axis limits inputs to expression range inputs
 # 2018-04-13: added 3D model gene name input default parameter
 #             added 3D model gene name input panel label parameter
 #             removed un-needed parameters left over from sample shift/stretch input panels
@@ -221,7 +222,7 @@ if(!exists("params"))
           `scale y-axis logarithmically (log2)`="logscale",
           `fix x-axis limits`="fix.xlim",
           `use single y-scale for all sub-plots`="single.y.scale",
-          `manually set y-axis limits`="set.ylim",
+          `manually set expression range limits` = "set.exprlim",
           `show slice width bars`="show.slice.width",
           `show gonad arm model (if single column & fixed x-axis limits)`=
             "show.model",
@@ -230,34 +231,20 @@ if(!exists("params"))
 
       # default selection of plot option input panel
        plot.options.input.default =
-         c("raw.points", "smooth.pooled", "fix.xlim", "show.smoothing.se", "show.dropouts")
+         c("raw.points", "smooth.pooled", "fix.xlim", "show.smoothing.se", "show.dropouts"),
 
 
-        ##############################
-        # y-axis minimum input panel #
-        ##############################
+        #################################
+        # expression range input panels #
+        #################################
 
-      # label of y-axis minimum input panel
-      ,manual.ymin.input.label="y-axis minimum"
-
-      # minimum value of y-axis minimum input panel
-      ,manual.ymin.input.min=-10^4
-
-      # maximum value of y-axis minimum input panel
-      ,manual.ymin.input.max = 10^6 - 1,
-      manual.ymin.input.default = 0,
-
-
-        ##############################
-        # y-axis maximum input panel #
-        ##############################
-
-      # label of y-axis maximum input panel
-      manual.ymax.input.label = "y-axis maximum"
-
-      # maximum value of y-axis maximum input panel
-      ,manual.ymax.input.max = 10^6,
-      manual.ymax.input.default = 10^4,
+      manual.exprmin.input.label="Expression range minimum",
+      manual.exprmin.input.min = -10^4,
+      manual.exprmin.input.max = 10^6 - 1,
+      manual.exprmin.input.default = 0,
+      manual.exprmax.input.label = "Expression range maximum",
+      manual.exprmax.input.max = 10^6,
+      manual.exprmax.input.default = 10^4,
 
 
         ##################################

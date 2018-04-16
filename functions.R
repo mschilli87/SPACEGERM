@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2018-04-13
+# last update:  2018-04-16
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-16: renamed y-axis limits inputs to expression range inputs
 # 2018-04-13: added sample shifts & stretches to 3D model coloring
 #             removed left-over code from user specified sample shift/strech support
 #             removed support for user specified sample shifts
@@ -160,134 +161,60 @@ source("params.R")
   # helper functions #
   ####################
 
-# generate y-axis minimum input panel
-generate.manual.ymin.input<-
+# generate expression range minimum input panel
+generate.manual.exprmin.input <-
+  function(plot.options, id = "manual.exprmin"){
 
-  # define y-axis minimum input panel generation function
-  function(
+    if("set.exprlim" %in% plot.options){
 
-    # plot options selected by the user
-    plot.options
+      # initiate minimal expression range minimum
+      min.value = params$manual.exprmin.input.min
 
-    # end y-axis minimum input panel generation function parameter definition
-    )
+      # adjust minimal expression range minimum based on logscale plot option
+      if("logscale" %in% plot.options)
 
-    # begin y-axis minimum input panel generation function definition
-    {
+          # don't allow non-positive values for log-scale
+          min.value %<>% max(1)
 
-      # assign input panel if manual y-axis limits plot option selected by the user
-      if("set.ylim" %in% plot.options){
+      # assign input panel
+      manual.exprmin.input <-
+        numericInput(inputId = id,
+                     label = h3(params$manual.exprmin.input.label),
+                     min = min.value,
+                     max = params$manual.exprmin.input.max,
+                     value = max(min.value,
+                                 params$manual.exprmin.input.default))}
 
-        # initiate minimal y-axis minimum
-        min.value=params$manual.ymin.input.min
+    # assign placeholder
+    else {manual.exprmin.input <- HTML("")}
 
-        # adjust minimal y-axis minimum based on logscale plot option
-        if("logscale" %in% plot.options)
-
-            # don't allow non-positive y-axis minimum for logarithmically scaled plots
-            min.value %<>% max(1)
-
-        # assign input panel
-        manual.ymin.input<-
-
-          # define y-axis minimum input panel
-          numericInput(
-
-            # name y-axis minimum input
-            inputId="manual.ymin"
-
-            # label y-axis minimum input panel
-            ,label=params$manual.ymin.input.label %>%
-
-              # make label 3rd level header
-              h3
-
-            # set minimal value for y-axis minimum input panel
-            ,min=min.value
-
-            # set maximal value for y-axis minimum input panel
-            ,max = params$manual.ymin.input.max,
-            value = max(min.value, params$manual.ymin.input.default))
-
-      # hide input panel if manual y-axis limits plot option not selected by the user
-      } else {
-
-        # assign placeholder
-        manual.ymin.input<-
-
-          # use empty HTML object as valid placeholder for input panel
-          HTML("")
-
-        # end input panel/placeholder assignment
-        }
-
-      # return input panel/placeholder for rendering
-      return(manual.ymin.input)
-
-    # end y-axis minimum input panel generation function definition
-    }
+    # return input panel/placeholder for rendering
+    return(manual.exprmin.input)}
 
 
-# generate y-axis maximum input panel
-generate.manual.ymax.input<-
+# generate expression range maximum input panel
+generate.manual.exprmax.input <-
+  function(plot.options, exprmin, id = "manual.exprmax"){
 
-  # define y-axis maximum input panel generation function
-  function(
-
-    # plot options selected by the user
-    plot.options
-
-    # manual y-axis limit set by the user
-    ,ymin
-
-    # end y-axis maximum input panel generation function parameter definition
-    )
-
-    # begin y-axis maximum input panel generation function definition
-    {
-
-      # assign input panel if manual y-axis limits plot option selected by the user
-      if("set.ylim" %in% plot.options){
+      if("set.exprlim" %in% plot.options){
 
         # assign input panel
-        manual.ymax.input<-
+        manual.exprmax.input <-
 
-          # define y-axis maximum input panel
-          numericInput(
+          # define expression range maximum input panel
+          numericInput(inputId = id,
+                       label = h3(params$manual.exprmax.input.label),
+                       min = exprmin + 1,
+                       max = params$manual.exprmax.input.max,
+                       value = max(exprmin + 1,
+                                   params$manual.exprmax.input.default))}
 
-            # name y-axis maximum input
-            inputId="manual.ymax"
-
-            # label y-axis maximum input panel
-            ,label=params$manual.ymax.input.label %>%
-
-              # make label 3rd level header
-              h3
-
-            # set minimal value for y-axis maximum input panel
-            ,min=ymin+1
-
-            # set maximal value for y-axis maximum input panel
-            ,max = params$manual.ymax.input.max,
-            value = max(ymin + 1, params$manual.ymax.input.default))
-
-      # hide input panel if manual y-axis limits plot option not selected by the user
-      } else {
-
-        # assign placeholder
-        manual.ymax.input<-
-
-          # use empty HTML object as valid placeholder for input panel
-          HTML("")
-
-        # end input panel/placeholder assignment
-        }
+      # assign placeholder
+      else {manual.exprmax.input <- HTML("")}
 
       # return input panel/placeholder for rendering
-      return(manual.ymax.input)
+      return(manual.exprmax.input)}
 
-    # end y-axis maximum input panel generation function definition
-    }
 
 # parse gene names input from single string to vector
 parse.gene.names<-
@@ -2082,16 +2009,12 @@ generate.profile.plot<-
     ,plot.options=
 
       # by default, don't use any plot option
-      character(0)
+      character(0),
 
-    # manual y-axis limits specified by the user
-    ,manual.ylim=
-
-      # by default, set y-axis limits automatically
-      NULL
+    manual.exprlim = NULL,
 
     # plot columns count to use
-    ,ncols.plot=
+    ncols.plot =
 
       # by default, use default plot columns count
       params$ncols.plot.input.default,
@@ -2117,11 +2040,11 @@ generate.profile.plot<-
     # begin profile plot generation function definition
     {
 
-      # if manual y-axis limits plot option not selected by the user
-      if(!("set.ylim" %in% plot.options))
+      # if manual expression range limits plot option not selected by the user
+      if(!("set.exprlim" %in% plot.options))
 
-        # discard any manual y-axis limits specified
-        manual.ylim<-NULL
+        # discard any manual expression range limits specified
+        manual.exprlim <- NULL
 
       # take tomo-seq data
       tomoseq.data %>%
@@ -2196,13 +2119,12 @@ generate.profile.plot<-
         ,fix.xlim="fix.xlim" %in% plot.options
 
         # use a single y-scale for all sub-plots if specified in plot options
-        ,single.y.scale="single.y.scale" %in% plot.options
+        ,single.y.scale = "single.y.scale" %in% plot.options,
 
-        # use y-axis limits specified
-        ,y.limits=manual.ylim
+        y.limits = manual.exprlim,
 
         # use plot columns count specified
-        ,ncols=ncols.plot
+        ncols = ncols.plot
 
         # plot isoform-specific profiles if specified
         ,isoform.level=per.isoform,

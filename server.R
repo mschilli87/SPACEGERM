@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-04-13
+# last update:  2018-04-16
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-16: renamed y-axis limits inputs to expression range inputs
 # 2018-04-13: added 3D model gene name default
 #             replaced user specified sample shifts by defaults
 #             replaced user specified sample description for heatmap by default
@@ -107,41 +108,11 @@ function(input, output, session){
   updateSelectizeInput(session, 'gene3d', choices = input.data$genes.name,
                        selected = params$gene3d.input.default, server = TRUE)
 
-  # assign y-axis minimum input panel output
-  output$manual.ymin.input<-
-
-    # render y-axis minimum input panel
-    renderUI(
-
-      # take plot options selected by the user
-      input$plot.options %>%
-
-      # generate y-axis minimum input panel
-      generate.manual.ymin.input
-
-      # end y-axis minimum input panel rendering
-      )
-
-  # assign y-axis maximum input panel output
-  output$manual.ymax.input<-
-
-    # render y-axis maximum input panel
-    renderUI(
-
-      # take plot options selected by the user
-      input$plot.options %>%
-
-      # generate y-axis maximum input panel
-      generate.manual.ymax.input(
-
-        # pass on y-axis minimum specified by the user
-        ymin=input$manual.ymin
-
-        # end y-axis maximum input panel generation
-        )
-
-      # end y-axis maximum input panel rendering
-      )
+  output$manual.exprmin.input <-
+    renderUI(generate.manual.exprmin.input(input$plot.options))
+  output$manual.exprmax.input <-
+    renderUI(generate.manual.exprmax.input(input$plot.options,
+                                           exprmin = input$manual.exprmin))
 
   # assign profile plot output
   output$profile.plot<-
@@ -162,20 +133,14 @@ function(input, output, session){
         ,sample.names=input$sample.names
 
         # set plot options specified by the user
-        ,plot.options=input$plot.options
+        ,plot.options = input$plot.options,
 
-        # set manual y-axis limits specified by the user
-        ,manual.ylim=c(input$manual.ymin,input$manual.ymax)
-
-        # set plot columns count specified by the user
-        ,ncols.plot = input$ncols.plot,
-
-        # set expression level specified by the user
+        manual.exprlim = c(input$manual.exprmin, input$manual.exprmax),
+        ncols.plot = input$ncols.plot,
         per.isoform = input$isoform.level,
-
-         unit = input$abundance.unit,
-         smoothing.n = input$smoothing.n,
-         smoothing.span = input$smoothing.span))
+        unit = input$abundance.unit,
+        smoothing.n = input$smoothing.n,
+        smoothing.span = input$smoothing.span))
 
   # assign genotype input panel output
   output$genotype.input <-
