@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-04-16
+# last update:  2018-04-23
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-23: added 3D expression range inputs
 # 2018-04-16: renamed y-axis limits inputs to expression range inputs
 # 2018-04-13: added 3D model gene name default
 #             replaced user specified sample shifts by defaults
@@ -155,6 +156,13 @@ function(input, output, session){
     renderUI(
       generate.gene.type.input(params$sample.description.input.default,
                                input$genotype))
+  output$manual.exprmin3d.input <-
+    renderUI(generate.manual.exprmin.input(input$plot.options3d,
+                                           id = "manual.exprmin3d"))
+  output$manual.exprmax3d.input <-
+    renderUI(generate.manual.exprmax.input(input$plot.options3d,
+                                           exprmin = input$manual.exprmin3d,
+                                           id = "manual.exprmax3d"))
 
   # assign gene list filtered gene profiles
   gene.profiles.filtered.gene.list<-
@@ -293,7 +301,9 @@ function(input, output, session){
                   filter(gene.name == input$gene3d,
                          genotype == input$genotype3d) %>%
                   fit.cpm(model.length = max(input.data$gonad.model$outline$dp),
-                          smoothing.span = input$span3d)))
+                          smoothing.span = input$span3d),
+        plot.options = input$plot.options3d,
+        manual.exprlim = c(input$manual.exprmin3d, input$manual.exprmax3d)))
 
   # assign gene annotation
   gene.annotation<-

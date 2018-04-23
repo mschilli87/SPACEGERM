@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-04-16
+# last update:  2018-04-23
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-23: added 3D model fixed expression range plot option
 # 2018-04-16: renamed y-axis limits inputs to expression range inputs
 # 2018-04-13: added 3D model gene name input default parameter
 #             added 3D model gene name input panel label parameter
@@ -487,6 +488,9 @@ if(!exists("params"))
       model3d.tab.title = "3D model",
       gene3d.input.label = "Gene/miRNA name",
       gene3d.input.default = "rpl-17",
+      plot.options3d =
+        c(`manually set expression range limis` = "set.exprlim"),
+      plot.options3d.input.default = c(),
 
 
   ##############

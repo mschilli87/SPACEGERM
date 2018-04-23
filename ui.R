@@ -21,7 +21,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-04-16
+# last update:  2018-04-23
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define front end for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-23: added 3D model plot options input panel & expression range inputs
 # 2018-04-16: renamed y-axis limits inputs to expression range inputs
 # 2018-04-13: relabeled 3D model gene input panel
 #             removed sample shift input panel
@@ -483,6 +484,12 @@ fluidPage(
                      selectizeInput(inputId = "gene3d",
                                     label = h3(params$gene3d.input.label),
                                     choices  = NULL),
+                     checkboxGroupInput(inputId = "plot.options3d",
+                                        label = h3(params$plot.options.input.label),
+                                        choices = params$plot.options3d,
+                                        selected = params$plot.options3d.input.default),
+                     uiOutput(outputId = "manual.exprmin3d.input"),
+                     uiOutput(outputId = "manual.exprmax3d.input"),
                      numericInput(inputId = "span3d",
                                   label = h3(params$smoothing.span.input.label),
                                   min = params$smoothing.span.input.min,

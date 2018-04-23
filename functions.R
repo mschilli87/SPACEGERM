@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2018-04-16
+# last update:  2018-04-23
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for tomo-seq shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-04-23: added fixed expression range support to 3D model coloring
 # 2018-04-16: renamed y-axis limits inputs to expression range inputs
 # 2018-04-13: added sample shifts & stretches to 3D model coloring
 #             removed left-over code from user specified sample shift/strech support
@@ -2206,24 +2207,28 @@ generate.heatmap<-
     # end heatmap generation function definition
     }
 
-plot.model3d <- function(outline, cpm.fit = NULL){
+plot.model3d <- function(outline, cpm.fit = NULL, plot.options = character(0),
+                         manual.exprlim = NULL){
+
   if(is.null(cpm.fit)) outline %<>% mutate(cpm = NA)
   else
     outline %<>%
       left_join(distinct(., dp) %>%
                 mutate(cpm = predict(cpm.fit, dp)))
+  if(!("set.exprlim" %in% plot.options)) manual.exprlim <- NULL
+
   outline %>%
-  plot_ly(x = ~dp, y = ~lr, z = ~dv) %>%
-  add_lines(color = ~cpm, colors = params$colorscale.model3d) %>%
-  colorbar(title = params$colorlab.model3d) %>%
-  layout(title = params$plot.title.model3d,
-         scene = list(xaxis = list(title = params$dplab.model3d),
-                      yaxis = list(title = params$lrlab.model3d),
-                      zaxis = list(title = params$dvlab.model3d),
-                      aspectmode = "data",
-                      camera = list(eye = list(x = params$eye.model3d.dp,
-                                               y = params$eye.model3d.lr,
-                                               z = params$eye.model3d.dv))))}
+    plot_ly(x = ~dp, y = ~lr, z = ~dv) %>%
+    add_lines(color = ~cpm, colors = params$colorscale.model3d) %>%
+    colorbar(title = params$colorlab.model3d, limits = manual.exprlim) %>%
+    layout(title = params$plot.title.model3d,
+           scene = list(xaxis = list(title = params$dplab.model3d),
+                        yaxis = list(title = params$lrlab.model3d),
+                        zaxis = list(title = params$dvlab.model3d),
+                        aspectmode = "data",
+                        camera = list(eye = list(x = params$eye.model3d.dp,
+                                                 y = params$eye.model3d.lr,
+                                                 z = params$eye.model3d.dv))))}
 
 
     ##########################
