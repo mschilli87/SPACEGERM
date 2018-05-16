@@ -1,4 +1,4 @@
-# tomo-seq shiny app server script
+# SPACEGERM shiny app server script
 # Copyright (C) 2017-2018  Marcel Schilling
 #
 # This program is free software: you can redistribute it and/or modify
@@ -21,15 +21,16 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-04-23
+# last update:  2018-05-16
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
-# purpose:      define back end for tomo-seq shiny app
+# purpose:      define back end for SPACEGERM shiny app
 
 
 ######################################
 # change log (reverse chronological) #
 ######################################
 
+# 2018-05-16: renamed app for publication
 # 2018-04-23: added 3D expression range inputs
 # 2018-04-16: renamed y-axis limits inputs to expression range inputs
 # 2018-04-13: added 3D model gene name default
@@ -127,7 +128,7 @@ function(input, output, session){
                        fontface = "bold", y = .3, size = 32)
       } else {
         profile.plot <-
-         input.data$tomoseq.data %>%
+         input.data$slice.data %>%
          generate.profile.plot(
            gene.names = input$gene.names,
            sample.names = input$sample.names,
@@ -294,7 +295,7 @@ function(input, output, session){
     renderPlotly(
       plot.model3d(
         outline = input.data$gonad.model$outline,
-        cpm.fit = input.data$tomoseq.data %>%
+        cpm.fit = input.data$slice.data %>%
                   filter(gene.name == input$gene3d,
                          genotype == input$genotype3d) %>%
                   fit.cpm(model.length = max(input.data$gonad.model$outline$dp),

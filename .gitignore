@@ -1,4 +1,4 @@
-# tomo-seq shiny app .gitignore
+# SPACEGERM shiny app .gitignore
 # Copyright (C) 2017-2018  Marcel Schilling
 #
 # This program is free software: you can redistribute it and/or modify
@@ -20,29 +20,30 @@
 
 # file:         .gitignore
 # created:      2017-02-23
-# last update:  2018-04-04
+# last update:  2018-05-16
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
-# purpose:      untrack input files for tomo-seq shiny app
+# purpose:      untrack input files for SPACEGERM shiny app
 
 
 ######################################
 # change log (reverse chronological) #
 ######################################
 
+# 2018-05-16: renamed app for publication
 # 2018-04-04: added Rds file providing default shifts/stretches
 # 2018-03-20: added Rds file providing gonad arm model
 # 2017-03-29: added Rds file providing gene profiles
 # 2017-02-24: added license comment
-# 2017-02-23: initial version (Rds file providing tomo-seq data)
+# 2017-02-23: initial version (Rds file providing slice data)
 
 
 ###############
 # input files #
 ###############
 
-# Rds file providing tomo-seq data
-/tomoseq.data.Rds
+# Rds file providing slice data
+/slice.data.Rds
 
 # Rds file providing default shifts/stretches
 /shift_stretch.Rds

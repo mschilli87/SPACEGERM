@@ -1,4 +1,4 @@
-# tomo-seq shiny app data loading script
+# SPACEGERM shiny app data loading script
 # Copyright (C) 2017-2018  Marcel Schilling
 #
 # This program is free software: you can redistribute it and/or modify
@@ -21,15 +21,16 @@
 # file:         data.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2018-04-13
+# last update:  2018-05-16
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
-# purpose:      load input data for tomo-seq shiny app
+# purpose:      load input data for SPACEGERM shiny app
 
 
 ######################################
 # change log (reverse chronological) #
 ######################################
 
+# 2018-05-16: renamed app for publication
 # 2018-04-13: added extraction of gene names
 # 2018-04-04: added default shift/stretch file loading and formatting
 # 2018-03-20: added slice width calculation
@@ -45,14 +46,14 @@
 # 2017-03-28: added missing explicit magrittr loading
 # 2017-02-24: added license comment
 # 2017-02-23: added sample names extraction
-#             initial version (double-sourcing check & tomo-seq data loading)
+#             initial version (double-sourcing check & slice data loading)
 
 
 #############
 # libraries #
 #############
 
-# tomo-seq data is provided as tibble
+# slice data is provided as tibble
 require(tibble)
 
 # get dlply
@@ -83,13 +84,13 @@ if(!exists("input.data"))
   {
 
     # load input data
-    input.data <- list(tomoseq.data = readRDS(params$tomoseq.data.file),
+    input.data <- list(slice.data = readRDS(params$slice.data.file),
                        shift_stretch = readRDS(params$shift_stretch.file),
                        gene.profiles = readRDS(params$gene.profiles.file),
                        gonad.model = readRDS(params$gonad.model.file))
 
     # get slice width [% gonad arm]
-    input.data$tomoseq.data %<>%
+    input.data$slice.data %<>%
         group_by(sample.name, gene, transcript.name) %>%
         mutate(n.slices = n()) %>%
         ungroup %>%
@@ -99,8 +100,8 @@ if(!exists("input.data"))
     # get sample names
     input.data$sample.names<-
 
-      # take tomo-seq data
-      input.data$tomoseq.data %>%
+      # take slice data
+      input.data$slice.data %>%
 
       # extract used sample names
       distinct(sample.name) %>%
@@ -184,5 +185,5 @@ if(!exists("input.data"))
       llply(dlply,"genotype",with,unique(gene.type))
 
   input.data$genes.names <-
-    input.data$tomoseq.data %$%
+    input.data$slice.data %$%
     unique(gene.name)}

@@ -1,4 +1,4 @@
-# tomo-seq shiny app function definition script
+# SPACEGERM shiny app function definition script
 # Copyright (C) 2017-2018  Marcel Schilling
 #
 # This program is free software: you can redistribute it and/or modify
@@ -21,15 +21,16 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2018-04-23
+# last update:  2018-05-16
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
-# purpose:      define functions for tomo-seq shiny app
+# purpose:      define functions for SPACEGERM shiny app
 
 
 ######################################
 # change log (reverse chronological) #
 ######################################
 
+# 2018-05-16: renamed app for publication
 # 2018-04-23: added fixed expression range support to 3D model coloring
 # 2018-04-16: renamed y-axis limits inputs to expression range inputs
 # 2018-04-13: added sample shifts & stretches to 3D model coloring
@@ -1991,8 +1992,8 @@ generate.profile.plot<-
   # define filter by gene names function
   function(
 
-    # tomoseq data to plot
-    tomoseq.data
+    # slice data to plot
+    slice.data
 
     # gene names of genes to include in plot
     ,gene.names
@@ -2000,8 +2001,8 @@ generate.profile.plot<-
     # sample names of samples to include in plot
     ,sample.names=
 
-      # derive default sample name to include in plot on given tomo seq data
-      tomoseq.data %$%
+      # derive default sample name to include in plot on given slice data
+      slice.data %$%
 
       # identify all sample names provided data for
       unique(sample.name)
@@ -2047,10 +2048,10 @@ generate.profile.plot<-
         # discard any manual expression range limits specified
         manual.exprlim <- NULL
 
-      # take tomo-seq data
-      tomoseq.data %>%
+      # take slice data
+      slice.data %>%
 
-      # filter tomo-seq data by sample names
+      # filter slice data by sample names
       filter.data.by.sample.names(
 
         # specify sample names of samples to keep
@@ -2065,7 +2066,7 @@ generate.profile.plot<-
         # end data filtering by sample names
         ) %>%
 
-      # filter tomo-seq data by gene names
+      # filter slice data by gene names
       filter.data.by.gene.names(
 
         # specify gene names of genes to keep
@@ -2080,7 +2081,7 @@ generate.profile.plot<-
         # end data filtering by gene names
         ) %>%
 
-      # filter tomo-seq data by expression level type (gene/isoform profiles?)
+      # filter slice data by expression level type (gene/isoform profiles?)
       filter.data.by.expression.level(
 
         # specify wether to use isoform-level expression estimates
@@ -2098,7 +2099,7 @@ generate.profile.plot<-
       # add stretch column to data
       add.stretch.column(stretches.by.sample = sample.stretches) %>%
 
-      # plot profiles based on filtered tomo-seq data
+      # plot profiles based on filtered slice data
       plot.profiles(
 
         # show raw data points if specified in plot options

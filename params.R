@@ -1,4 +1,4 @@
-# tomo-seq shiny app parameter definition script
+# SPACEGERM shiny app parameter definition script
 # Copyright (C) 2017-2018  Marcel Schilling
 #
 # This program is free software: you can redistribute it and/or modify
@@ -21,15 +21,16 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-04-23
+# last update:  2018-05-16
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
-# purpose:      define parameters for tomo-seq shiny app
+# purpose:      define parameters for SPACEGERM shiny app
 
 
 ######################################
 # change log (reverse chronological) #
 ######################################
 
+# 2018-05-16: renamed app for publication
 # 2018-04-23: added 3D model fixed expression range plot option
 # 2018-04-16: renamed y-axis limits inputs to expression range inputs
 # 2018-04-13: added 3D model gene name input default parameter
@@ -128,7 +129,7 @@ if(!exists("params"))
     ##########################
 
       # title of the app
-      app.title="tomo-seq"
+      app.title = "SPACEGERM"
 
 
     ###########################
@@ -497,8 +498,8 @@ if(!exists("params"))
   # data paths #
   ##############
 
-      # (relative) file path of Rds file with tomo-seq data
-      tomoseq.data.file = "tomoseq.data.Rds",
+      # (relative) file path of Rds file with slice data
+      slice.data.file = "slice.data.Rds",
 
       shift_stretch.file = "shift_stretch.Rds",
 

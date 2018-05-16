@@ -1,4 +1,4 @@
-# tomo-seq shiny app user interface script
+# SPACEGERM shiny app user interface script
 # Copyright (C) 2017-2018  Marcel Schilling
 #
 # This program is free software: you can redistribute it and/or modify
@@ -21,15 +21,16 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-04-23
+# last update:  2018-05-16
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
-# purpose:      define front end for tomo-seq shiny app
+# purpose:      define front end for SPACEGERM shiny app
 
 
 ######################################
 # change log (reverse chronological) #
 ######################################
 
+# 2018-05-16: renamed app for publication
 # 2018-04-23: added 3D model plot options input panel & expression range inputs
 # 2018-04-16: renamed y-axis limits inputs to expression range inputs
 # 2018-04-13: relabeled 3D model gene input panel
