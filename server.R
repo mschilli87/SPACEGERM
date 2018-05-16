@@ -117,31 +117,28 @@ function(input, output, session){
 
   # assign profile plot output
   output$profile.plot<-
-
-    # render gene profiles plot
-    renderPlot(
-
-      # take tomo-seq data
-      input.data$tomoseq.data %>%
-
-      # generate profile plot
-      generate.profile.plot(
-
-        # plot profiles of genes specified by the user
-        gene.names=input$gene.names
-
-        # include sample specified by the user in plot
-        ,sample.names=input$sample.names
-
-        # set plot options specified by the user
-        ,plot.options = input$plot.options,
-
-        manual.exprlim = c(input$manual.exprmin, input$manual.exprmax),
-        ncols.plot = input$ncols.plot,
-        per.isoform = input$isoform.level,
-        unit = input$abundance.unit,
-        smoothing.n = input$smoothing.n,
-        smoothing.span = input$smoothing.span))
+    renderPlot({
+      if(input$gene.names %in% "chicken!"){
+        profile.plot <-
+          ggdraw() +
+            draw_image(paste0("http://www.factroom.ru/facts/wp-content/uploa",
+                              "ds/2013/12/319-620x411.jpg")) +
+            draw_label("There is no gene called chicken!", colour = "white",
+                       fontface = "bold", y = .3, size = 32)
+      } else {
+        profile.plot <-
+         input.data$tomoseq.data %>%
+         generate.profile.plot(
+           gene.names = input$gene.names,
+           sample.names = input$sample.names,
+           plot.options = input$plot.options,
+           manual.exprlim = c(input$manual.exprmin, input$manual.exprmax),
+           ncols.plot = input$ncols.plot,
+           per.isoform = input$isoform.level,
+           unit = input$abundance.unit,
+           smoothing.n = input$smoothing.n,
+           smoothing.span = input$smoothing.span)}
+      profile.plot})
 
   # assign genotype input panel output
   output$genotype.input <-

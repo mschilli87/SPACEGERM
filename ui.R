@@ -116,6 +116,9 @@ titlePanel(
 # embed title panel in page
 fluidPage(
 
+  HTML("<!-- if in doubt: http://isotropic.org/papers/chicken.pdf -->"),
+  ., # Make sure the above comment ends up on line 42 of the HTML. ;-)
+
   # add gene name input panel
   textInput(
 
