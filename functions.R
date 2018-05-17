@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-05-17: replaced require by library
+# 2018-05-17: dropped explicit loading of ggplot2 (pulled in by cowplot)
+#             replaced require by library
 # 2018-05-16: renamed app for publication
 # 2018-04-23: added fixed expression range support to 3D model coloring
 # 2018-04-16: renamed y-axis limits inputs to expression range inputs
@@ -112,9 +113,6 @@
 
 # get pipe operators
 library(magrittr)
-
-# get ggplot for plotting
-library(ggplot2)
 
 # get log2_trans for logscale
 library(scales)
