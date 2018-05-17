@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-05-16
+# last update:  2018-05-17
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for SPACEGERM shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-05-17: replaced require by library
 # 2018-05-16: renamed app for publication
 # 2018-04-23: added 3D expression range inputs
 # 2018-04-16: renamed y-axis limits inputs to expression range inputs
@@ -78,10 +79,10 @@
 #############
 
 # get pipe operators
-require(magrittr)
+library(magrittr)
 
 # get renderIheatmap
-require(iheatmapr)
+library(iheatmapr)
 library(plotly)
 
 

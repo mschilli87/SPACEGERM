@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2018-05-16
+# last update:  2018-05-17
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for SPACEGERM shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-05-17: replaced require by library
 # 2018-05-16: renamed app for publication
 # 2018-04-23: added fixed expression range support to 3D model coloring
 # 2018-04-16: renamed y-axis limits inputs to expression range inputs
@@ -110,37 +111,37 @@
 #############
 
 # get pipe operators
-require(magrittr)
+library(magrittr)
 
 # get ggplot for plotting
-require(ggplot2)
+library(ggplot2)
 
 # get log2_trans for logscale
-require(scales)
+library(scales)
 
 # get llply
-require(plyr)
+library(plyr)
 
 # get tibbles
-require(tibble)
+library(tibble)
 
 # get filter
-require(dplyr)
+library(dplyr)
 
 # get geom_circle
-require(ggforce)
+library(ggforce)
 
 # get plot_grid
-require(cowplot)
+library(cowplot)
 
 # get acast
-require(reshape2)
+library(reshape2)
 
 # get interactive complex heatmap framework
-require(iheatmapr)
+library(iheatmapr)
 
 # get write.xlsx & read.xlsx
-require(xlsx)
+library(xlsx)
 library(plotly)
 
 

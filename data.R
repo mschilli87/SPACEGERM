@@ -21,7 +21,7 @@
 # file:         data.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2018-05-16
+# last update:  2018-05-17
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      load input data for SPACEGERM shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-05-17: replaced require by library
 # 2018-05-16: renamed app for publication
 # 2018-04-13: added extraction of gene names
 # 2018-04-04: added default shift/stretch file loading and formatting
@@ -54,15 +55,15 @@
 #############
 
 # slice data is provided as tibble
-require(tibble)
+library(tibble)
 
 # get dlply
-require(plyr)
+library(plyr)
 
 # get %>% & distinct
 # Note: dplyr must be loaded after plyr!
-require(dplyr)
-require(magrittr)
+library(dplyr)
+library(magrittr)
 
 
 ##############
