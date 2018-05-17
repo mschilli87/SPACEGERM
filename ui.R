@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-05-17: replaced require by library
+# 2018-05-17: added app subtitle
+#             replaced require by library
 # 2018-05-16: renamed app for publication
 # 2018-04-23: added 3D model plot options input panel & expression range inputs
 # 2018-04-16: renamed y-axis limits inputs to expression range inputs
@@ -78,8 +79,7 @@
 
 # get pipe operators
 library(magrittr)
-
-# get iheatmaprOutput
+library(markdown)
 library(iheatmapr)
 library(plotly)
 
@@ -110,7 +110,8 @@ source("data.R")
 titlePanel(
 
   # set app title
-  title=params$app.title
+  title = params$app.title,
+  windowTitle = params$app.title
 
   # end title panel definition
   ) %>%
@@ -120,6 +121,8 @@ fluidPage(
 
   HTML("<!-- if in doubt: http://isotropic.org/papers/chicken.pdf -->"),
   ., # Make sure the above comment ends up on line 42 of the HTML. ;-)
+  HTML(markdownToHTML(text = params$app.subtitle.md,
+                      fragment.only = TRUE)),
 
   # add gene name input panel
   textInput(

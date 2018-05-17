@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-05-17: replaced require by library
+# 2018-05-17: added app subtitle
+#             replaced require by library
 # 2018-05-16: renamed app for publication
 # 2018-04-23: added 3D model fixed expression range plot option
 # 2018-04-16: renamed y-axis limits inputs to expression range inputs
@@ -130,15 +131,17 @@ if(!exists("params"))
     ##########################
 
       # title of the app
-      app.title = "SPACEGERM"
-
+      app.title = "SPACEGERM",
+      app.subtitle.md =
+        paste("**Spa**tial ***C****aenorhabditis* ***e****legans*",
+              "**g**ermline **e**xpression of m**R**NA & **m**iRNA"),
 
     ###########################
     # gene profiles tab panel #
     ###########################
 
       # title of gene profiles
-      ,gene.profiles.tab.title="Gene profiles"
+      gene.profiles.tab.title = "Gene profiles"
 
 
       #################
