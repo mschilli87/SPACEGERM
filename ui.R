@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-05-17: added app subtitle
+# 2018-05-17: re-ordered tabs for publication
+#             added app subtitle
 #             replaced require by library
 # 2018-05-16: renamed app for publication
 # 2018-04-23: added 3D model plot options input panel & expression range inputs
@@ -278,6 +279,26 @@ fluidPage(
   # embed gene profiles tab panel in tabset panel
   tabsetPanel(
 
+    tabPanel(
+      title = params$model3d.tab.title,
+      sidebarLayout(
+        sidebarPanel(uiOutput(outputId = "genotype3d.input"),
+                     selectizeInput(inputId = "gene3d",
+                                    label = h3(params$gene3d.input.label),
+                                    choices  = NULL),
+                     checkboxGroupInput(inputId = "plot.options3d",
+                                        label = h3(params$plot.options.input.label),
+                                        choices = params$plot.options3d,
+                                        selected = params$plot.options3d.input.default),
+                     uiOutput(outputId = "manual.exprmin3d.input"),
+                     uiOutput(outputId = "manual.exprmax3d.input"),
+                     numericInput(inputId = "span3d",
+                                  label = h3(params$smoothing.span.input.label),
+                                  min = params$smoothing.span.input.min,
+                                  max = params$smoothing.span.input.max,
+                                  value = params$smoothing.span.input.default)),
+        mainPanel(plotlyOutput(outputId = "model3d")))),
+
     # add heatmap tab panel
     tabPanel(
 
@@ -483,27 +504,7 @@ fluidPage(
         )
 
       # end heatmap tab panel definition
-      ),
-
-    tabPanel(
-      title = params$model3d.tab.title,
-      sidebarLayout(
-        sidebarPanel(uiOutput(outputId = "genotype3d.input"),
-                     selectizeInput(inputId = "gene3d",
-                                    label = h3(params$gene3d.input.label),
-                                    choices  = NULL),
-                     checkboxGroupInput(inputId = "plot.options3d",
-                                        label = h3(params$plot.options.input.label),
-                                        choices = params$plot.options3d,
-                                        selected = params$plot.options3d.input.default),
-                     uiOutput(outputId = "manual.exprmin3d.input"),
-                     uiOutput(outputId = "manual.exprmax3d.input"),
-                     numericInput(inputId = "span3d",
-                                  label = h3(params$smoothing.span.input.label),
-                                  min = params$smoothing.span.input.min,
-                                  max = params$smoothing.span.input.max,
-                                  value = params$smoothing.span.input.default)),
-        mainPanel(plotlyOutput(outputId = "model3d")))))) %>%
+      ), .)) %>%
 
 # initialize user interface
 shinyUI
