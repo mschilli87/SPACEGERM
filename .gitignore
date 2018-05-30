@@ -20,7 +20,7 @@
 
 # file:         .gitignore
 # created:      2017-02-23
-# last update:  2018-05-16
+# last update:  2018-05-30
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # purpose:      untrack input files for SPACEGERM shiny app
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-05-30: replaced shift/stretch RDS input by SQLite database
 # 2018-05-16: renamed app for publication
 # 2018-04-04: added Rds file providing default shifts/stretches
 # 2018-03-20: added Rds file providing gonad arm model
@@ -42,11 +43,11 @@
 # input files #
 ###############
 
+# SQLite database file providing input data
+/data.sqlite
+
 # Rds file providing slice data
 /slice.data.Rds
-
-# Rds file providing default shifts/stretches
-/shift_stretch.Rds
 
 # Rds file providing gene profiles
 /gene.profiles.Rds

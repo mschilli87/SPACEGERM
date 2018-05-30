@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-05-17
+# last update:  2018-05-30
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for SPACEGERM shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-05-30: replaced shift/stretch RDS input by SQLite database
 # 2018-05-17: adjusted tab titles for publication
 #             added app subtitle
 #             replaced require by library
@@ -503,10 +504,10 @@ if(!exists("params"))
   # data paths #
   ##############
 
+      data.sqlite = "data.sqlite",
+
       # (relative) file path of Rds file with slice data
       slice.data.file = "slice.data.Rds",
-
-      shift_stretch.file = "shift_stretch.Rds",
 
       # (relative) file path of Rds file with gene profiles
       gene.profiles.file = "gene.profiles.Rds",

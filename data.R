@@ -21,7 +21,7 @@
 # file:         data.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2018-05-17
+# last update:  2018-05-30
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      load input data for SPACEGERM shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-05-30: replaced shift/stretch RDS input by SQLite database
 # 2018-05-17: replaced require by library
 # 2018-05-16: renamed app for publication
 # 2018-04-13: added extraction of gene names
@@ -84,9 +85,11 @@ if(!exists("input.data"))
   # begin data loading
   {
 
+    data.db <- src_sqlite(params$data.sqlite)
+
     # load input data
     input.data <- list(slice.data = readRDS(params$slice.data.file),
-                       shift_stretch = readRDS(params$shift_stretch.file),
+                       shift.stretch = tbl(data.db, "shift.stretch"),
                        gene.profiles = readRDS(params$gene.profiles.file),
                        gonad.model = readRDS(params$gonad.model.file))
 
@@ -116,7 +119,7 @@ if(!exists("input.data"))
     # get default sample shifts
     input.data$sample.shift.defaults <-
       data_frame(sample.name = input.data$sample.names) %>%
-      left_join(input.data$shift_stretch) %>%
+      left_join(input.data$shift.stretch, copy = TRUE) %>%
       mutate(
         shift.default = ifelse(is.na(shift.default),
                                params$sample.shifts.input.default,
@@ -131,7 +134,7 @@ if(!exists("input.data"))
     # get default sample stretches
     input.data$sample.stretch.defaults <-
       data_frame(sample.name = input.data$sample.names) %>%
-      left_join(input.data$shift_stretch) %>%
+      left_join(input.data$shift.stretch, copy = TRUE) %>%
       mutate(stretch.default = ifelse(is.na(stretch.default),
                                 params$sample.stretches.input.default,
                                 stretch.default),
