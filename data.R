@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-05-30: replaced shift/stretch RDS input by SQLite database
+# 2018-05-30: removed slice width calculation (provided in input)
+#             replaced shift/stretch RDS input by SQLite database
 # 2018-05-17: replaced require by library
 # 2018-05-16: renamed app for publication
 # 2018-04-13: added extraction of gene names
@@ -92,14 +93,6 @@ if(!exists("input.data"))
                        shift.stretch = tbl(data.db, "shift.stretch"),
                        gene.profiles = readRDS(params$gene.profiles.file),
                        gonad.model = readRDS(params$gonad.model.file))
-
-    # get slice width [% gonad arm]
-    input.data$slice.data %<>%
-        group_by(sample.name, gene, transcript.name) %>%
-        mutate(n.slices = n()) %>%
-        ungroup %>%
-        mutate(width.percent = 100 / n.slices) %>%
-        select(-n.slices)
 
     # get sample names
     input.data$sample.names<-
