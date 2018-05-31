@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-05-31: removed slice data RDS (replaced by SQLite database)
+# 2018-05-31: increased smooth fit span default to match publication
+#             removed slice data RDS (replaced by SQLite database)
 # 2018-05-30: replaced shift/stretch RDS input by SQLite database
 # 2018-05-17: adjusted tab titles for publication
 #             added app subtitle
@@ -288,7 +289,7 @@ if(!exists("params"))
       smoothing.span.input.label = "Span to use for smoothing",
       smoothing.span.input.min = 0,
       smoothing.span.input.max = 1,
-      smoothing.span.input.default = .35,
+      smoothing.span.input.default = .4,
 
 
         #############################
