@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-05-17
+# last update:  2018-05-31
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for SPACEGERM shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-05-31: added support for slice data passed in as database query
 # 2018-05-17: replaced require by library
 # 2018-05-16: renamed app for publication
 # 2018-04-23: added 3D expression range inputs
@@ -299,6 +300,7 @@ function(input, output, session){
         cpm.fit = input.data$slice.data %>%
                   filter(gene.name == input$gene3d,
                          genotype == input$genotype3d) %>%
+                  collect %>%
                   fit.cpm(model.length = max(input.data$gonad.model$outline$dp),
                           smoothing.span = input$span3d),
         plot.options = input$plot.options3d,

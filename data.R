@@ -21,7 +21,7 @@
 # file:         data.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2018-05-30
+# last update:  2018-05-31
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      load input data for SPACEGERM shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-05-31: replaced slice data RDS input by SQLite database
 # 2018-05-30: removed slice width calculation (provided in input)
 #             replaced shift/stretch RDS input by SQLite database
 # 2018-05-17: replaced require by library
@@ -55,9 +56,6 @@
 #############
 # libraries #
 #############
-
-# slice data is provided as tibble
-library(tibble)
 
 # get dlply
 library(plyr)
@@ -89,24 +87,17 @@ if(!exists("input.data"))
     data.db <- src_sqlite(params$data.sqlite)
 
     # load input data
-    input.data <- list(slice.data = readRDS(params$slice.data.file),
+    input.data <- list(slice.data = tbl(data.db, "slice.data"),
                        shift.stretch = tbl(data.db, "shift.stretch"),
                        gene.profiles = readRDS(params$gene.profiles.file),
                        gonad.model = readRDS(params$gonad.model.file))
 
     # get sample names
-    input.data$sample.names<-
-
-      # take slice data
+    input.data$sample.names <-
       input.data$slice.data %>%
-
-      # extract used sample names
       distinct(sample.name) %>%
-
-      # convert single-column tibble to vector
+      collect %>%
       unlist %>%
-
-      # drop names
       unname
 
     # get default sample shifts
@@ -182,5 +173,8 @@ if(!exists("input.data"))
       llply(dlply,"genotype",with,unique(gene.type))
 
   input.data$genes.names <-
-    input.data$slice.data %$%
-    unique(gene.name)}
+    input.data$slice.data %>%
+    distinct(gene.name) %>%
+    collect %>%
+    unlist %>%
+    unname}

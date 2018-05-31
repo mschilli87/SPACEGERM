@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2018-05-17
+# last update:  2018-05-31
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for SPACEGERM shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-05-31: added support for slice data passed in as database query / cosmetics
 # 2018-05-17: dropped explicit loading of ggplot2 (pulled in by cowplot)
 #             replaced require by library
 # 2018-05-16: renamed app for publication
@@ -246,178 +247,37 @@ parse.gene.names<-
 
 
 # filter data by sample names
-filter.data.by.sample.names<-
-
-  # define filter by sample names function
-  function(
-
-    # unfiltered data
-    unfiltered.data
-
-    # sample names to keep
-    ,sample.names.to.keep
-
-    # end filter by sample names function parameter definition
-    )
-
-    # begin filter by sample names function definition
-    {
-
-      # take unfiltered data
-      unfiltered.data %>%
-
-      # subset unfiltered data
-      subset(
-
-        # select data with sample names to keep
-        sample.name %in% sample.names.to.keep
-
-        # end data subsetting
-        )
-
-    # end filter by sample names function definition
-    }
+filter.data.by.sample.names <-
+  function(unfiltered.data, sample.names.to.keep)
+    unfiltered.data %>%
+    filter(sample.name %in% sample.names.to.keep)
 
 
 # filter data by gene names
-filter.data.by.gene.names<-
-
-  # define filter by gene names function
-  function(
-
-    # unfiltered data
-    unfiltered.data
-
-    # gene names to keep
-    ,gene.names.to.keep
-
-    # end filter by gene names function parameter definition
-    )
-
-    # begin filter by gene names function definition
-    {
-
-      # take unfiltered data
-      unfiltered.data %>%
-
-      # subset unfiltered data
-      subset(
-
-        # select data with sample names to keep
-        gene.name %in% gene.names.to.keep
-
-        # end data subsetting
-        )
-
-    # end filter by gene names function definition
-    }
+filter.data.by.gene.names <-
+  function(unfiltered.data, gene.names.to.keep)
+    unfiltered.data %>%
+    filter(gene.name %in% gene.names.to.keep)
 
 
 # filter data by expression level type (gene/isoform profiles?)
-filter.data.by.expression.level<-
-
-  # define filter by expression level type (gene/isoform profiles?) function
-  function(
-
-    # unfiltered data
-    unfiltered.data
-
-    # use isoform-level expression estimates?
-    ,isoform.level
-
-    # end filter by expression level type (gene/isoform profiles?) function parameter definition
-    )
-
-    # begin filter by expression level type (gene/isoform profiles?) function definition
-    {
-
-      # take unfiltered data
-      unfiltered.data %>%
-
-      # subset unfiltered data
-      subset(
-
-        # select data isoform-level data for isoform-level profiles
-        is.na(transcript.name) != isoform.level
-
-        # end data subsetting
-        )
-
-    # end filter by expression level type (gene/isoform profiles?) function definition
-    }
+filter.data.by.expression.level <-
+  function(unfiltered.data, isoform.level)
+    unfiltered.data %>%
+    filter(is.na(transcript.name) != isoform.level)
 
 
 # add shift column to data
-add.shift.column<-
-
-  # define shift column addition function
-  function(
-
-    # data to add shift column to
-    input.data
-
-    # shifts to add to data labeled by sample name
-    ,shifts.by.sample
-
-    # end shift column addition function parameter definition
-    )
-
-    # begin shift column addition function definition
-    {
-
-      # take data to add shift column to
-      input.data %>%
-
-      # add column to data
-      cbind(
-
-        # label shift column
-        shift=
-
-          # assign shift by sample name
-          shifts.by.sample[.$sample.name]
-
-        # and column addition
-        )
-
-    # end shift column addition function definition
-    }
+add.shift.column <-
+  function(input.data, shifts.by.sample)
+    input.data %>%
+    mutate(shift = shifts.by.sample[sample.name])
 
 # add stretch column to data
-add.stretch.column<-
-
-  # define stretch column addition function
-  function(
-
-    # data to add stretch column to
-    input.data
-
-    # stretches to add to data labeled by sample name
-    ,stretches.by.sample
-
-    # end stretch column addition function parameter definition
-    )
-
-    # begin stretch column addition function definition
-    {
-
-      # take data to add stretch column to
-      input.data %>%
-
-      # add column to data
-      cbind(
-
-        # label stretch column
-        stretch=
-
-          # assign stretch by sample name
-          stretches.by.sample[.$sample.name]
-
-        # and column addition
-        )
-
-    # end stretch column addition function definition
-    }
+add.stretch.column <-
+  function(input.data, stretches.by.sample)
+    input.data %>%
+    mutate(stretch = stretches.by.sample[sample.name])
 
 # generate gonad arm model plot
 plot.model <- function(model.data)
@@ -1986,7 +1846,7 @@ generate.gene.type.input<-
     ##################
 
 # profile plot generation function
-generate.profile.plot<-
+generate.profile.plot <-
 
   # define filter by gene names function
   function(
@@ -2079,6 +1939,8 @@ generate.profile.plot<-
 
         # end data filtering by gene names
         ) %>%
+      collect %>%
+      mutate(dropout = as.logical(dropout)) %>% # SQL stores logicals as integers
 
       # filter slice data by expression level type (gene/isoform profiles?)
       filter.data.by.expression.level(
