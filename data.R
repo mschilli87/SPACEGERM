@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-05-31: replaced slice data RDS input by SQLite database
+# 2018-05-31: replaced gene profiles RDS input by SQLite database
+#             replaced slice data RDS input by SQLite database
 # 2018-05-30: removed slice width calculation (provided in input)
 #             replaced shift/stretch RDS input by SQLite database
 # 2018-05-17: replaced require by library
@@ -89,7 +90,7 @@ if(!exists("input.data"))
     # load input data
     input.data <- list(slice.data = tbl(data.db, "slice.data"),
                        shift.stretch = tbl(data.db, "shift.stretch"),
-                       gene.profiles = readRDS(params$gene.profiles.file),
+                       gene.profiles = tbl(data.db, "gene.profiles"),
                        gonad.model = readRDS(params$gonad.model.file))
 
     # get sample names
@@ -131,46 +132,27 @@ if(!exists("input.data"))
       setNames(stretch.default, sample.name)
 
     # get sample descriptions
-    input.data$sample.descriptions<-
-
-      # take gene profiles
+    input.data$sample.descriptions <-
       input.data$gene.profiles %>%
-
-      # extract used sample descriptions
       distinct(sample.description) %>%
-
-      # convert single-column tibble to vector
+      collect %>%
       unlist %>%
-
-      # drop names
       unname
 
     # get genotypes per sample description
-    input.data$genotypes<-
-
-      # take gene profiles
+    input.data$genotypes <-
       input.data$gene.profiles %>%
-
-      # extract used genotype/sample description combinations
-      distinct(sample.description,genotype) %>%
-
-      # extract used genotypes per sample description
-      dlply("sample.description",with,unique(genotype))
+      distinct(sample.description, genotype) %>%
+      collect %>%
+      dlply("sample.description", with, unique(genotype))
 
     # get gene types per sample description & genotype
-    input.data$gene.types<-
-
-      # take gene profiles
+    input.data$gene.types <-
       input.data$gene.profiles %>%
-
-      # extract used genotype/sample description/gene type combinations
-      distinct(sample.description,genotype,gene.type) %>%
-
-      # extract used genotypes/gene type combinations per sample description
-      dlply("sample.description",distinct,genotype,gene.type) %>%
-
-      # extract used gene types per sample description/genotype combination
-      llply(dlply,"genotype",with,unique(gene.type))
+      distinct(sample.description, genotype, gene.type) %>%
+      collect %>%
+      dlply("sample.description", distinct, genotype, gene.type) %>%
+      llply(dlply, "genotype", with, unique(gene.type))
 
   input.data$genes.names <-
     input.data$slice.data %>%

@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-05-31: removed slice data RDS (replaced by SQLite database)
+# 2018-05-31: removed gene profiles RDS (replaced by SQLite database)
+#             removed slice data RDS (replaced by SQLite database)
 # 2018-05-30: replaced shift/stretch RDS input by SQLite database
 # 2018-05-16: renamed app for publication
 # 2018-04-04: added Rds file providing default shifts/stretches
@@ -46,9 +47,6 @@
 
 # SQLite database file providing input data
 /data.sqlite
-
-# Rds file providing gene profiles
-/gene.profiles.Rds
 
 # Rds file providing gonad arm model
 /gonad.model.Rds

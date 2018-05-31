@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-05-31: added support for slice data passed in as database query
+# 2018-05-31: added support for gene profiles passed in as database query
+#             added support for slice data passed in as database query
 # 2018-05-17: replaced require by library
 # 2018-05-16: renamed app for publication
 # 2018-04-23: added 3D expression range inputs
@@ -229,6 +230,7 @@ function(input, output, session){
 
       # take gene type filtered gene profiles
       gene.profiles.filtered.gene.type() %>%
+      collect %>%
 
       # extract gene profiles for genes with peak CPM above minimum specified by the user
       filter.data.by.min.cpm.max(input$min.cpm.max)

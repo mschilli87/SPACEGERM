@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-05-31: increased smooth fit span default to match publication
+# 2018-05-31: removed gene profiles RDS (replaced by SQLite database)
+#             increased smooth fit span default to match publication
 #             removed slice data RDS (replaced by SQLite database)
 # 2018-05-30: replaced shift/stretch RDS input by SQLite database
 # 2018-05-17: adjusted tab titles for publication
@@ -507,9 +508,6 @@ if(!exists("params"))
   ##############
 
       data.sqlite = "data.sqlite",
-
-      # (relative) file path of Rds file with gene profiles
-      gene.profiles.file = "gene.profiles.Rds",
 
       # (relative) file path of Rds file with gene profiles
       gonad.model.file = "gonad.model.Rds"
