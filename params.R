@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-08-16: added location measure input panel parameters (incl. new distance measure)
+# 2018-08-16: added migration time location measure
+#             added location measure input panel parameters (incl. new distance measure)
 # 2018-05-31: removed gene profiles RDS (replaced by SQLite database)
 #             increased smooth fit span default to match publication
 #             removed slice data RDS (replaced by SQLite database)
@@ -215,7 +216,8 @@ if(!exists("params"))
 
       # choices for location measure input panel
       location.measure.input.choices = c("Relative position [% distal-to-proximal]",
-                                         "Distance to the DTC [μm]"),
+                                         "Distance to the DTC [μm]",
+                                         "Migration time from the DTC [h]"),
 
       # default selection of location measure input panel
       location.measure.input.default = "Relative position [% distal-to-proximal]",

@@ -30,7 +30,8 @@
 # change log (reverse chronological) #
 ######################################
 
-# 2018-08-16: added support for distance location measure
+# 2018-08-16: added support for migration time location measure
+#             added support for distance location measure
 # 2018-05-31: added support for slice data passed in as database query / cosmetics
 # 2018-05-17: dropped explicit loading of ggplot2 (pulled in by cowplot)
 #             replaced require by library
@@ -284,9 +285,14 @@ add.stretch.column <-
 plot.model <-
   function(model.data,
            location.measure = params$location.measure.input$default){
+
+    if(!(location.measure %in% c("Relative position [% distal-to-proximal]",
+                                 "Distance to the DTC [μm]"))) return(NULL)
+
     scale.factor <- ifelse(location.measure ==
                              "Relative position [% distal-to-proximal]",
                            100 / model.data$len.gonad.arm.um, 1)
+
     model.data$fit.radii %>%
     ggplot(aes(dist.to.dtc.um * scale.factor,
                radius.gonad.um * scale.factor)) %>%
@@ -429,6 +435,10 @@ plot.profiles<-
                dist.end.um = percent.end / 100 *
                                input.data$gonad.model$len.gonad.arm.um,
                dist.center.um = (dist.start.um + dist.end.um) / 2,
+               time.start.h = input.data$gonad.model$dist2time(dist.start.um),
+               time.end.h = input.data$gonad.model$dist2time(dist.end.um),
+               time.center.h =
+                 input.data$gonad.model$dist2time(dist.center.um),
                tx_color = isoform.level %>%
                           ifelse(list(transcript.name %>%
                                       sub(".*[.]", "isoform ", .)
@@ -440,15 +450,28 @@ plot.profiles<-
         ungroup %>%
         mutate(cpm.per.cell = cpm / n.cells)
 
-      location.center <- ifelse(location.measure == "Distance to the DTC [μm]",
-                                "dist.center.um", "percent.center")
-      location.start <- ifelse(location.measure == "Distance to the DTC [μm]",
-                               "dist.start.um", "percent.start")
-      location.end <- ifelse(location.measure == "Distance to the DTC [μm]",
-                             "dist.end.um", "percent.end")
+      location.center <-
+        ifelse(location.measure == "Distance to the DTC [μm]",
+               "dist.center.um",
+               ifelse(location.measure == "Migration time from the DTC [h]",
+                      "time.center.h", "percent.center"))
+
+      location.start <-
+        ifelse(location.measure == "Distance to the DTC [μm]", "dist.start.um",
+               ifelse(location.measure == "Migration time from the DTC [h]",
+                      "time.start.h", "percent.start"))
+
+      location.end <-
+        ifelse(location.measure == "Distance to the DTC [μm]", "dist.end.um",
+               ifelse(location.measure == "Migration time from the DTC [h]",
+                      "time.end.h", "percent.end"))
+
       xlim.scale.factor <-
         ifelse(location.measure == "Distance to the DTC [μm]",
-               input.data$gonad.model$len.gonad.arm.um / 100, 1)
+               input.data$gonad.model$len.gonad.arm.um / 100,
+               ifelse(location.measure == "Migration time from the DTC [h]",
+               input.data$gonad.model$dist2time(
+                 input.data$gonad.model$len.gonad.arm.um) / 100, 1))
 
       # create profile plot
       profile.plot <-
@@ -717,7 +740,9 @@ plot.profiles<-
           # fix x-axis limits
           + xlim(params$profile.plot.xlim * xlim.scale.factor)
 
-        if(show.model)
+        if(show.model &
+           location.measure %in% c("Relative position [% distal-to-proximal]",
+                                   "Distance to the DTC [μm]"))
           profile.plot %<>%
             plot_grid(model.plot, ncol = 1, align = "v", axis = "lr")
 
