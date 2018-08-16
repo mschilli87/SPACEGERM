@@ -21,7 +21,7 @@
 # file:         functions.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-23
-# last update:  2018-05-31
+# last update:  2018-08-16
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define functions for SPACEGERM shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-08-16: added support for distance location measure
 # 2018-05-31: added support for slice data passed in as database query / cosmetics
 # 2018-05-17: dropped explicit loading of ggplot2 (pulled in by cowplot)
 #             replaced require by library
@@ -280,67 +281,68 @@ add.stretch.column <-
     mutate(stretch = stretches.by.sample[sample.name])
 
 # generate gonad arm model plot
-plot.model <- function(model.data)
-  model.data$fit.radii %>%
-  ggplot(aes(dist.to.dtc.um * 100 / model.data$len.gonad.arm.um,
-             radius.gonad.um * 100 / model.data$len.gonad.arm.um)) %>%
-  + geom_circle(data = model.data$germ.layers %>%
-                       mutate(center.dist.um =
-                                (start.dist.um + end.dist.um) / 2,
-                              n.circles =
-                                as.integer(diam.gonad.um /
-                                             model.data$diam.germ.cell.um)) %>%
-                       group_by(germ.layer) %>%
-                       do(data_frame(center.dist.um = .$center.dist.um,
-                                     n.circles = .$n.circles,
-                                     circle = 1:.$n.circles)) %>%
-                       ungroup %>%
-                       mutate(y.center = (circle -.5 - n.circles / 2) *
-                                           model.data$diam.germ.cell.um,
-                              radius.um = model.data$diam.germ.cell.um / 2),
-                aes(x0 = center.dist.um * 100 / model.data$len.gonad.arm.um,
-                    y0 = y.center * 100 / model.data$len.gonad.arm.um,
-                    r = radius.um * 100 / model.data$len.gonad.arm.um),
-                inherit.aes = FALSE, color = "grey") %>%
-  + geom_circle(data = model.data$oocytes %>%
-                       mutate(center.dist.um =
-                                (start.dist.um + end.dist.um) / 2,
-                              radius.um = diam.um / 2),
-                aes(x0 = center.dist.um * 100 / model.data$len.gonad.arm.um,
-                    y0 = 0, r = radius.um * 100 / model.data$len.gonad.arm.um),
-                inherit.aes = FALSE, color = "grey") %>%
-  + geom_segment(data = model.data$zones %>%
-                        filter(end.dist.um != model.data$len.gonad.arm.um),
-                 aes(x = end.dist.um * 100 / model.data$len.gonad.arm.um,
-                     xend = end.dist.um * 100 / model.data$len.gonad.arm.um,
-                     y = -2500 / model.data$len.gonad.arm.um,
-                     yend = 2500 / model.data$len.gonad.arm.um),
-                 linetype = "dotted") %>%
-  + geom_line() %>%
-  + geom_line(data=model.data$fit.radii %>%
+plot.model <-
+  function(model.data,
+           location.measure = params$location.measure.input$default){
+    scale.factor <- ifelse(location.measure ==
+                             "Relative position [% distal-to-proximal]",
+                           100 / model.data$len.gonad.arm.um, 1)
+    model.data$fit.radii %>%
+    ggplot(aes(dist.to.dtc.um * scale.factor,
+               radius.gonad.um * scale.factor)) %>%
+    + geom_circle(data = model.data$germ.layers %>%
+                         mutate(
+                           center.dist.um =
+                             (start.dist.um + end.dist.um) / 2,
+                            n.circles =
+                              as.integer(diam.gonad.um /
+                                           model.data$diam.germ.cell.um)) %>%
+                         group_by(germ.layer) %>%
+                         do(data_frame(center.dist.um = .$center.dist.um,
+                                       n.circles = .$n.circles,
+                                       circle = 1:.$n.circles)) %>%
+                         ungroup %>%
+                         mutate(y.center = (circle -.5 - n.circles / 2) *
+                                             model.data$diam.germ.cell.um,
+                                radius.um = model.data$diam.germ.cell.um / 2),
+                  aes(x0 = center.dist.um * scale.factor,
+                      y0 = y.center * scale.factor,
+                      r = radius.um * scale.factor),
+                  inherit.aes = FALSE, color = "grey") %>%
+    + geom_circle(data = model.data$oocytes %>%
+                         mutate(center.dist.um =
+                                  (start.dist.um + end.dist.um) / 2,
+                                radius.um = diam.um / 2),
+                  aes(x0 = center.dist.um * scale.factor,
+                      y0 = 0, r = radius.um * scale.factor),
+                  inherit.aes = FALSE, color = "grey") %>%
+    + geom_segment(data = model.data$zones %>%
+                          filter(end.dist.um != model.data$len.gonad.arm.um),
+                   aes(x = end.dist.um * scale.factor,
+                       xend = end.dist.um * scale.factor,
+                       y = -25 * scale.factor,
+                       yend = 25 * scale.factor),
+                   linetype = "dotted") %>%
+    + geom_line() %>%
+    + geom_line(data=model.data$fit.radii %>%
                      mutate(radius.gonad.um = -radius.gonad.um)) %>%
-  + geom_segment(
-      data = model.data$fit.radii[c(1, nrow(model.data$fit.radii)),],
-      aes(xend = dist.to.dtc.um * 100 / model.data$len.gonad.arm.um,
-          yend = -radius.gonad.um * 100 / model.data$len.gonad.arm.um)) %>%
-  + annotate("segment",
-             x = (model.data$len.gonad.arm.um - 60) * 100 /
-                   model.data$len.gonad.arm.um,
-             xend = (model.data$len.gonad.arm.um - 10) * 100 /
-                      model.data$len.gonad.arm.um,
-             y = -3000 / model.data$len.gonad.arm.um,
-             yend = -3000 / model.data$len.gonad.arm.um, size = 1) %>%
-  + annotate("text",
-             x = (model.data$len.gonad.arm.um - 35) * 100 /
-                   model.data$len.gonad.arm.um,
-             y = -3500 / model.data$len.gonad.arm.um, vjust = 1,
-             label = "50 μm") %>%
-  + expand_limits(y = -5000 / model.data$len.gonad.arm.um) %>%
-  + coord_fixed() %>%
-  + theme_void()
-
-# globally define gonad arm model plot
-model.plot <- plot.model(input.data$gonad.model)
+    + geom_segment(
+        data = model.data$fit.radii[c(1, nrow(model.data$fit.radii)),],
+        aes(xend = dist.to.dtc.um * scale.factor,
+            yend = -radius.gonad.um * scale.factor)) %>%
+    + annotate("segment",
+               x = (model.data$len.gonad.arm.um - 60) * scale.factor,
+               xend = (model.data$len.gonad.arm.um - 10) * scale.factor,
+               y = -30 * scale.factor,
+               yend = -30 * scale.factor,
+               size = 1) %>%
+    + annotate("text",
+               x = (model.data$len.gonad.arm.um - 35) * scale.factor,
+               y = -35 * scale.factor,
+               vjust = 1, label = "50 μm") %>%
+    + expand_limits(y = -50 * scale.factor) %>%
+    + coord_fixed() %>%
+    + theme_void()}
 
 dist2n.cells <- function(end.dist.um, start.dist.um = 0,
                          cell.data = input.data$gonad.model$cells){
@@ -407,11 +409,13 @@ plot.profiles<-
     show.slice.width = TRUE,
 
     abundance.unit = params$abundance.unit.default,
+    location.measure = params$location.measure.input.default,
     n.points.smooth = params$smoothing.n.input.default,
     span.smooth = params$smoothing.span.input.default,
     show.model = TRUE,
     show.smoothing.se = TRUE,
-    show.dropouts = TRUE)
+    show.dropouts = TRUE,
+    model.plot = plot.model(input.data$gonad.model, location.measure))
 
     # begin profile plot function definition
     {
@@ -424,6 +428,7 @@ plot.profiles<-
                                  input.data$gonad.model$len.gonad.arm.um,
                dist.end.um = percent.end / 100 *
                                input.data$gonad.model$len.gonad.arm.um,
+               dist.center.um = (dist.start.um + dist.end.um) / 2,
                tx_color = isoform.level %>%
                           ifelse(list(transcript.name %>%
                                       sub(".*[.]", "isoform ", .)
@@ -435,12 +440,23 @@ plot.profiles<-
         ungroup %>%
         mutate(cpm.per.cell = cpm / n.cells)
 
+      location.center <- ifelse(location.measure == "Distance to the DTC [μm]",
+                                "dist.center.um", "percent.center")
+      location.start <- ifelse(location.measure == "Distance to the DTC [μm]",
+                               "dist.start.um", "percent.start")
+      location.end <- ifelse(location.measure == "Distance to the DTC [μm]",
+                             "dist.end.um", "percent.end")
+      xlim.scale.factor <-
+        ifelse(location.measure == "Distance to the DTC [μm]",
+               input.data$gonad.model$len.gonad.arm.um / 100, 1)
+
       # create profile plot
       profile.plot <-
         plot.data %>%
         filter(!dropout) %>%
-        ggplot(aes_string(x = "percent.center", y = unit2col(abundance.unit),
-                          color = "tx_color", linetype = "sample.name")) %>%
+        ggplot(aes_string(x = location.center,
+                          y = unit2col(abundance.unit), color = "tx_color",
+                          linetype = "sample.name")) %>%
 
         # split plot into panels
         + facet_wrap(
@@ -491,13 +507,7 @@ plot.profiles<-
             ) %>%
 
         # adjust x-axis labelling
-        + xlab(
-
-            # adjust x-axis label
-            label=params$profile.plot.xlab
-
-            # end x-axis label parameter definition
-            ) %>%
+        + xlab(label = location.measure) %>%
         + ylab(label = params$profile.plot.ylab %>%
                        paste(paste0("[", abundance.unit, "]"),
                              sep = ifelse((nchar(abundance.unit) > 4) &
@@ -548,12 +558,14 @@ plot.profiles<-
         if(show.slice.width){
           if(show.dropouts)
             profile.plot %<>%
-            + geom_errorbarh(aes(xmin = percent.start, xmax = percent.end),
+            + geom_errorbarh(aes_string(xmin = location.start,
+                                        xmax = location.end),
                              data = plot.data %>%
                                     filter(dropout),
                              alpha = params$profile.plot.dropouts.alpha)
           profile.plot %<>%
-          + geom_errorbarh(aes(xmin = percent.start, xmax = percent.end))}
+          + geom_errorbarh(aes_string(xmin = location.start,
+                                      xmax = location.end))}
 
         # add raw data points if specified
         if(raw.points){
@@ -703,7 +715,7 @@ plot.profiles<-
           profile.plot %<>%
 
           # fix x-axis limits
-          + xlim(params$profile.plot.xlim)
+          + xlim(params$profile.plot.xlim * xlim.scale.factor)
 
         if(show.model)
           profile.plot %<>%
@@ -1895,8 +1907,10 @@ generate.profile.plot <-
       FALSE,
 
     unit = params$abundance.unit.default,
+    location = params$location.measure.input.default,
     smoothing.n = params$smoothing.n.input.default,
-    smoothing.span = params$smoothing.span.input.default)
+    smoothing.span = params$smoothing.span.input.default,
+    model2d = plot.model(input.data$gondad.model, location))
 
     # begin profile plot generation function definition
     {
@@ -1993,6 +2007,7 @@ generate.profile.plot <-
         ,isoform.level=per.isoform,
 
         abundance.unit = unit,
+        location.measure = location,
         n.points.smooth = smoothing.n,
         span.smooth = smoothing.span,
         show.slice.width = "show.slice.width" %in% plot.options,
@@ -2000,7 +2015,8 @@ generate.profile.plot <-
           ("show.model" %in% plot.options) & ("fix.xlim" %in% plot.options) &
             ((ncols.plot == 1) | (length(parse.gene.names(gene.names)) == 1)),
         show.smoothing.se = "show.smoothing.se" %in% plot.options,
-        show.dropouts = "show.dropouts" %in% plot.options)}
+        show.dropouts = "show.dropouts" %in% plot.options,
+        model.plot = model2d)}
 
 
 # heatmap generation function

@@ -21,7 +21,7 @@
 # file:         params.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-05-31
+# last update:  2018-08-16
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define parameters for SPACEGERM shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-08-16: added location measure input panel parameters (incl. new distance measure)
 # 2018-05-31: removed gene profiles RDS (replaced by SQLite database)
 #             increased smooth fit span default to match publication
 #             removed slice data RDS (replaced by SQLite database)
@@ -201,7 +202,23 @@ if(!exists("params"))
        abundance.unit.input.choices = c("CPM", "CPM / cell"),
 
        # default selection of abundance unit input panel
-       abundance.unit.input.default = "CPM"
+       abundance.unit.input.default = "CPM",
+
+
+
+        ################################
+        # location measure input panel #
+        ################################
+
+      # label of location measure input panel
+      location.measure.input.label = "Location measure",
+
+      # choices for location measure input panel
+      location.measure.input.choices = c("Relative position [% distal-to-proximal]",
+                                         "Distance to the DTC [μm]"),
+
+      # default selection of location measure input panel
+      location.measure.input.default = "Relative position [% distal-to-proximal]",
 
 
         ############################
@@ -209,7 +226,7 @@ if(!exists("params"))
         ############################
 
       # label of sample names input panel
-      ,sample.names.input.label = "Samples",
+      sample.names.input.label = "Samples",
 
       # default selection of sample names input panel
       sample.names.input.default =
@@ -610,9 +627,6 @@ if(!exists("params"))
 
       # title of profile plot
       ,profile.plot.title="Spatial gene expression"
-
-      # x-axis label of profile plot
-      ,profile.plot.xlab="Position [% distal-to-proximal]"
 
       # y-axis label of profile plot
       ,profile.plot.ylab="Expression"

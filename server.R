@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-05-31
+# last update:  2018-08-16
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for SPACEGERM shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-08-16: added support user specified location measure
 # 2018-05-31: added support for gene profiles passed in as database query
 #             added support for slice data passed in as database query
 # 2018-05-17: replaced require by library
@@ -119,6 +120,10 @@ function(input, output, session){
     renderUI(generate.manual.exprmax.input(input$plot.options,
                                            exprmin = input$manual.exprmin))
 
+  # cache model plot
+  model.plot <- reactive(input.data$gonad.model %>%
+                         plot.model(input$location.measure))
+
   # assign profile plot output
   output$profile.plot<-
     renderPlot({
@@ -140,8 +145,10 @@ function(input, output, session){
            ncols.plot = input$ncols.plot,
            per.isoform = input$isoform.level,
            unit = input$abundance.unit,
+           location = input$location.measure,
            smoothing.n = input$smoothing.n,
-           smoothing.span = input$smoothing.span)}
+           smoothing.span = input$smoothing.span,
+           model2d = model.plot())}
       profile.plot})
 
   # assign genotype input panel output

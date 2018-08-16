@@ -21,7 +21,7 @@
 # file:         ui.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-05-17
+# last update:  2018-08-16
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define front end for SPACEGERM shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-08-16: added location measure input panel
 # 2018-05-17: re-ordered tabs for publication
 #             added app subtitle
 #             replaced require by library
@@ -173,7 +174,11 @@ fluidPage(
       selectInput(inputId="abundance.unit",
                   label=h3(params$abundance.unit.input.label),
                   choices=params$abundance.unit.input.choices,
-                  selected=params$abundance.unit.input.default)
+                  selected=params$abundance.unit.input.default),
+      selectInput(inputId = "location.measure",
+                  label = h3(params$location.measure.input.label),
+                  choices = params$location.measure.input.choices,
+                  selected = params$location.measure.input.default)
 
     # add sample names input panel
     ,checkboxGroupInput(
