@@ -21,7 +21,7 @@
 # file:         server.R
 # author(s):    Marcel Schilling <marcel.schilling@mdc-berlin.de>
 # created:      2017-02-21
-# last update:  2018-08-16
+# last update:  2018-09-03
 # license:      GNU Affero General Public License Version 3 (GNU AGPL v3)
 # purpose:      define back end for SPACEGERM shiny app
 
@@ -30,6 +30,7 @@
 # change log (reverse chronological) #
 ######################################
 
+# 2018-09-03: fixed crashes on Shiny Server Pro VM
 # 2018-08-16: added support user specified location measure
 # 2018-05-31: added support for gene profiles passed in as database query
 #             added support for slice data passed in as database query
@@ -75,6 +76,14 @@
 #             replaced gene names output assignment by profile plot output assignment
 # 2017-02-21: added gene names output assignment
 #             initial version (empty template)
+
+
+###########
+# options #
+###########
+
+# Note: Without this, the app crashed repeatedly on our Shiny Server Pro VM:
+options(java.parameters = "-Xss2560k")
 
 
 #############
